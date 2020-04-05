@@ -1,5 +1,4 @@
 #include <configuration.h>
-#include <motor.h>
 
 PinConfiguration *PinConfiguration::INSTANCE = NULL;
 
@@ -33,9 +32,9 @@ void PinConfiguration::pinConfiguration()
 {
 	// Motor pins
 	pinMode(motorOut1, OUTPUT);
-	digitalWrite(motorOut1, initialPolarity);
+	digitalWrite(motorOut1, INITIAL_POLARITY);
 	pinMode(motorOut2, OUTPUT);
-	digitalWrite(motorOut2, initialPolarity);
+	digitalWrite(motorOut2, INITIAL_POLARITY);
 	pinMode(motorControl, OUTPUT);
 
 	//knobs

@@ -1,5 +1,4 @@
 #include <motor.h>
-#include <avr/wdt.h>
 
 Motor *Motor::INSTANCE = NULL;
 

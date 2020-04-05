@@ -1,7 +1,9 @@
+#ifndef EVENT_CONFIGURATION_H
+#define EVENT_CONFIGURATION_H
+
+#include <motor.h>
 #include <Arduino.h>
 
-#ifndef CONFIGURATION_H
-#define CONFIGURATION_H
 
 class PinConfiguration
 {
@@ -11,7 +13,6 @@ private:
 public:
     static PinConfiguration *getInstance();
 
-    const int initialPolarity = 0;
     const static int debounceDelay = 250;
 
     const static int motorOut1 = 13;
@@ -23,7 +24,7 @@ public:
     const static int directionKey = 3;
     long directionKeyTime = 0;
     const static int motorKey = 2;
-    long motorKeyTime = 0 ;
+    long motorKeyTime = 0;
 
     void pinConfiguration();
 };

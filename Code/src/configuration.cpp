@@ -48,4 +48,8 @@ void PinConfiguration::pinConfiguration()
 	pinMode(directionKey, INPUT);
 	digitalWrite(directionKey, HIGH);
 	attachInterrupt(digitalPinToInterrupt(directionKey), directionKeyWrapper, FALLING);
+
+	//----buzzer
+	pinMode(buzzerPin, OUTPUT);
+	digitalWrite(buzzerPin, HIGH);
 }

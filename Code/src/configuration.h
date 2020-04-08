@@ -26,6 +26,9 @@ public:
     const static int motorKey = 2;
     long motorKeyTime = 0;
 
+    //----buzzer
+    const static int buzzerPin = 5; //PWM
+
     void pinConfiguration();
 };
 

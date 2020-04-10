@@ -2,7 +2,6 @@
 #define BUZZER_H
 
 #include <Arduino.h>
-#include <avr/wdt.h>
 #include <configuration.h>
 
 class Buzzer

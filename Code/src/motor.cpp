@@ -11,19 +11,63 @@ Motor *Motor::getInstance()
     return INSTANCE;
 }
 
+int Motor::getStatus()
+{
+    return this->motorStatus;
+}
+
 void Motor::changeDirection()
 {
     this->direction = ~this->direction;
-    if (motorStatus == 1)
+    this->setMotorOut();
+}
+
+void Motor::setDirection(int directionl)
+{
+    char my_string[40];
+    this->direction = directionl;
+    sprintf(my_string, "setting direction: %d\r\n", this->direction);
+    Serial.print(my_string);
+    this->setMotorOut();
+}
+
+int Motor::getDirection()
+{
+    return this->direction;
+}
+
+void Motor::setMotorOut()
+{
+    char my_string[50];
+    if (this->motorStatus == MOTOR_IS_ON)
     {
-        digitalWrite(PinConfiguration::motorOut1, direction);
+        sprintf(my_string ,"motor is on direction : %d\r\n", this->direction);
+        Serial.print(my_string);
+
+        // if(this->direction == DIRECTION_CLOSE)
+        // {
+        //     Serial.print("motor out close\r\n");
+        //     digitalWrite(PinConfiguration::motorOut1, HIGH);
+        //     delay(50);
+        //     digitalWrite(PinConfiguration::motorOut2, LOW);
+        // }
+        // else
+        // {
+        //     Serial.print("motor out open\r\n");
+        //     digitalWrite(PinConfiguration::motorOut1, LOW);
+        //     delay(50);
+        //     digitalWrite(PinConfiguration::motorOut2, HIGH);
+        // }
+    
+        digitalWrite(PinConfiguration::motorOut1, this->direction);
         delay(50);
-        digitalWrite(PinConfiguration::motorOut2, ~direction);
+        digitalWrite(PinConfiguration::motorOut2, not(this->direction));
     }
     else
     {
-        digitalWrite(PinConfiguration::motorOut1, direction);
-        digitalWrite(PinConfiguration::motorOut2, direction);
+        Serial.print("motor off\r\n");
+        digitalWrite(PinConfiguration::motorOut1, LOW);
+        digitalWrite(PinConfiguration::motorOut2, LOW);
     }
 }
 
@@ -44,24 +88,17 @@ int Motor::getSpeedPWM()
 }
 void Motor::motorStop()
 {
-    if (this->motorStatus == 1)
-    {
-        this->motorStatus = 0;
-        digitalWrite(PinConfiguration::motorOut2, this->direction);
-    }
+    this->motorStatus = MOTOR_IS_OFF;
+    this->setMotorOut();
 }
 void Motor::motorStart()
 {
-    if (this->motorStatus == 0)
-    {
-        this->motorStatus = 1;
-        analogWrite(PinConfiguration::motorControl, getSpeedPWM());
-        digitalWrite(PinConfiguration::motorOut2, ~direction);
-    }
+    this->motorStatus = MOTOR_IS_ON;
+    this->setMotorOut();
 }
 void Motor::motorSwitch()
 {
-    if (motorStatus == 1)
+    if (motorStatus == MOTOR_IS_ON)
     {
         motorStop();
     }

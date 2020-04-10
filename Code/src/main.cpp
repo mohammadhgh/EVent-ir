@@ -7,7 +7,7 @@
 
 #include <motor.h>
 #include <buzzer.h>
-
+#include <volume.h>
 void setup()
 {
   // put your setup code here, to run once:
@@ -18,7 +18,7 @@ void setup()
 }
 
 void loop()
-{ 
+{
   int knob = map(analogRead(PinConfiguration::getInstance()->motorSpeedKnob), 0, 1023, 0, 100);
   Motor::getInstance()->setSpeed(knob);
   wdt_reset();

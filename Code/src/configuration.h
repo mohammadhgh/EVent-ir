@@ -13,21 +13,36 @@ private:
 public:
     static PinConfiguration *getInstance();
 
-    const static int debounceDelay = 250;
+    //----parameters
+    const static int debounceDelay = 10;
+    const static int uSwitch_hits_thr = 5;
+
+    //----uSwitches
+    const static int open_uSw_pin = 3;
+    long open_uSw_last = 0;
+    int open_uSw_hits = 0;
+    const static int close_uSw_pin = 18;
+    long close_uSw_last = 0;
+    int close_uSw_hits = 0;
 
     const static int motorOut1 = 13;
-    const static int motorOut2 = 12;
+    const static int motorOut2 = 9;
     const static int motorControl = 11;
 
-    const static int motorSpeedKnob = A0;
+    //----knobs
+    const static int RR_knob_pin = A0;
 
-    const static int directionKey = 3;
-    long directionKeyTime = 0;
-    const static int motorKey = 2;
-    long motorKeyTime = 0;
+    //----pushButtons
+    const static int onButton_pin = 2;
+    long onButton_last = 0;
+    int onButton_hits = 0;
 
     //----buzzer
     const static int buzzerPin = 5; //PWM
+
+    //----LEDs
+    const static int gLED_pin = 7;
+    const static int ardLED = 13;
 
     void pinConfiguration();
 };

@@ -24,8 +24,8 @@ LED* ardLED;
 /* ----------------- Push Buttons Interrupt Handlers ------------*/
 void static onButton_handler()
 {
-	if (millis() - ON_button->get_last_hit() > PinConfiguration::debounceDelay && 
-		ON_button->increment_hits() > PinConfiguration::uSwitch_hits_thr)
+	if ((millis() - ON_button->get_last_hit() > PinConfiguration::debounceDelay) && 
+		ON_button->getLastState() == BSTATE_HIGH)
 	{
 		int readVal = ON_button->getValue();
 		if(readVal==LOW)
@@ -41,14 +41,11 @@ void static onButton_handler()
 /* -----------------uSwitches Interrupt Handlers----------------- */
 void static open_uSw_handler()
 {
-	if (millis() - open_uSwitch->get_last_hit() > PinConfiguration::debounceDelay && 
-		open_uSwitch->increment_hits() > PinConfiguration::uSwitch_hits_thr)
+	if (millis() - open_uSwitch->get_last_hit() > PinConfiguration::debounceDelay)
 	{
-		// Serial.print("Amir_open\r\n");
 		int readVal = open_uSwitch->getValue();
 		if(readVal==LOW)
 		{
-			// Serial.print("mohammad_open\r\n");
 			Motor::getInstance()->setDirection(DIRECTION_CLOSE);
       		// ardLED->set_val(Motor::getInstance()->getDirection());
 		}
@@ -58,14 +55,11 @@ void static open_uSw_handler()
 
 void static close_uSw_handler()
 {
-	if (millis() - close_uSwitch->get_last_hit() > PinConfiguration::debounceDelay && 
-		close_uSwitch->increment_hits() > PinConfiguration::uSwitch_hits_thr)
+	if (millis() - close_uSwitch->get_last_hit() > PinConfiguration::debounceDelay)
 	{
-		// Serial.print("Amir_close\r\n");
 		int readVal = close_uSwitch->getValue();
 		if(readVal==LOW)
 		{
-			// Serial.print("mohammad_close\r\n");
 			Motor::getInstance()->setDirection(DIRECTION_OPEN);
       		// ardLED->set_val(Motor::getInstance()->getDirection());
 		}

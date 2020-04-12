@@ -21,15 +21,17 @@ Button* close_uSwitch;
 LED* gLED;
 LED* ardLED;
 
+Buzzer* coolBuzz;
+
 /* ----------------- Push Buttons Interrupt Handlers ------------*/
 void static onButton_callback()
 {
-	Serial.print("inside callback\r\n");
 	Motor::getInstance()->motorSwitch();
 	gLED->set_val(Motor::getInstance()->getStatus());
+	coolBuzz->beep(2);
 }
 
-/* -----------------uSwSerial.print("inside check\r\n");itches Interrupt Handlers----------------- */
+/* ----------	Serial.print("inside callback\r\n");-------uSwSerial.print("inside check\r\n");itches Interrupt Handlers----------------- */
 void static open_uSw_callback()
 {
 	Motor::getInstance()->setDirection(DIRECTION_CLOSE);
@@ -48,7 +50,7 @@ void setup()
 	
 	PinConfiguration::getInstance()->pinConfiguration();
 
-	Buzzer::getInstance()->beep(2);
+	coolBuzz = new Buzzer(PinConfiguration::buzzerPin);
 
 	RR_knob = new Knob(PinConfiguration::RR_knob_pin);
 

@@ -14,7 +14,7 @@ public:
     static PinConfiguration *getInstance();
 
     //----parameters
-    const static int debounceDelay = 20; //milli-seconds 
+    const static int debounceDelay = 100; //milli-seconds 
     const static int holdTime = 1000; //milli-seconds
     const static int uSwitch_hits_thr = 5;
 

@@ -16,7 +16,7 @@ private:
     long btnDnTime;
     bool ignoreUp;
 
-    void *pressCallback;
+    void (*pressCallback)(void);
 public:
     Button (int pin);
     void setPressCallback(void (*callback_func)(void));

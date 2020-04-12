@@ -18,6 +18,7 @@ void Button::setPressCallback(void (*callback_func)(void))
 
 void Button::check()
 {
+
     // Read the state of the button
     int buttonVal = digitalRead(this->pin);
 
@@ -25,7 +26,10 @@ void Button::check()
     if (buttonVal == LOW && 
         this->lastState == HIGH && (millis() - this->btnUpTime) > PinConfiguration::debounceDelay)
     {
+        Serial.print("inside low\r\n");
         this->btnDnTime = millis();   
+        this->lastState = LOW;
+        this->pressCallback();
     }
 
     // Test for button release and store the up time
@@ -33,11 +37,13 @@ void Button::check()
         this->lastState == LOW && 
         (millis() - this->btnDnTime) > PinConfiguration::debounceDelay)
     {
-        if (this->ignoreUp == false)
-            this->pressCallback();
-        else
-            this->ignoreUp = false;
+        Serial.print("inside hight\r\n");
+        // if (this->ignoreUp == false)
+        //     // this->pressCallback();
+        // else
+        //     this->ignoreUp = false;
         this->btnUpTime = millis();
+        this->lastState = HIGH;
     }
 
     // Test for button held down for longer than the hold time
@@ -46,6 +52,7 @@ void Button::check()
     {
         // event2();
         // this->ignoreUp = true;
+        Serial.print("inside hold\r\n");
         this->btnDnTime = millis();   
     }
 }

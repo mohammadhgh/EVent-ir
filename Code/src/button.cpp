@@ -3,36 +3,56 @@
 Button::Button(int pin)
 {
     this->pin = pin;
-    this->hits = 0;
-    this->last_hit = 0;
+    this->btnDnTime = 0;
+    this->btnUpTime = 0;
+    this->lastState = HIGH;
+    this->ignoreUp = false;
+
+    this->pressCallback = NULL;
 }
 
-void Button::setHnadler(void (*handler_func)(void))
+void Button::setPressCallback(void (*callback_func)(void))
 {
-    attachInterrupt(digitalPinToInterrupt(this->pin), handler_func, LOW);
+    this->pressCallback = callback_func;
 }
 
-int Button::getValue()
+void Button::check()
 {
-    int return_val;
-    return_val = digitalRead(this->pin);
 
-    return return_val;
-}
+    // Read the state of the button
+    int buttonVal = digitalRead(this->pin);
 
-int Button::increment_hits()
-{
-    this->hits++;
+    // Test for button pressed and store the down time
+    if (buttonVal == LOW && 
+        this->lastState == HIGH && (millis() - this->btnUpTime) > PinConfiguration::debounceDelay)
+    {
+        Serial.print("inside low\r\n");
+        this->btnDnTime = millis();   
+        this->lastState = LOW;
+        this->pressCallback();
+    }
 
-    return this->hits;
-}
+    // Test for button release and store the up time
+    if (buttonVal == HIGH && 
+        this->lastState == LOW && 
+        (millis() - this->btnDnTime) > PinConfiguration::debounceDelay)
+    {
+        Serial.print("inside hight\r\n");
+        // if (this->ignoreUp == false)
+        //     // this->pressCallback();
+        // else
+        //     this->ignoreUp = false;
+        this->btnUpTime = millis();
+        this->lastState = HIGH;
+    }
 
-void Button::set_last_hit(long hit_time)
-{
-    this->last_hit = hit_time;
-}
-
-long Button::get_last_hit()
-{
-    return this->last_hit; 
+    // Test for button held down for longer than the hold time
+    if (buttonVal == LOW && 
+        (millis() - this->btnDnTime) > PinConfiguration::holdTime)
+    {
+        // event2();
+        // this->ignoreUp = true;
+        Serial.print("inside hold\r\n");
+        this->btnDnTime = millis();   
+    }
 }

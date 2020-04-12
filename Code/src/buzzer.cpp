@@ -1,33 +1,19 @@
 #include <buzzer.h>
 
-Buzzer *Buzzer::INSTANCE = NULL;
-
-Buzzer *Buzzer::getInstance()
+Buzzer::Buzzer(int pin)
 {
-    if (INSTANCE == NULL)
-    {
-        INSTANCE = new Buzzer();
-    }
-    return INSTANCE;
+    this->pin = pin;
+    this->sound_freq = 1000; //active buzzer
+    this->on_delay = 50;
 }
 
 void Buzzer::beep(int beeps_count)
 {
     for(int i=0; i<beeps_count; i++)
     {
-        analogWrite(PinConfiguration::buzzerPin, sound_freq);
-        delay(on_delay);
-        analogWrite(PinConfiguration::buzzerPin, 0);
-        delay(on_delay);
-        analogWrite(PinConfiguration::buzzerPin, sound_freq);
-        delay(on_delay);
-        analogWrite(PinConfiguration::buzzerPin, 0);
-        delay(on_delay);
-        analogWrite(PinConfiguration::buzzerPin, sound_freq);
-        delay(on_delay);
-        analogWrite(PinConfiguration::buzzerPin, 0);
-        delay(on_delay);
-        analogWrite(PinConfiguration::buzzerPin, 0);
-        delay(off_delay);
+        tone(this->pin, this->sound_freq, this->on_delay);
+        delay(this->on_delay);
+        noTone(this->pin);
+        delay(this->on_delay);
     }
 }

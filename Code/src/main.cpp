@@ -7,7 +7,6 @@
 
 #include <motor.h>
 #include <buzzer.h>
-<<<<<<< HEAD
 #include <knob.h>
 #include <button.h>
 #include <led.h>
@@ -45,9 +44,6 @@ void static close_uSw_callback()
     // ardLED->set_val(Motor::getInstance()->getDirection());
 }
 
-=======
-#include <volume.h>
->>>>>>> volume
 void setup()
 {
 	Serial.begin(9600);
@@ -73,7 +69,6 @@ void setup()
 }
 
 void loop()
-<<<<<<< HEAD
 { 
 	ON_button->check();
 	open_uSwitch->check();
@@ -83,10 +78,3 @@ void loop()
   	Motor::getInstance()->setSpeed(rr_knob_val);
   	wdt_reset();
 }
-=======
-{
-  int knob = map(analogRead(PinConfiguration::getInstance()->motorSpeedKnob), 0, 1023, 0, 100);
-  Motor::getInstance()->setSpeed(knob);
-  wdt_reset();
-}
->>>>>>> volume

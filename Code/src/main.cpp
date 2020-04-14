@@ -5,6 +5,7 @@
 #include <configuration.h>
 #include <avr/wdt.h>
 
+#include <sysconfig.h>
 #include <motor.h>
 #include <buzzer.h>
 #include <knob.h>
@@ -12,6 +13,8 @@
 #include <led.h>
 
 /* Global Objects */
+SysConfig* Global_SysConfig;
+
 Knob* RR_knob;
 
 Button* ON_button;
@@ -49,6 +52,8 @@ void setup()
 	Serial.begin(9600);
 	
 	PinConfiguration::getInstance()->pinConfiguration();
+
+	Global_SysConfig = new SysConfig(0, 0, 0);
 
 	coolBuzz = new Buzzer(PinConfiguration::buzzerPin);
 

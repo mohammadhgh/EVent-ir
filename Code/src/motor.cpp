@@ -24,10 +24,7 @@ void Motor::changeDirection()
 
 void Motor::setDirection(int directionl)
 {
-    char my_string[40];
     this->direction = directionl;
-    sprintf(my_string, "setting direction: %d\r\n", this->direction);
-    Serial.print(my_string);
     this->setMotorOut();
 }
 
@@ -41,31 +38,12 @@ void Motor::setMotorOut()
     char my_string[50];
     if (this->motorStatus == MOTOR_IS_ON)
     {
-        sprintf(my_string ,"motor is on direction : %d\r\n", this->direction);
-        Serial.print(my_string);
-
-        // if(this->direction == DIRECTION_CLOSE)
-        // {
-        //     Serial.print("motor out close\r\n");
-        //     digitalWrite(PinConfiguration::motorOut1, HIGH);
-        //     delay(50);
-        //     digitalWrite(PinConfiguration::motorOut2, LOW);
-        // }
-        // else
-        // {
-        //     Serial.print("motor out open\r\n");
-        //     digitalWrite(PinConfiguration::motorOut1, LOW);
-        //     delay(50);
-        //     digitalWrite(PinConfiguration::motorOut2, HIGH);
-        // }
-    
         digitalWrite(PinConfiguration::motorOut1, this->direction);
         delay(50);
         digitalWrite(PinConfiguration::motorOut2, not(this->direction));
     }
     else
     {
-        Serial.print("motor off\r\n");
         digitalWrite(PinConfiguration::motorOut1, LOW);
         digitalWrite(PinConfiguration::motorOut2, LOW);
     }

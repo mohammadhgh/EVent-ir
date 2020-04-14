@@ -7,12 +7,11 @@
 class Buzzer
 {
 private:
-    static Buzzer *INSTANCE;
-    int sound_freq = 10; //active buzzer
-    int on_delay = 50;
-    int off_delay = 500;
+    int pin;
+    int sound_freq; //active buzzer
+    int on_delay;
 public:
-    static Buzzer *getInstance();
+    Buzzer(int pin);
     void beep(int beeps_count);
 };
 

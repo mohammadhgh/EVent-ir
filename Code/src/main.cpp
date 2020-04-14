@@ -22,56 +22,27 @@ Button* close_uSwitch;
 LED* gLED;
 LED* ardLED;
 
+Buzzer* coolBuzz;
+
 /* ----------------- Push Buttons Interrupt Handlers ------------*/
-void static onButton_handler()
+void static onButton_callback()
 {
-	if (millis() - ON_button->get_last_hit() > PinConfiguration::debounceDelay && 
-		ON_button->increment_hits() > PinConfiguration::uSwitch_hits_thr)
-	{
-		int readVal = ON_button->getValue();
-		if(readVal==LOW)
-		{
-			Motor::getInstance()->motorSwitch();
-      		gLED->set_val(Motor::getInstance()->getStatus());
-		}
-		
-		ON_button->set_last_hit(millis());
-	}
+	Motor::getInstance()->motorSwitch();
+	gLED->set_val(Motor::getInstance()->getStatus());
+	coolBuzz->beep(2);
 }
 
-/* -----------------uSwitches Interrupt Handlers----------------- */
-void static open_uSw_handler()
+/* ----------	Serial.print("inside callback\r\n");-------uSwSerial.print("inside check\r\n");itches Interrupt Handlers----------------- */
+void static open_uSw_callback()
 {
-	if (millis() - open_uSwitch->get_last_hit() > PinConfiguration::debounceDelay && 
-		open_uSwitch->increment_hits() > PinConfiguration::uSwitch_hits_thr)
-	{
-		// Serial.print("Amir_open\r\n");
-		int readVal = open_uSwitch->getValue();
-		if(readVal==LOW)
-		{
-			// Serial.print("mohammad_open\r\n");
-			Motor::getInstance()->setDirection(DIRECTION_CLOSE);
-      		// ardLED->set_val(Motor::getInstance()->getDirection());
-		}
-		open_uSwitch->set_last_hit(millis());
-	}
+	Motor::getInstance()->setDirection(DIRECTION_CLOSE);
+    // ardLED->set_val(Motor::getInstance()->getDirection());
 }
 
-void static close_uSw_handler()
+void static close_uSw_callback()
 {
-	if (millis() - close_uSwitch->get_last_hit() > PinConfiguration::debounceDelay && 
-		close_uSwitch->increment_hits() > PinConfiguration::uSwitch_hits_thr)
-	{
-		// Serial.print("Amir_close\r\n");
-		int readVal = close_uSwitch->getValue();
-		if(readVal==LOW)
-		{
-			// Serial.print("mohammad_close\r\n");
-			Motor::getInstance()->setDirection(DIRECTION_OPEN);
-      		// ardLED->set_val(Motor::getInstance()->getDirection());
-		}
-		close_uSwitch->set_last_hit(millis());
-	}
+	Motor::getInstance()->setDirection(DIRECTION_OPEN);
+    // ardLED->set_val(Motor::getInstance()->getDirection());
 }
 
 =======
@@ -83,18 +54,18 @@ void setup()
 	
 	PinConfiguration::getInstance()->pinConfiguration();
 
-	Buzzer::getInstance()->beep(2);
+	coolBuzz = new Buzzer(PinConfiguration::buzzerPin);
 
 	RR_knob = new Knob(PinConfiguration::RR_knob_pin);
 
 	ON_button = new Button(PinConfiguration::onButton_pin);
-	ON_button->setHnadler(onButton_handler);
+	ON_button->setPressCallback(onButton_callback);
 
 	open_uSwitch = new Button(PinConfiguration::open_uSw_pin);
-	open_uSwitch->setHnadler(open_uSw_handler);
+	open_uSwitch->setPressCallback(open_uSw_callback);
 
 	close_uSwitch = new Button(PinConfiguration::close_uSw_pin);
-	close_uSwitch->setHnadler(close_uSw_handler);
+	close_uSwitch->setPressCallback(close_uSw_callback);
 
 	gLED = new LED(PinConfiguration::gLED_pin);
 
@@ -104,6 +75,10 @@ void setup()
 void loop()
 <<<<<<< HEAD
 { 
+	ON_button->check();
+	open_uSwitch->check();
+	close_uSwitch->check();
+
   	int rr_knob_val = RR_knob->getVal();
   	Motor::getInstance()->setSpeed(rr_knob_val);
   	wdt_reset();

@@ -4,19 +4,23 @@
 #include <Arduino.h>
 #include <configuration.h>
 
+#define BSTATE_HIGH     HIGH
+#define BSTATE_LOW      LOW
+
 class Button
 {
 private:
     int pin;
-    int hits;
-    long last_hit;
+    int lastState;
+    long btnUpTime;
+    long btnDnTime;
+    bool ignoreUp;
+
+    void (*pressCallback)(void);
 public:
     Button (int pin);
-    void setHnadler(void (*handler_func)(void));
-    int getValue();
-    int increment_hits();
-    void set_last_hit(long hit_time);
-    long get_last_hit();
+    void setPressCallback(void (*callback_func)(void));
+    void check();
 };
 
 #endif

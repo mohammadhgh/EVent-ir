@@ -7,6 +7,7 @@
 
 #include <motor.h>
 #include <buzzer.h>
+<<<<<<< HEAD
 #include <knob.h>
 #include <button.h>
 #include <led.h>
@@ -73,6 +74,9 @@ void static close_uSw_handler()
 	}
 }
 
+=======
+#include <volume.h>
+>>>>>>> volume
 void setup()
 {
 	Serial.begin(9600);
@@ -98,8 +102,16 @@ void setup()
 }
 
 void loop()
+<<<<<<< HEAD
 { 
   	int rr_knob_val = RR_knob->getVal();
   	Motor::getInstance()->setSpeed(rr_knob_val);
   	wdt_reset();
 }
+=======
+{
+  int knob = map(analogRead(PinConfiguration::getInstance()->motorSpeedKnob), 0, 1023, 0, 100);
+  Motor::getInstance()->setSpeed(knob);
+  wdt_reset();
+}
+>>>>>>> volume

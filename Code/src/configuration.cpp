@@ -42,4 +42,9 @@ void PinConfiguration::pinConfiguration()
 	//----LEDs
 	pinMode(gLED_pin, OUTPUT);
 	digitalWrite(gLED_pin, LOW);
+
+	//----Volumes
+	const static int volumePin_RespVolume = A1;
+	const static int volumePin_RespCycle = A2;
+	const static int volumePin_IERatio = A3;
 }

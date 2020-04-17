@@ -1,9 +1,7 @@
 #ifndef EVENT_CONFIGURATION_H
 #define EVENT_CONFIGURATION_H
 
-#include <motor.h>
 #include <Arduino.h>
-
 
 class PinConfiguration
 {

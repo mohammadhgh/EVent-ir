@@ -5,13 +5,17 @@
 #include <configuration.h>
 #include <avr/wdt.h>
 
+#include <sysconfig.h>
 #include <motor.h>
+#include <motor_driver.h>
 #include <buzzer.h>
 #include <knob.h>
 #include <button.h>
 #include <led.h>
 
 /* Global Objects */
+SysConfig* Global_SysConfig;
+
 Knob* RR_knob;
 
 Button* ON_button;
@@ -22,8 +26,8 @@ LED* gLED;
 LED* ardLED;
 
 Buzzer* coolBuzz;
-
-/* ----------------- Push Buttons Interrupt Handlers ------------*/
+Motor_Driver* mot_Driver;
+/* ------------- on Button CallBacks ------------*/
 void static onButton_callback()
 {
 	Motor::getInstance()->motorSwitch();
@@ -31,17 +35,15 @@ void static onButton_callback()
 	coolBuzz->beep(2);
 }
 
-/* ----------	Serial.print("inside callback\r\n");-------uSwSerial.print("inside check\r\n");itches Interrupt Handlers----------------- */
+/* ---------- uSwithches callbacks ----------------- */
 void static open_uSw_callback()
 {
 	Motor::getInstance()->setDirection(DIRECTION_CLOSE);
-    // ardLED->set_val(Motor::getInstance()->getDirection());
 }
 
 void static close_uSw_callback()
 {
 	Motor::getInstance()->setDirection(DIRECTION_OPEN);
-    // ardLED->set_val(Motor::getInstance()->getDirection());
 }
 
 void setup()
@@ -49,6 +51,8 @@ void setup()
 	Serial.begin(9600);
 	
 	PinConfiguration::getInstance()->pinConfiguration();
+
+	Global_SysConfig = new SysConfig(0, 0, 0);
 
 	coolBuzz = new Buzzer(PinConfiguration::buzzerPin);
 
@@ -66,6 +70,10 @@ void setup()
 	gLED = new LED(PinConfiguration::gLED_pin);
 
 	ardLED = new LED(PinConfiguration::ardLED);
+
+	resp_Vol = new Volume();
+	
+	mot_Driver = new Motor_Driver(Motor::getInstance());
 }
 
 void loop()
@@ -73,6 +81,9 @@ void loop()
 	ON_button->check();
 	open_uSwitch->check();
 	close_uSwitch->check();
+	Global_SysConfig->set_Resp_Rate(resp_Vol->check());
+	mot_Driver->update_sysconfig(Global_SysConfig);
+	mot_Driver->check();
 
   	int rr_knob_val = RR_knob->getVal();
   	Motor::getInstance()->setSpeed(rr_knob_val);

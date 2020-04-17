@@ -7,7 +7,6 @@
 #include <motor.h>
 #include <sysconfig.h>
 
-
 class Motor_Driver
 {
 private:
@@ -15,6 +14,9 @@ private:
     SysConfig local_sysconfig;
 public:
     Motor_Driver(Motor* motor);
+    void update_sysconfig(SysConfig* newconfig);
+    void set_motor();
+    void check();
 };
 
 #endif

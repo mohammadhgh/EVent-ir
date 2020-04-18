@@ -9,14 +9,12 @@
 #include <motor.h>
 #include <motor_driver.h>
 #include <buzzer.h>
-#include <knob.h>
 #include <button.h>
 #include <led.h>
+#include <Potentiometer.h>
 
 /* Global Objects */
 SysConfig* Global_SysConfig;
-
-Knob* RR_knob;
 
 Button* ON_button;
 Button* open_uSwitch;
@@ -27,6 +25,15 @@ LED* ardLED;
 
 Buzzer* coolBuzz;
 Motor_Driver* mot_Driver;
+
+Potentiometer *respVolume;
+Potentiometer *respCycle;
+
+int table_RV[] = {200, 300, 400, 500, 600, 700, 800};
+int table_RC[23];
+
+int RV = 0;
+int RC = 0;
 /* ------------- on Button CallBacks ------------*/
 void static onButton_callback()
 {
@@ -80,11 +87,9 @@ void setup()
 	
 	PinConfiguration::getInstance()->pinConfiguration();
 
-	Global_SysConfig = new SysConfig(2, 20, 0);
+	Global_SysConfig = new SysConfig(2, 0, 0);
 
 	coolBuzz = new Buzzer(PinConfiguration::buzzerPin);
-
-	RR_knob = new Knob(PinConfiguration::RR_knob_pin);
 
 	mot_Driver = new Motor_Driver(Motor::getInstance());
 
@@ -101,20 +106,23 @@ void setup()
 
 	ardLED = new LED(PinConfiguration::ardLED);
 
-	//resp_Vol = new Volume();
+	respCycle = new Potentiometer(PinConfiguration::Potentiometer_Cycle, 23);
+	respVolume = new Potentiometer(PinConfiguration::Potentiometer_Volume, 7);
 	
-	initial_Check();
+	for (size_t i = 8; i <= 30; i++)
+		table_RC[i - 8] = i;
+	respVolume->set_Range(table_RV, sizeof table_RV);
+	respCycle->set_Range(table_RC, sizeof table_RC);
 
+	initial_Check();
 
 }
 
 void loop()
 { 
+	Global_SysConfig->set_Resp_Rate(respCycle->Potentiometer_Read());
 	ON_button->check();
 	open_uSwitch->check();
-	//close_uSwitch->check();
-	//Global_SysConfig->set_Resp_Rate(resp_Vol->check());
-	
 	mot_Driver->check();
 
   	wdt_reset();

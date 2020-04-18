@@ -28,9 +28,6 @@ public:
     const static int motorOut2 = 9;
     const static int motorControl = 11;
 
-    //----knobs
-    const static int RR_knob_pin = A0;
-
     //----pushButtons
     const static int onButton_pin = 2;
     long onButton_last = 0;
@@ -45,7 +42,7 @@ public:
 
     //----Potentiometer
     const static int Potentiometer_Volume = A1;
-    const static int Potentiometer_Cycle = A2;
+    const static int Potentiometer_Cycle = A0; //orig=A2 
     const static int Potentiometer_IE = A3;
 
     void pinConfiguration();

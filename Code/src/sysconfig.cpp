@@ -13,6 +13,17 @@ int SysConfig::get_IE_Ratio()
     return this->IE_Ratio;
 }
 
+int SysConfig::get_Resp_Rate()
+{
+    return this->Resp_Rate;
+}
+
+int SysConfig::get_Tidal_Volume()
+{
+    return this->Tidal_Volume;
+}
+
+
 int SysConfig::get_Inh_Time()
 {
     return this->Inhale_Time;
@@ -21,6 +32,10 @@ int SysConfig::get_Inh_Time()
 int SysConfig::get_Exh_Time()
 {
     return this->Exhale_Time;
+}
+
+unsigned long SysConfig::get_Start_Time(){
+    return this->Start_Time;
 }
 
 void SysConfig::set_IE_Ratio(int IE_Ratio)
@@ -41,15 +56,22 @@ void SysConfig::set_Tidal_Volume(int Tidal_Volume)
 
 void SysConfig::set_Inh_Time()
 {
-    this->Inhale_Time=(int)(60000)/(get_Resp_Rate()*(get_IE_Ratio()+1));
+    float num = (float)60000;
+    float den = (get_Resp_Rate()*(get_IE_Ratio()+1));
+    float result = num/den; 
+    this->Inhale_Time=(int)result;
 }
 
 void SysConfig::set_Exh_Time()
 {
-    this->Exhale_Time=(int)(60000)*(get_IE_Ratio())/(get_Resp_Rate()*(get_IE_Ratio()+1));
+    float num = (float)60000*get_IE_Ratio();
+    float den = (get_Resp_Rate()*(get_IE_Ratio()+1));
+    float result = num/den; 
+    this->Exhale_Time=(int)result;
 }
 
-void SysConfig::set_Start_Time(){
+void SysConfig::set_Start_Time()
+{
     this->Start_Time=millis();
 }
 
@@ -60,4 +82,5 @@ void SysConfig::update(SysConfig* new_config)
     this->set_Tidal_Volume(new_config->get_Tidal_Volume());
     this->set_Inh_Time();
     this->set_Exh_Time();
+    this->Start_Time=new_config->get_Start_Time();
 }

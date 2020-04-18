@@ -15,33 +15,31 @@ void Motor_Driver::update_sysconfig(SysConfig* newconfig)
 void Motor_Driver::check()
 {
     unsigned long current_Time = 0;
-    /*unsigned long start_Time = this->local_sysconfig->get_Start_Time();
-
+    unsigned long start_Time = 0;
     if(pMotor->getStatus()==MOTOR_IS_ON){
+        start_Time = this->local_sysconfig->get_Start_Time();
         current_Time = millis();    
         if(this->inhaleExhale == INHALE){
-            pMotor->setSpeed(50);
+            pMotor->setSpeed(100);
             pMotor->setDirection(DIRECTION_CLOSE);
-            if (((signed long)(current_Time - start_Time))==this->local_sysconfig->get_Inh_Time()){
-                pMotor->setSpeed(25);
-                pMotor->motorSwitch();
+            if (((signed long)(current_Time - start_Time))>=this->local_sysconfig->get_Inh_Time()){
+                pMotor->setSpeed(50);
+                pMotor->setDirection(DIRECTION_OPEN);
                 this->local_sysconfig->set_Start_Time();
                 this->inhaleExhale = EXHALE;
             }
         }
         else
         {
-            if (((signed long)(current_Time - start_Time))==this->local_sysconfig->get_Exh_Time()){
-                pMotor->setSpeed(50);
-                pMotor->motorSwitch();
+            Serial.println("here0");
+            if(pMotor->getDirection()==DIRECTION_CLOSE)
+            {
+                pMotor->setSpeed(100);
                 this->local_sysconfig->set_Start_Time();
-                this->inhaleExhale = INHALE;               
+                this->inhaleExhale = INHALE;                
             }
-        }*/
+        }
         
-
-
-        //pMotor->setSpeed(local_sysconfig->get_Inh_Time());
-    //}   
+    }   
 }
 

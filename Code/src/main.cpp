@@ -30,20 +30,48 @@ Motor_Driver* mot_Driver;
 /* ------------- on Button CallBacks ------------*/
 void static onButton_callback()
 {
-	Motor::getInstance()->motorSwitch();
+	
+	ON_button->set_On_Off();
+	if (ON_button->get_On_Off()==BSTATE_ON)
+	{
+		Global_SysConfig->set_Start_Time();
+		mot_Driver->update_sysconfig(Global_SysConfig);
+		Motor::getInstance()->motorStart();	
+	}
+	else
+	{
+		Motor::getInstance()->motorStop();
+	}
+	
+	/*Motor::getInstance()->motorSwitch();	
 	gLED->set_val(Motor::getInstance()->getStatus());
-	coolBuzz->beep(2);
+	coolBuzz->beep(2);*/
 }
 
 /* ---------- uSwithches callbacks ----------------- */
 void static open_uSw_callback()
 {
 	Motor::getInstance()->setDirection(DIRECTION_CLOSE);
+	open_uSwitch->set_Clicked();
 }
 
 void static close_uSw_callback()
 {
 	Motor::getInstance()->setDirection(DIRECTION_OPEN);
+}
+
+/* ------------- on Button CallBacks ------------*/
+void static initial_Check(){
+	if(open_uSwitch->get_Status()==BSTATE_HIGH){
+		Serial.print("Initial Setup");
+		Motor::getInstance()->setDirection(DIRECTION_OPEN);	
+		Motor::getInstance()->motorStart();
+		do{
+			open_uSwitch->check();
+		}
+		while(!open_uSwitch->get_Clicked());
+		Motor::getInstance()->motorStop();	
+	}
 }
 
 void setup()
@@ -52,11 +80,13 @@ void setup()
 	
 	PinConfiguration::getInstance()->pinConfiguration();
 
-	Global_SysConfig = new SysConfig(0, 0, 0);
+	Global_SysConfig = new SysConfig(2, 20, 0);
 
 	coolBuzz = new Buzzer(PinConfiguration::buzzerPin);
 
 	RR_knob = new Knob(PinConfiguration::RR_knob_pin);
+
+	mot_Driver = new Motor_Driver(Motor::getInstance());
 
 	ON_button = new Button(PinConfiguration::onButton_pin);
 	ON_button->setPressCallback(onButton_callback);
@@ -71,21 +101,21 @@ void setup()
 
 	ardLED = new LED(PinConfiguration::ardLED);
 
-	resp_Vol = new Volume();
+	//resp_Vol = new Volume();
 	
-	mot_Driver = new Motor_Driver(Motor::getInstance());
+	initial_Check();
+
+
 }
 
 void loop()
 { 
 	ON_button->check();
 	open_uSwitch->check();
-	close_uSwitch->check();
-	Global_SysConfig->set_Resp_Rate(resp_Vol->check());
-	mot_Driver->update_sysconfig(Global_SysConfig);
+	//close_uSwitch->check();
+	//Global_SysConfig->set_Resp_Rate(resp_Vol->check());
+	
 	mot_Driver->check();
 
-  	int rr_knob_val = RR_knob->getVal();
-  	Motor::getInstance()->setSpeed(rr_knob_val);
   	wdt_reset();
 }

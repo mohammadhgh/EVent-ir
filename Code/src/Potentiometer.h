@@ -11,11 +11,12 @@ private:
     int pin;
     int subMultiple;
     int subValue;
-    int table[MAX_RANGE_SIZE];
+    int *table;
+    uint8_t size;
 
 public:
     Potentiometer(int pin, int subMultiple, int subValue);
-    void set_Range(int table[]);
+    void set_Range(int *table, uint8_t size);
     int Potentiometer_Read();
 };
 

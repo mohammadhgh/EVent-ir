@@ -12,6 +12,7 @@
 #include <button.h>
 #include <led.h>
 #include <Potentiometer.h>
+#include <LCD.h>
 
 /* Global Objects */
 SysConfig* Global_SysConfig;
@@ -28,6 +29,8 @@ Motor_Driver* mot_Driver;
 
 Potentiometer *respVolume;
 Potentiometer *respCycle;
+
+
 
 int table_RV[] = {200, 300, 400, 500, 600, 700, 800};
 int table_RC[23];
@@ -106,6 +109,10 @@ void setup()
 
 	ardLED = new LED(PinConfiguration::ardLED);
 
+	LCD::getInstance()->LCD_Cover();
+	delay(2000);
+	LCD::getInstance()->LCD_Clear();
+
 	respCycle = new Potentiometer(PinConfiguration::Potentiometer_Cycle, 23);
 	respVolume = new Potentiometer(PinConfiguration::Potentiometer_Volume, 7);
 	
@@ -114,13 +121,18 @@ void setup()
 	respVolume->set_Range(table_RV, sizeof table_RV);
 	respCycle->set_Range(table_RC, sizeof table_RC);
 
-	initial_Check();
-
+	//initial_Check();
+	Serial.println("Setup");
 }
 
 void loop()
 { 
+	Serial.println("Loop");
+	LCD::getInstance()->LCD_Menu();
+
 	Global_SysConfig->set_Resp_Rate(respCycle->Potentiometer_Read());
+	Global_SysConfig->set_Tidal_Volume(respVolume->Potentiometer_Read());
+	
 	ON_button->check();
 	open_uSwitch->check();
 	mot_Driver->check();

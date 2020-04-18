@@ -5,12 +5,13 @@
 #include <openGLCD.h>
 #include <sysconfig.h>
 #include <configuration.h>
+//#include <gText.h>
 
 class LCD
 {
 private:
     static LCD *INSTANCE;
-    SysConfig local_sysconfig;
+    SysConfig *local_sysconfig;
 
 public:
     static LCD *getInstance();

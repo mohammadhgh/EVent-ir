@@ -13,16 +13,18 @@ LCD *LCD::getInstance()
 
 void LCD::update_sysconfig(SysConfig *newconfig)
 {
-    this->local_sysconfig.update(newconfig);
+    this->local_sysconfig->update(newconfig);
 }
 
 void LCD::LCD_Cover()
 {
     GLCD.Init();
-    GLCD.DrawRoundRect(0, 0, GLCD.Width, GLCD.Height, 4);
+    GLCD.DrawRoundRect(0, 0, 128, 64, 4);
+    Serial.println("Setup");
     GLCD.SelectFont(cp437font8x8);
     GLCD.DrawString(F("Save Breathe"), gTextfmt_center, 25);
     GLCD.DrawString(F("Save Life"), gTextfmt_center, 35);
+    
 }
 void LCD::LCD_Clear()
 {
@@ -31,9 +33,9 @@ void LCD::LCD_Clear()
 
 void LCD::LCD_Menu()
 {
-    int tidalVolume = this->local_sysconfig.get_Tidal_Volume();
-    int respRate = this->local_sysconfig.get_Resp_Rate();
-    int IEratio = this->local_sysconfig.get_IE_Ratio();
+    int tidalVolume = this->local_sysconfig->get_Tidal_Volume();
+    int respRate = this->local_sysconfig->get_Resp_Rate();
+    int IEratio = this->local_sysconfig->get_IE_Ratio();
 
     GLCD.DrawRoundRect(0, 0, GLCD.Width, GLCD.Height, 2);
     GLCD.SelectFont(Iain5x7);

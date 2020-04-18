@@ -47,6 +47,7 @@ void SysConfig::set_Resp_Rate(int Resp_Rate)
 {
     this->Resp_Rate = Resp_Rate;
     this->set_Inh_Time();
+    this->set_Exh_Time();
 }
 
 void SysConfig::set_Tidal_Volume(int Tidal_Volume)

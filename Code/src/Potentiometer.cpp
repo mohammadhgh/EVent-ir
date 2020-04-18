@@ -2,21 +2,23 @@
 
 Potentiometer::Potentiometer(int pin, int subMltiple, int subValue)
 {
-    this->subValue = subValue;
+
     this->pin = pin;
     this->subMultiple = subMultiple;
 }
 
-void Potentiometer::set_Range(int table[MAX_RANGE_SIZE])
+void Potentiometer::set_Range(int *table, uint8_t size)
 {
-    this->table[MAX_RANGE_SIZE] = table[MAX_RANGE_SIZE];
+    this->table = new int[size];
+    memcpy(this->table, table, size);
+    this->size = size;
 }
 
 int Potentiometer::Potentiometer_Read()
 {
     int volumeValue = analogRead(this->pin);
     int volumeDisplay = 0;
-    int Range_Value[23] = {};
+    int Range_Value[this->subMultiple] = {};
 
     this->subValue = 1023 / this->subMultiple;
     for (size_t i = 1; i <= this->subMultiple; i++)
@@ -28,6 +30,10 @@ int Potentiometer::Potentiometer_Read()
     {
 
         volumeDisplay = table[0];
+    }
+    if (volumeValue > Range_Value[this->subMultiple - 1])
+    {
+        volumeDisplay = this->table[this->subMultiple - 1];
     }
 
     for (size_t i = 0; i < (this->subMultiple - 1); i++)

@@ -12,16 +12,6 @@ int SysConfig::get_IE_Ratio()
     return this->IE_Ratio;
 }
 
-int SysConfig::get_IE_Ratio()
-{
-    return this->IE_Ratio;
-}
-
-int SysConfig::get_IE_Ratio()
-{
-    return this->IE_Ratio;
-}
-
 void SysConfig::set_IE_Ratio(int IE_Ratio)
 {
     this->IE_Ratio = IE_Ratio;

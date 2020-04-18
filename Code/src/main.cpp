@@ -13,6 +13,8 @@
 #include <button.h>
 #include <led.h>
 
+long testTimer = 0;
+
 /* Global Objects */
 SysConfig* Global_SysConfig;
 
@@ -71,21 +73,36 @@ void setup()
 
 	ardLED = new LED(PinConfiguration::ardLED);
 
-	resp_Vol = new Volume();
+	// resp_Vol = new Volume();
 	
-	mot_Driver = new Motor_Driver(Motor::getInstance());
+	// mot_Driver = new Motor_Driver(Motor::getInstance());
+
+	Motor::getInstance()->resetEncCount();
 }
 
 void loop()
 { 
-	ON_button->check();
-	open_uSwitch->check();
-	close_uSwitch->check();
-	Global_SysConfig->set_Resp_Rate(resp_Vol->check());
-	mot_Driver->update_sysconfig(Global_SysConfig);
-	mot_Driver->check();
+	// ON_button->check();
+	// open_uSwitch->check();
+	// close_uSwitch->check();
+	// Global_SysConfig->set_Resp_Rate(resp_Vol->check());
+	// mot_Driver->update_sysconfig(Global_SysConfig);
+	// mot_Driver->check();
 
-  	int rr_knob_val = RR_knob->getVal();
-  	Motor::getInstance()->setSpeed(rr_knob_val);
+  	// int rr_knob_val = RR_knob->getVal();
+  	// Motor::getInstance()->setSpeed(rr_knob_val);
+
+	Motor::getInstance()->encCheck();
+	// Serial.println(Motor::getInstance()->getEncCount());
+
+	if(millis() - testTimer > 500)
+	{
+		testTimer = millis();
+		int period = Motor::getInstance()->getEncPeriod();	
+		Serial.println(period);
+		long rpm = Motor::getInstance()->getEncRPM();
+		Serial.println(rpm);
+	}
+
   	wdt_reset();
 }

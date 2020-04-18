@@ -1,6 +1,6 @@
 #include "Potentiometer.h"
 
-Potentiometer::Potentiometer(int pin, int subMltiple, int subValue)
+Potentiometer::Potentiometer(int pin, int subMltiple)
 {
 
     this->pin = pin;

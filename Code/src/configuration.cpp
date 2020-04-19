@@ -20,9 +20,6 @@ void PinConfiguration::pinConfiguration()
 	digitalWrite(motorOut2, LOW);
 	pinMode(motorControl, OUTPUT);
 
-	//----knobs
-	pinMode(RR_knob_pin, INPUT);
-
 	//----buttons
 	pinMode(onButton_pin, INPUT);
 	digitalWrite(onButton_pin, HIGH);

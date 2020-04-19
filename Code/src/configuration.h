@@ -12,8 +12,8 @@ public:
     static PinConfiguration *getInstance();
 
     //----parameters
-    const static int debounceDelay = 100; //milli-seconds 
-    const static int holdTime = 1000; //milli-seconds
+    const static int debounceDelay = 100; //milli-seconds
+    const static int holdTime = 1000;     //milli-seconds
     const static int uSwitch_hits_thr = 5;
 
     //----uSwitches
@@ -30,9 +30,6 @@ public:
     const static int motorControl = 11;
     const static int motorEncoderPin = 4;
 
-    //----knobs
-    const static int RR_knob_pin = A0;
-
     //----pushButtons
     const static int onButton_pin = 2;
     long onButton_last = 0;
@@ -44,6 +41,11 @@ public:
     //----LEDs
     const static int gLED_pin = 7;
     const static int ardLED = 13;
+
+    //----Potentiometer
+    const static int Potentiometer_Volume = A8;
+    const static int Potentiometer_Cycle = A9; //orig=A2
+    //const static int Potentiometer_IE = A3;
 
     void pinConfiguration();
 };

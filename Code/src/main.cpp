@@ -39,26 +39,39 @@ int table_RC[23];
 int RV = 0;
 int RC = 0;
 /* ------------- on Button CallBacks ------------*/
-/*void static onButton_callback()
+void static onButton_callback()
 {
 
 	ON_button->set_On_Off();
 	if (ON_button->get_On_Off() == BSTATE_ON)
-	{
+	{		
+		Motor::getInstance()->setSpeed(85);
+		Motor::getInstance()->setDirection(DIRECTION_CLOSE);
+		Motor::getInstance()->motorStart();
 		Global_SysConfig->set_Start_Time();
 		mot_Driver->update_sysconfig(Global_SysConfig);
-		Motor::getInstance()->motorStart();
+		Motor::getInstance()->setSpeed(88-Global_SysConfig->get_Resp_Rate());
+		delay(100);
+		Motor::getInstance()->setSpeed(78-Global_SysConfig->get_Resp_Rate());
+		delay(100);
+		
 	}
 	else
 	{
+		Motor::getInstance()->setSpeed(80);
+		delay(200);		
+		Motor::getInstance()->setSpeed(85);
+		delay(200);
+        Motor::getInstance()->setDirection(DIRECTION_OPEN);
+		delay(500);		
 		Motor::getInstance()->motorStop();
 	}
 
-	Motor::getInstance()->motorSwitch();
+	/*Motor::getInstance()->motorSwitch();
 	gLED->set_val(Motor::getInstance()->getStatus());
-	coolBuzz->beep(2);
+	coolBuzz->beep(2);*/
 }
-*/
+
 /* ---------- uSwithches callbacks ----------------- */
 /*
 void static open_uSw_callback()
@@ -101,7 +114,7 @@ void setup()
 	mot_Driver = new Motor_Driver(Motor::getInstance());
 
 	ON_button = new Button(PinConfiguration::onButton_pin);
-	//ON_button->setPressCallback(onButton_callback);
+	ON_button->setPressCallback(onButton_callback);
 
 	open_uSwitch = new Button(PinConfiguration::open_uSw_pin);
 	//open_uSwitch->setPressCallback(open_uSw_callback);
@@ -128,18 +141,20 @@ void setup()
 	respVolume->set_Range(table_RV, sizeof table_RV);
 	respCycle->set_Range(table_RC, sizeof table_RC);
 
-	Motor::getInstance()->motorStart();
-	Global_SysConfig->set_Start_Time();
-	mot_Driver->update_sysconfig(Global_SysConfig);	
 	//initial_Check();
 }
 
 void loop()
 {
+
+	ON_button->check();
 	Global_SysConfig->set_Resp_Rate(respCycle->Potentiometer_Read());
-	Serial.println(respCycle->Potentiometer_Read());
+	mot_Driver->update_resp_rate(Global_SysConfig);
+	//Motor::getInstance()->setSpeed(Global_SysConfig->get_Resp_Rate()+60);
+	//Serial.println(Global_SysConfig->get_Resp_Rate()+60);
+	
+	//Serial.println(respCycle->Potentiometer_Read());
 	//Motor::getInstance()->setSpeed(respCycle->Potentiometer_Read()+50);
-	mot_Driver->update_sysconfig(Global_SysConfig);
 	mot_Driver->check();
 	//LCD::getInstance()->LCD_Menu(respVolume->Potentiometer_Read(), respCycle->Potentiometer_Read());
 

@@ -35,6 +35,7 @@ int Motor::getDirection()
 
 void Motor::setMotorOut()
 {
+    char my_string[50];
     if (this->motorStatus == MOTOR_IS_ON)
     {
         digitalWrite(PinConfiguration::motorOut1, this->direction);
@@ -71,7 +72,6 @@ void Motor::motorStop()
 void Motor::motorStart()
 {
     this->motorStatus = MOTOR_IS_ON;
-    this->setSpeed(motorSpeed);
     this->setMotorOut();
 }
 void Motor::motorSwitch()
@@ -84,4 +84,69 @@ void Motor::motorSwitch()
     {
         motorStart();
     }
+}
+
+void Motor::encCheck()
+{
+    long nowTime = micros();
+
+    if(nowTime - this->encLastCheck > this->encDebounceTime)
+    {
+            this->encLastCheck = nowTime;
+
+            int nowState = digitalRead(PinConfiguration::motorEncoderPin);
+            
+            if(nowState==HIGH && this->encLastState==LOW)
+            {
+                if (nowTime - this->encLastTime > MOTOR_ENC_PERIOD_OFF)
+                {
+                    this->encPulseCount = 0;
+                    this->encPeriod = 0;
+                }
+                else
+                {
+                    this->encPulseCount++;
+                    this->encPeriod = nowTime - this->encLastTime;
+                }
+
+                this->encLastTime = nowTime;
+                
+            }
+
+            this->encLastState = nowState;
+    }
+}
+
+int Motor::getEncCount()
+{
+    return this->encPulseCount;
+}
+
+void Motor::resetEncCount()
+{
+    this->encPulseCount = 0;
+}
+
+int Motor::getEncPeriod()
+{
+    return this->encPeriod;
+}
+
+long Motor::getEncRPM()
+{
+    long RPM = 0;
+    int period = this->getEncPeriod();
+    RPM = (long)period * (long)MOTOR_PULSE_PER_TURN;
+    RPM = (long)60000000 / RPM;
+    if(RPM < 0)
+    {
+        RPM=0;
+    }
+    return RPM;
+}
+
+int Motor::getEncAngle()
+{
+    int angle = 0;
+    
 }

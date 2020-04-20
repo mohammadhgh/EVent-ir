@@ -113,9 +113,9 @@ void setup()
 
 	ardLED = new LED(PinConfiguration::ardLED);
 
-	LCD::getInstance()->LCD_Cover();
+	/*LCD::getInstance()->LCD_Cover();
 	delay(2000);
-	LCD::getInstance()->LCD_Clear();
+	LCD::getInstance()->LCD_Clear();*/
 
 	respVolume = new Potentiometer(PinConfiguration::Potentiometer_Volume, 7);
 	respCycle = new Potentiometer(PinConfiguration::Potentiometer_Cycle, 23);
@@ -127,16 +127,25 @@ void setup()
 
 	respVolume->set_Range(table_RV, sizeof table_RV);
 	respCycle->set_Range(table_RC, sizeof table_RC);
+
+	Motor::getInstance()->motorStart();
+	Global_SysConfig->set_Start_Time();
+	mot_Driver->update_sysconfig(Global_SysConfig);	
 	//initial_Check();
 }
 
 void loop()
 {
-	LCD::getInstance()->LCD_Menu(respVolume->Potentiometer_Read(), respCycle->Potentiometer_Read());
+	Global_SysConfig->set_Resp_Rate(respCycle->Potentiometer_Read());
+	Serial.println(respCycle->Potentiometer_Read());
+	//Motor::getInstance()->setSpeed(respCycle->Potentiometer_Read()+50);
+	mot_Driver->update_sysconfig(Global_SysConfig);
+	mot_Driver->check();
+	//LCD::getInstance()->LCD_Menu(respVolume->Potentiometer_Read(), respCycle->Potentiometer_Read());
 
 	//ON_button->check();
 	//open_uSwitch->check();
-	//mot_Driver->check();
+	
 
 	wdt_reset();
 }

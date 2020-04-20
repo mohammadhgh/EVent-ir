@@ -16,17 +16,25 @@ void Motor_Driver::check()
 {
     unsigned long current_Time = 0;
     unsigned long start_Time = 0;
+    int respRate = local_sysconfig->get_Resp_Rate();
     if (pMotor->getStatus() == MOTOR_IS_ON)
     {
+
+
         start_Time = this->local_sysconfig->get_Start_Time();
         current_Time = millis();
+        Serial.println("here");
+        Serial.println(start_Time);
+        Serial.println(current_Time);
+        Serial.println(this->local_sysconfig->get_Inh_Time());
         if (this->inhaleExhale == INHALE)
         {
-            pMotor->setSpeed(100);
+            //Serial.println(respRate);
+            pMotor->setSpeed(respRate+40);
             pMotor->setDirection(DIRECTION_CLOSE);
             if (((signed long)(current_Time - start_Time)) >= this->local_sysconfig->get_Inh_Time())
             {
-                pMotor->setSpeed(50);
+                pMotor->setSpeed(respRate+60);
                 pMotor->setDirection(DIRECTION_OPEN);
                 this->local_sysconfig->set_Start_Time();
                 this->inhaleExhale = EXHALE;
@@ -35,9 +43,10 @@ void Motor_Driver::check()
         else
         {
             Serial.println("here0");
-            if (pMotor->getDirection() == DIRECTION_CLOSE)
+            if (((signed long)(current_Time - start_Time)) >= this->local_sysconfig->get_Exh_Time())
             {
-                pMotor->setSpeed(100);
+                pMotor->setSpeed(respRate+40);
+                pMotor->setDirection(DIRECTION_CLOSE);
                 this->local_sysconfig->set_Start_Time();
                 this->inhaleExhale = INHALE;
             }

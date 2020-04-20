@@ -21,7 +21,7 @@ class Motor
 {
 private:
     static Motor *INSTANCE;
-    int motorSpeed = 50;
+    int motorSpeed = 90;
     int motorStatus = MOTOR_IS_OFF;
     int direction = DIRECTION_OPEN;
 

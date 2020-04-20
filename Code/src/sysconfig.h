@@ -13,6 +13,7 @@ private:
     int Inhale_Time;
     int Exhale_Time;
     unsigned long Start_Time;
+
 public:
     SysConfig(int IE_Ratio, int Resp_Rate, int Tidal_Volume);
     int get_IE_Ratio();
@@ -27,8 +28,7 @@ public:
     void set_Inh_Time();
     void set_Exh_Time();
     void set_Start_Time();
-    void update(SysConfig* new_config);
-    
+    void update(SysConfig *new_config);
 };
 
 #endif

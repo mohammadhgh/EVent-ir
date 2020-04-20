@@ -34,7 +34,7 @@ Potentiometer *respVolume;
 Potentiometer *respCycle;
 
 int table_RV[] = {200, 300, 400, 500, 600, 700, 800};
-int table_RC[23];
+int table_RC[75];
 
 int RV = 0;
 int RC = 0;
@@ -44,27 +44,36 @@ void static onButton_callback()
 
 	ON_button->set_On_Off();
 	if (ON_button->get_On_Off() == BSTATE_ON)
-	{		
+	{	
 		Motor::getInstance()->setSpeed(85);
+		delay(500);
+		Motor::getInstance()->motorStart();	
+		delay(1000);
+		Motor::getInstance()->setSpeed(75);
+		delay(1500);
+		Motor::getInstance()->setSpeed(65);
+		delay(1500);
+		Motor::getInstance()->setSpeed(55);
+		delay(1500);
+		Motor::getInstance()->setSpeed(45);
+		delay(1500);
+		Motor::getInstance()->setSpeed(35);
+		delay(1500);
+		Motor::getInstance()->setSpeed(25);
+		delay(1500);											
+		/*Motor::getInstance()->resetEncCount();
+		Motor::getInstance()->setSpeed(Global_SysConfig->get_Resp_Rate()+60);
 		Motor::getInstance()->setDirection(DIRECTION_CLOSE);
-		Motor::getInstance()->motorStart();
-		Global_SysConfig->set_Start_Time();
-		mot_Driver->update_sysconfig(Global_SysConfig);
-		Motor::getInstance()->setSpeed(88-Global_SysConfig->get_Resp_Rate());
-		delay(100);
-		Motor::getInstance()->setSpeed(78-Global_SysConfig->get_Resp_Rate());
-		delay(100);
-		
+		Motor::getInstance()->motorStart();*/
 	}
 	else
 	{
 		Motor::getInstance()->setSpeed(80);
 		delay(200);		
-		Motor::getInstance()->setSpeed(85);
-		delay(200);
-        Motor::getInstance()->setDirection(DIRECTION_OPEN);
-		delay(500);		
+		Motor::getInstance()->setSpeed(95);
+		delay(500);	
 		Motor::getInstance()->motorStop();
+		//Motor::getInstance()->resetEncCount();
 	}
 
 	/*Motor::getInstance()->motorSwitch();
@@ -133,29 +142,37 @@ void setup()
 	respVolume = new Potentiometer(PinConfiguration::Potentiometer_Volume, 7);
 	respCycle = new Potentiometer(PinConfiguration::Potentiometer_Cycle, 23);
 
-	for (size_t i = 8; i <= 30; i++)
+	for (size_t i = 0; i <= 74; i++)
 	{
-		table_RC[i - 8] = i;
+		table_RC[i - 0] = i;
 	}
 
 	respVolume->set_Range(table_RV, sizeof table_RV);
 	respCycle->set_Range(table_RC, sizeof table_RC);
 
+	Motor::getInstance()->setSpeed(98);
+	
 	//initial_Check();
 }
 
 void loop()
 {
-
 	ON_button->check();
 	Global_SysConfig->set_Resp_Rate(respCycle->Potentiometer_Read());
-	mot_Driver->update_resp_rate(Global_SysConfig);
-	//Motor::getInstance()->setSpeed(Global_SysConfig->get_Resp_Rate()+60);
-	//Serial.println(Global_SysConfig->get_Resp_Rate()+60);
+	Motor::getInstance()->setSpeed(15-Global_SysConfig->get_Resp_Rate());
+	//ON_button->check();
 	
+
+	//mot_Driver->update_resp_rate(Global_SysConfig);
+	//Motor::getInstance()->setSpeed(Global_SysConfig->get_Resp_Rate()+60);
+	//Serial.println("Enc");
+	//Serial.println(Global_SysConfig->get_Resp_Rate()+60);
+	//Motor::getInstance()->encCheck();
+	Serial.println(15-Global_SysConfig->get_Resp_Rate());
+
 	//Serial.println(respCycle->Potentiometer_Read());
 	//Motor::getInstance()->setSpeed(respCycle->Potentiometer_Read()+50);
-	mot_Driver->check();
+	//mot_Driver->check();
 	//LCD::getInstance()->LCD_Menu(respVolume->Potentiometer_Read(), respCycle->Potentiometer_Read());
 
 	//ON_button->check();

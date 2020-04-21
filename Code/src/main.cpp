@@ -34,31 +34,40 @@ Potentiometer *respVolume;
 Potentiometer *respCycle;
 
 int table_RV[] = {200, 300, 400, 500, 600, 700, 800};
-int table_RC[23];
+int table_RC[13];
 
 int RV = 0;
 int RC = 0;
 /* ------------- on Button CallBacks ------------*/
-/*void static onButton_callback()
+void static onButton_callback()
 {
 
 	ON_button->set_On_Off();
 	if (ON_button->get_On_Off() == BSTATE_ON)
-	{
+	{		
+		Motor::getInstance()->setSpeed(85);
+		Motor::getInstance()->setDirection(DIRECTION_CLOSE);
+		Motor::getInstance()->motorStart();
 		Global_SysConfig->set_Start_Time();
 		mot_Driver->update_sysconfig(Global_SysConfig);
-		Motor::getInstance()->motorStart();
+		
 	}
 	else
 	{
+		Motor::getInstance()->setSpeed(80);
+		delay(200);		
+		Motor::getInstance()->setSpeed(95);
+		delay(200);
+        Motor::getInstance()->setDirection(DIRECTION_OPEN);
+		delay(500);		
 		Motor::getInstance()->motorStop();
 	}
 
-	Motor::getInstance()->motorSwitch();
+	/*Motor::getInstance()->motorSwitch();
 	gLED->set_val(Motor::getInstance()->getStatus());
-	coolBuzz->beep(2);
+	coolBuzz->beep(2);*/
 }
-*/
+
 /* ---------- uSwithches callbacks ----------------- */
 /*
 void static open_uSw_callback()
@@ -101,7 +110,7 @@ void setup()
 	mot_Driver = new Motor_Driver(Motor::getInstance());
 
 	ON_button = new Button(PinConfiguration::onButton_pin);
-	//ON_button->setPressCallback(onButton_callback);
+	ON_button->setPressCallback(onButton_callback);
 
 	open_uSwitch = new Button(PinConfiguration::open_uSw_pin);
 	//open_uSwitch->setPressCallback(open_uSw_callback);
@@ -113,39 +122,33 @@ void setup()
 
 	ardLED = new LED(PinConfiguration::ardLED);
 
-	/*LCD::getInstance()->LCD_Cover();
+	LCD::getInstance()->LCD_Cover();
 	delay(2000);
-	LCD::getInstance()->LCD_Clear();*/
+	LCD::getInstance()->LCD_Clear();
 
 	respVolume = new Potentiometer(PinConfiguration::Potentiometer_Volume, 7);
 	respCycle = new Potentiometer(PinConfiguration::Potentiometer_Cycle, 23);
 
-	for (size_t i = 8; i <= 30; i++)
+	for (size_t i = 18; i <= 30; i++)
 	{
-		table_RC[i - 8] = i;
+		table_RC[i - 18] = i;
 	}
 
 	respVolume->set_Range(table_RV, sizeof table_RV);
 	respCycle->set_Range(table_RC, sizeof table_RC);
 
-	Motor::getInstance()->motorStart();
-	Global_SysConfig->set_Start_Time();
-	mot_Driver->update_sysconfig(Global_SysConfig);	
+	Motor::getInstance()->setSpeed(96);
+	
 	//initial_Check();
 }
 
 void loop()
 {
 	Global_SysConfig->set_Resp_Rate(respCycle->Potentiometer_Read());
-	Serial.println(respCycle->Potentiometer_Read());
-	//Motor::getInstance()->setSpeed(respCycle->Potentiometer_Read()+50);
-	mot_Driver->update_sysconfig(Global_SysConfig);
-	mot_Driver->check();
-	//LCD::getInstance()->LCD_Menu(respVolume->Potentiometer_Read(), respCycle->Potentiometer_Read());
-
+	mot_Driver->update_resp_rate(Global_SysConfig);
 	//ON_button->check();
-	//open_uSwitch->check();
-	
-
+	mot_Driver->check();
+	LCD::getInstance()->LCD_Menu(respVolume->Potentiometer_Read(), respCycle->Potentiometer_Read());
+	Serial.println("loop");
 	wdt_reset();
 }

@@ -46,8 +46,8 @@
  */
 #define glcdPinCSEL1     47    // CS1 Bit  
 #define glcdPinCSEL2     49    // CS2 Bit
-#define glcdPinRW        27    // R/W Bit
-#define glcdPinDI        25    // D/I Bit 
+#define glcdPinRW        25    // R/W Bit
+#define glcdPinDI        23    // D/I Bit 
 #define glcdPinEN        29    // EN Bit
 
 #if NBR_CHIP_SELECT_PINS > 2

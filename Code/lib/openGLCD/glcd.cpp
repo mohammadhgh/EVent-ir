@@ -278,18 +278,18 @@ void glcd::DrawRoundRect(uint8_t x, uint8_t y, uint8_t width, uint8_t height, ui
   	int16_t tSwitch; 
 	uint8_t x1 = 0, y1 = radius;
   	tSwitch = 3 - 2 * radius;
-	
 	while (x1 <= y1)
 	{
+			
 		// upper left corner
 		this->SetDot(x+radius - x1, y+radius - y1, color); // upper half
 		this->SetDot(x+radius - y1, y+radius - x1, color); // lower half
-
+		
 		
 		// upper right corner
 		this->SetDot(x+width-radius-1 + x1, y+radius - y1, color); // upper half
 		this->SetDot(x+width-radius-1 + y1, y+radius - x1, color); // lower half
-
+		
 		// lower right corner
 		this->SetDot(x+width-radius-1 + x1, y+height-radius-1 + y1, color); // lower half
 		this->SetDot(x+width-radius-1 + y1, y+height-radius-1 + x1, color); // upper half
@@ -297,7 +297,7 @@ void glcd::DrawRoundRect(uint8_t x, uint8_t y, uint8_t width, uint8_t height, ui
 		// lower left corner
 		this->SetDot(x+radius - x1, y+height-radius-1 + y1, color); // lower half
 		this->SetDot(x+radius - y1, y+height-radius-1 + x1, color); // upper half
-
+		
 		if (tSwitch < 0)
 		{
 			tSwitch += (4 * x1 + 6);
@@ -308,12 +308,14 @@ void glcd::DrawRoundRect(uint8_t x, uint8_t y, uint8_t width, uint8_t height, ui
 			y1--;
 		}
 		x1++;
+		
 	}
 	  	
 	this->DrawHLine(x+radius, y, width-(2*radius), color);			// top
 	this->DrawHLine(x+radius, y+height-1, width-(2*radius), color);	// bottom
 	this->DrawVLine(x, y+radius, height-(2*radius), color);			// left
 	this->DrawVLine(x+width-1, y+radius, height-(2*radius), color);	// right
+	
 }
 /**
  * Fill a rectangle with rounded corners

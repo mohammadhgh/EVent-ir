@@ -19,6 +19,7 @@ private:
 public:
     Motor_Driver(Motor* motor);
     void update_sysconfig(SysConfig* newconfig);
+    void update_resp_rate(SysConfig *newconfig);
     void set_motor();
     void check();
 };

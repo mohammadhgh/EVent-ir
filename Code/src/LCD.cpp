@@ -29,6 +29,7 @@ void LCD::LCD_Cover()
     GLCD.SelectFont(cp437font8x8);
     GLCD.DrawString(F("Save Breathe"), gTextfmt_center, 25);
     GLCD.DrawString(F("Save Life"), gTextfmt_center, 35);
+    
 }
 void LCD::LCD_Clear()
 {

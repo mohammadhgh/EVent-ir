@@ -24,9 +24,11 @@ public:
     long close_uSw_last = 0;
     int close_uSw_hits = 0;
 
+    //----motor
     const static int motorOut1 = 13;
     const static int motorOut2 = 9;
     const static int motorControl = 11;
+    const static int motorEncoderPin = 4;
 
     //----pushButtons
     const static int onButton_pin = 2;

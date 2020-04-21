@@ -29,38 +29,21 @@ void Motor_Driver::check()
     {      
 
         if (this->inhaleExhale == INHALE)
-        {
-            /*Serial.println("start time in inhale");
-            Serial.println(start_Time);
-            Serial.println(current_Time);
-            Serial.println("inhale time");
-            Serial.println(this->local_sysconfig->get_Inh_Time());*/          
+        {       
             if (((signed long)(current_Time - start_Time)) >= this->local_sysconfig->get_Inh_Time())
             {
-                pMotor->setSpeed(85);
-                delay(200);
-                pMotor->setDirection(DIRECTION_OPEN);
-                pMotor->setSpeed(88-respRate);
-                delay(100);               
+                pMotor->setSpeed(92);
+                pMotor->setDirection(DIRECTION_OPEN);             
                 this->local_sysconfig->set_Start_Time();
                 this->inhaleExhale = EXHALE;
             }
         }
         else
         {
-            /*Serial.println("start time in exhale");
-            Serial.println(start_Time);
-            Serial.println(current_Time);*/
             if (((signed long)(current_Time - start_Time)) >= this->local_sysconfig->get_Exh_Time())
             {
-                /*Serial.println("cond true");*/
                 pMotor->setSpeed(85);
-                delay(200);
-                pMotor->setDirection(DIRECTION_CLOSE);
-                pMotor->setSpeed(88-respRate);
-                delay(100);
-                pMotor->setSpeed(78-respRate);
-                delay(100);                 
+                pMotor->setDirection(DIRECTION_CLOSE);                
                 this->local_sysconfig->set_Start_Time();
                 this->inhaleExhale = INHALE;
             }

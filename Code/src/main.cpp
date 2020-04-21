@@ -34,7 +34,7 @@ Potentiometer *respVolume;
 Potentiometer *respCycle;
 
 int table_RV[] = {200, 300, 400, 500, 600, 700, 800};
-int table_RC[13];
+int table_RC[33];
 
 int RV = 0;
 int RC = 0;
@@ -75,6 +75,7 @@ void static open_uSw_callback()
 	Motor::getInstance()->setDirection(DIRECTION_CLOSE);
 	open_uSwitch->set_Clicked();
 }
+*/
 /*
 void static close_uSw_callback()
 {
@@ -127,11 +128,11 @@ void setup()
 	LCD::getInstance()->LCD_Clear();
 
 	respVolume = new Potentiometer(PinConfiguration::Potentiometer_Volume, 7);
-	respCycle = new Potentiometer(PinConfiguration::Potentiometer_Cycle, 23);
-
-	for (size_t i = 18; i <= 30; i++)
+	respCycle = new Potentiometer(PinConfiguration::Potentiometer_Cycle, sizeof(table_RC)/2);
+	
+	for (size_t i = 8; i <= 40; i++)
 	{
-		table_RC[i - 18] = i;
+		table_RC[i - 8] = i;
 	}
 
 	respVolume->set_Range(table_RV, sizeof table_RV);
@@ -140,15 +141,16 @@ void setup()
 	Motor::getInstance()->setSpeed(96);
 	
 	//initial_Check();
+	
 }
 
 void loop()
 {
-	Global_SysConfig->set_Resp_Rate(respCycle->Potentiometer_Read());
-	mot_Driver->update_resp_rate(Global_SysConfig);
+	//Global_SysConfig->set_Resp_Rate(respCycle->Potentiometer_Read());
+	//mot_Driver->update_resp_rate(Global_SysConfig);
 	//ON_button->check();
-	mot_Driver->check();
+	//mot_Driver->check();
 	LCD::getInstance()->LCD_Menu(respVolume->Potentiometer_Read(), respCycle->Potentiometer_Read());
-	Serial.println("loop");
+	Serial.println(respCycle->Potentiometer_Read());
 	wdt_reset();
 }

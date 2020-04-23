@@ -15,16 +15,19 @@ class Button
 private:
     int pin;
     int lastState;
+    int interruptMode;
     long btnUpTime;
     long btnDnTime;
     bool ignoreUp;
     bool clicked;
     int  on_off_Stat;
     void (*pressCallback)(void);
+    
 public:
-    Button (int pin);
+    Button(int pin, uint8_t ioMode, void (*callback_func)(void), int interruptMode);
     void setPressCallback(void (*callback_func)(void));
-    void check();
+    void callBackFunc();
+    void enableInterrupt(void (*callback_func)(void));
     bool get_Clicked();
     int  get_Status();
     int  get_On_Off();

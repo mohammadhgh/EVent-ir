@@ -7,6 +7,7 @@
 #include <configuration.h>
 #include <../lib/openGLCD/include/gText.h>
 
+
 class LCD
 {
 private:

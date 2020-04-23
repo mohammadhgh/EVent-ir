@@ -38,11 +38,19 @@ int table_RC[33];
 
 int RV = 0;
 int RC = 0;
-/* ------------- on Button CallBacks ------------*/
-void static onButton_callback()
-{
 
-	ON_button->set_On_Off();
+volatile int onButtonClicked = 0;
+volatile int timerOvfed = 0;
+volatile int timerOvfedb = 0;
+/* ------------- on Button CallBacks ------------*/
+void static onButton_Interrupt()
+{
+	detachInterrupt(digitalPinToInterrupt(PinConfiguration::onButton_pin));
+	TCCR1B |= (1 << WGM12)|(1<<CS10) | (1<<CS12) ;
+	onButtonClicked=1;
+	//TCCR1B |= (1 << CS12);    // 256 prescaler 
+	//ON_button->callBackFunc();
+	/*ON_button->set_On_Off();
 	if (ON_button->get_On_Off() == BSTATE_ON)
 	{		
 		Motor::getInstance()->setSpeed(85);
@@ -61,7 +69,7 @@ void static onButton_callback()
         Motor::getInstance()->setDirection(DIRECTION_OPEN);
 		delay(500);		
 		Motor::getInstance()->motorStop();
-	}
+	}*/
 
 	/*Motor::getInstance()->motorSwitch();
 	gLED->set_val(Motor::getInstance()->getStatus());
@@ -76,13 +84,8 @@ void static open_uSw_callback()
 	open_uSwitch->set_Clicked();
 }
 */
-/*
-void static close_uSw_callback()
-{
-	Motor::getInstance()->setDirection(DIRECTION_OPEN);
-}
-*/
-/* ------------- on Button CallBacks ------------*/
+
+/* ------------- Initial Check ------------*/
 /*
 void static initial_Check()
 {
@@ -99,8 +102,51 @@ void static initial_Check()
 	}
 }
 */
+
+void static Init_Timer1(){
+	TCCR1B = 0;
+	TCCR1A = 0;	
+	TCNT1  = 0;					// preload timer 65536-16MHz/256/2Hz
+    OCR1A = 1024;				// initialize compare value	
+	TIMSK1 |= (1 << OCIE1A);	// enable timer compare interrupt
+}
+
+ISR(TIMER1_COMPA_vect)        // interrupt service routine that wraps a user defined function supplied by attachInterrupt
+{
+	TCNT1 = 0;
+	TIMSK1 = 0;
+	OCR1A =0;
+	if(ON_button->get_Status()==BSTATE_LOW){
+		timerOvfed = 1;	
+		OCR1B = 1024*10;		
+		TIMSK1 |= (1 << OCIE1B);
+	}	 
+}
+
+ISR(TIMER1_COMPB_vect)        // interrupt service routine that wraps a user defined function supplied by attachInterrupt
+{
+	TCNT1 = 0;	
+	if(ON_button->get_Status()==BSTATE_HIGH){
+		timerOvfedb = 1;
+		TCCR1B = 0;			
+		TIMSK1 = 0;
+		OCR1B = 0;
+		OCR1A = 1024;
+		TIMSK1 = (1 << OCIE1A);  
+		ON_button->enableInterrupt(onButton_Interrupt);		
+	}
+}
+
+
 void setup()
 {
+	noInterrupts(); 
+
+	for (size_t i = 8; i <= 40; i++)
+		table_RC[i - 8] = i;	
+
+	Init_Timer1();
+	
 	Serial.begin(9600);
 
 	Global_SysConfig = new SysConfig(2, 0, 0);
@@ -110,30 +156,21 @@ void setup()
 
 	mot_Driver = new Motor_Driver(Motor::getInstance());
 
-	ON_button = new Button(PinConfiguration::onButton_pin);
-	ON_button->setPressCallback(onButton_callback);
+	ON_button = new Button(PinConfiguration::onButton_pin, INPUT, onButton_Interrupt, LOW);
 
-	open_uSwitch = new Button(PinConfiguration::open_uSw_pin);
+	//open_uSwitch = new Button(PinConfiguration::open_uSw_pin);
 	//open_uSwitch->setPressCallback(open_uSw_callback);
-
-	close_uSwitch = new Button(PinConfiguration::close_uSw_pin);
-	//close_uSwitch->setPressCallback(close_uSw_callback);
 
 	gLED = new LED(PinConfiguration::gLED_pin);
 
 	ardLED = new LED(PinConfiguration::ardLED);
 
-	LCD::getInstance()->LCD_Cover();
+	/*LCD::getInstance()->LCD_Cover();
 	delay(2000);
-	LCD::getInstance()->LCD_Clear();
+	LCD::getInstance()->LCD_Clear();*/
 
 	respVolume = new Potentiometer(PinConfiguration::Potentiometer_Volume, 7);
 	respCycle = new Potentiometer(PinConfiguration::Potentiometer_Cycle, sizeof(table_RC)/2);
-	
-	for (size_t i = 8; i <= 40; i++)
-	{
-		table_RC[i - 8] = i;
-	}
 
 	respVolume->set_Range(table_RV, sizeof table_RV);
 	respCycle->set_Range(table_RC, sizeof table_RC);
@@ -141,7 +178,7 @@ void setup()
 	Motor::getInstance()->setSpeed(96);
 	
 	//initial_Check();
-	
+	interrupts();
 }
 
 void loop()
@@ -150,7 +187,23 @@ void loop()
 	//mot_Driver->update_resp_rate(Global_SysConfig);
 	//ON_button->check();
 	//mot_Driver->check();
-	LCD::getInstance()->LCD_Menu(respVolume->Potentiometer_Read(), respCycle->Potentiometer_Read());
-	Serial.println(respCycle->Potentiometer_Read());
+	//LCD::getInstance()->LCD_Menu(respVolume->Potentiometer_Read(), respCycle->Potentiometer_Read());
+	//Serial.println(respCycle->Potentiometer_Read());
+	if (timerOvfed==1) {
+		
+		Serial.println("TimerOverflow");	
+		timerOvfed=0;
+	}
+	if (timerOvfedb==1) {
+		
+		Serial.println("TimerOverflowB");	
+		timerOvfedb=0;
+	}	
+	if (onButtonClicked==1) {
+		
+		Serial.println("Button Clicked");	
+		onButtonClicked=0;
+	}	
+	//Serial.println("loop");	
 	wdt_reset();
 }

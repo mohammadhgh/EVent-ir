@@ -10,6 +10,7 @@ class Potentiometer
 private:
     int pin;
     int subMultiple;
+    int volumeDisplay;
     int subValue;
     int *table;
     uint8_t size;

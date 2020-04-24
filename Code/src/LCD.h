@@ -5,7 +5,8 @@
 #include <openGLCD.h>
 #include <sysconfig.h>
 #include <configuration.h>
-#include <gText.h>
+#include <../lib/openGLCD/include/gText.h>
+
 
 class LCD
 {

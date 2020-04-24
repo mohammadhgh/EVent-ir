@@ -17,10 +17,10 @@ public:
     const static int uSwitch_hits_thr = 5;
 
     //----uSwitches
-    const static int open_uSw_pin = 3;
+    const static int open_uSw_pin = 18;
     long open_uSw_last = 0;
     int open_uSw_hits = 0;
-    const static int close_uSw_pin = 18;
+    const static int close_uSw_pin = 3;
     long close_uSw_last = 0;
     int close_uSw_hits = 0;
 

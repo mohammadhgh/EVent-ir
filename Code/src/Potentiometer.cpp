@@ -5,6 +5,7 @@ Potentiometer::Potentiometer(int pin, int subMultiple)
 
     this->pin = pin;
     this->subMultiple = subMultiple;
+    this->volumeDisplay = 0;
 }
 
 void Potentiometer::set_Range(int *table, uint8_t size)
@@ -18,7 +19,6 @@ int Potentiometer::Potentiometer_Read()
 {
     int volumeValue = analogRead(this->pin);
 
-    int volumeDisplay;
     int Range_Value[this->subMultiple] = {};
     this->subValue = 1023 / this->subMultiple;
 
@@ -26,25 +26,28 @@ int Potentiometer::Potentiometer_Read()
     {
         Range_Value[i - 1] = i * (this->subValue);
     }
+    int margin = Range_Value[0] / 2;
 
-    if (volumeValue <= Range_Value[0])
+    if (volumeValue <= Range_Value[0] - margin || volumeValue <= Range_Value[0] + margin)
     {
 
-        volumeDisplay = this->table[0];
+        this->volumeDisplay = this->table[0];
     }
 
-    if (volumeValue > Range_Value[this->subMultiple - 1])
+    if (volumeValue > Range_Value[this->subMultiple - 1] + margin || volumeValue > Range_Value[this->subMultiple - 1] - margin)
     {
-        volumeDisplay = this->table[this->subMultiple - 1];
+        this->volumeDisplay = this->table[this->subMultiple - 1];
     }
 
     for (int i = 0; i < (this->subMultiple - 1); i++)
     {
-        if (volumeValue > Range_Value[i] && volumeValue < Range_Value[i + 1])
+        if ((volumeValue > Range_Value[i] + margin || volumeValue > Range_Value[i] - margin) && (volumeValue < Range_Value[i + 1] + margin || volumeValue < Range_Value[i + 1] - margin))
         {
-            volumeDisplay = this->table[i + 1];
+            this->volumeDisplay = this->table[i + 1];
+
+            break;
         }
     }
 
-    return volumeDisplay;
+    return this->volumeDisplay;
 }

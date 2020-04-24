@@ -44,8 +44,8 @@ public:
 
     //----Potentiometer
     const static int Potentiometer_Volume = A8;
-    const static int Potentiometer_Cycle = A9; //orig=A2
-    //const static int Potentiometer_IE = A3;
+    const static int Potentiometer_Cycle = A9;
+    const static int Potentiometer_IE = A10;
 
     void pinConfiguration();
 };

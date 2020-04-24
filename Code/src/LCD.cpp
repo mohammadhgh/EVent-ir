@@ -5,8 +5,6 @@ LCD *LCD::INSTANCE = NULL;
 LCD::LCD()
 {
     this->local_sysconfig = new SysConfig(0, 0, 0);
-    this->lastRate = 0;
-    this->lastVol = 0;
 }
 LCD *LCD::getInstance()
 {
@@ -36,13 +34,16 @@ void LCD::LCD_Clear()
     GLCD.ClearScreen();
 }
 
-void LCD::LCD_Menu(int tidalVolume, int respRate)
+void LCD::LCD_Menu(int tidalVolume, int respRate, int IEratio)
 {
     //int tidalVolume = this->local_sysconfig->get_Tidal_Volume();
-    //int respRate = this->local_sysconfig->get_Resp_Rate();
 
-    int *tidal_Vol = &(this->lastVol);
-    int *resp_Rate = &(this->lastRate);
+    String *tidal_Vol = &(this->lastVol);
+    String *resp_Rate = &(this->lastRate);
+    String *IE_ratio = &(this->lastIE);
+    String a = String(tidalVolume);
+    String b = String(respRate);
+    String c = String(IEratio);
 
     GLCD.DrawRoundRect(0, 0, GLCD.Width, GLCD.Height, 2);
     GLCD.SelectFont(Iain5x7);
@@ -54,27 +55,29 @@ void LCD::LCD_Menu(int tidalVolume, int respRate)
     }
 
     GLCD.DrawString(F("Tidal Volume : "), 3, 3);
-    GLCD.CursorTo((int8_t)16);
-    GLCD.print(screenWiper((int8_t)16, tidalVolume, tidal_Vol));
+    GLCD.CursorTo(16);
+    GLCD.Puts(screenWiper(16, a, tidal_Vol));
 
     GLCD.DrawString(F("Resp Rate : "), 3, 19);
-    GLCD.CursorTo((int8_t)16);
-    GLCD.print(screenWiper((int8_t)16, respRate, resp_Rate));
+    GLCD.CursorTo(16);
+    GLCD.Puts(screenWiper(16, b, resp_Rate));
 
     GLCD.DrawString(F("In/Ex Ratio: "), 3, 36);
     GLCD.CursorTo(16);
-    GLCD.print(1);
+    GLCD.DrawString(F("1 :"), 80, 36);
+    GLCD.CursorTo(18);
+    GLCD.Puts(screenWiper(18, c, IE_ratio));
 
     GLCD.DrawString(F("Pressure Sen : "), 3, 53);
     GLCD.CursorTo(16);
     GLCD.print(1);
 }
 
-int LCD::screenWiper(int8_t columnNumber, int toPrint, int *lastToPrint)
+String LCD::screenWiper(int columnNumber, String toPrint, String *lastToPrint)
 {
     if (toPrint != *lastToPrint)
     {
-        GLCD.print("          ");
+        GLCD.print("            ");
         GLCD.CursorTo(columnNumber);
         *lastToPrint = toPrint;
     }

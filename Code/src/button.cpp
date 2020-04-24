@@ -33,8 +33,8 @@ int Button::get_Status()
     return digitalRead(this->pin);
 }
 
-void Button::set_Clicked(){
-    this->clicked = true;
+void Button::set_Clicked(bool clicked){
+    this->clicked = clicked;
 }
 
 bool Button::get_Clicked(){

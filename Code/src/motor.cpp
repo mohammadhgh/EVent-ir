@@ -18,7 +18,12 @@ int Motor::getStatus()
 
 void Motor::changeDirection()
 {
-    this->direction = ~this->direction;
+    if(this->motorStatus==MOTOR_IS_ON){
+        if(this->direction==DIRECTION_CLOSE)
+            this->direction=DIRECTION_OPEN;
+        else
+            this->direction=DIRECTION_CLOSE;
+    }    
     this->setMotorOut();
 }
 
@@ -35,7 +40,6 @@ int Motor::getDirection()
 
 void Motor::setMotorOut()
 {
-    char my_string[50];
     if (this->motorStatus == MOTOR_IS_ON)
     {
         digitalWrite(PinConfiguration::motorOut1, this->direction);

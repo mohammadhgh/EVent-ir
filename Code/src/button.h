@@ -32,7 +32,7 @@ public:
     int  get_Status();
     int  get_On_Off();
     void set_On_Off();
-    void set_Clicked();
+    void set_Clicked(bool clicked);
 };
 
 #endif

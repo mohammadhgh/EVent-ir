@@ -15,8 +15,11 @@
 #include <LCD.h>
 #include <string.h>
 #include <Stream.h>
+<<<<<<< Updated upstream
 
 long testTimer = 0;
+=======
+>>>>>>> Stashed changes
 
 /* Global Objects */
 SysConfig *Global_SysConfig;

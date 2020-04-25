@@ -17,10 +17,10 @@ public:
     const static int uSwitch_hits_thr = 5;
 
     //----uSwitches
-    const static int open_uSw_pin = 3;
+    const static int open_uSw_pin = 18;
     long open_uSw_last = 0;
     int open_uSw_hits = 0;
-    const static int close_uSw_pin = 18;
+    const static int close_uSw_pin = 3;
     long close_uSw_last = 0;
     int close_uSw_hits = 0;
 
@@ -28,7 +28,7 @@ public:
     const static int motorOut1 = 13;
     const static int motorOut2 = 9;
     const static int motorControl = 11;
-    const static int motorEncoderPin = 4;
+    const static int motorEncoderPin = 19;
 
     //----pushButtons
     const static int onButton_pin = 2;
@@ -44,8 +44,8 @@ public:
 
     //----Potentiometer
     const static int Potentiometer_Volume = A8;
-    const static int Potentiometer_Cycle = A9; //orig=A2
-    //const static int Potentiometer_IE = A3;
+    const static int Potentiometer_Cycle = A9;
+    const static int Potentiometer_IE = A10;
 
     void pinConfiguration();
 };

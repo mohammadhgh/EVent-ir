@@ -5,7 +5,6 @@
 #include <configuration.h>
 #include <avr/wdt.h>
 #include <openGLCD.h>
-
 #include <sysconfig.h>
 #include <motor.h>
 #include <motor_driver.h>
@@ -14,6 +13,10 @@
 #include <led.h>
 #include <Potentiometer.h>
 #include <LCD.h>
+#include <timers.h>
+#include <callBacks.h>
+#include <string.h>
+#include <Stream.h>
 
 long testTimer = 0;
 
@@ -22,135 +25,148 @@ SysConfig *Global_SysConfig;
 
 Button *ON_button;
 Button *open_uSwitch;
-Button *close_uSwitch;
 
 LED *gLED;
 LED *ardLED;
-
+boolean a = false;
 Buzzer *coolBuzz;
 Motor_Driver *mot_Driver;
 
 Potentiometer *respVolume;
 Potentiometer *respCycle;
+Potentiometer *IERatio;
 
 int table_RV[] = {200, 300, 400, 500, 600, 700, 800};
 int table_RC[33];
+int table_IE[] = {1, 2, 3, 4};
 
 int RV = 0;
 int RC = 0;
-/* ------------- on Button CallBacks ------------*/
-void static onButton_callback()
-{
 
-	ON_button->set_On_Off();
-	if (ON_button->get_On_Off() == BSTATE_ON)
-	{		
-		Motor::getInstance()->setSpeed(85);
-		Motor::getInstance()->setDirection(DIRECTION_CLOSE);
-		Motor::getInstance()->motorStart();
-		Global_SysConfig->set_Start_Time();
-		mot_Driver->update_sysconfig(Global_SysConfig);
-		
+volatile int encFalled=0;
+volatile int encValid=0;
+
+void enc_callback(){
+	
+	if (encFalled==0){
+		TCNT5=0;
+		TCCR5B |= (1<<CS11);			
+		encFalled=1;
 	}
-	else
-	{
-		Motor::getInstance()->setSpeed(80);
-		delay(200);		
-		Motor::getInstance()->setSpeed(95);
-		delay(200);
-        Motor::getInstance()->setDirection(DIRECTION_OPEN);
-		delay(500);		
-		Motor::getInstance()->motorStop();
+	else{
+		TCCR5B = 0;
+		encFalled=0;
+		Motor::getInstance()->setEncPeriod(TCNT5);
+		encValid = 1;
 	}
-
-	/*Motor::getInstance()->motorSwitch();
-	gLED->set_val(Motor::getInstance()->getStatus());
-	coolBuzz->beep(2);*/
 }
 
-/* ---------- uSwithches callbacks ----------------- */
-/*
-void static open_uSw_callback()
-{
-	Motor::getInstance()->setDirection(DIRECTION_CLOSE);
-	open_uSwitch->set_Clicked();
-}
-*/
-/*
-void static close_uSw_callback()
-{
-	Motor::getInstance()->setDirection(DIRECTION_OPEN);
-}
-*/
-/* ------------- on Button CallBacks ------------*/
-/*
+/* ------------- Initial Check ------------*/
+
 void static initial_Check()
 {
 	if (open_uSwitch->get_Status() == BSTATE_HIGH)
 	{
-		Serial.print("Initial Setup");
+		Serial.println("Initial Setup");
 		Motor::getInstance()->setDirection(DIRECTION_OPEN);
 		Motor::getInstance()->motorStart();
-		do
-		{
-			open_uSwitch->check();
-		} while (!open_uSwitch->get_Clicked());
+		while (open_uSwitch->get_Clicked()==false)
+			delay(1);
+		open_uSwitch->set_Clicked(false);
 		Motor::getInstance()->motorStop();
 	}
 }
+
+
+
+/*
+void blinking()
+{
+	a = ON_button->get_Status();
+	if (a == 0)
+	{
+		gLED->set_high();
+		delay(500);
+		gLED->switch_led();
+	}
+}
 */
+
 void setup()
 {
+	noInterrupts(); 
+
+	for (size_t i = 8; i <= 40; i++)
+		table_RC[i - 8] = i;		
+
+	Init_Timer3();
+	Init_Timer4();
+	Init_Timer5();
+	
 	Serial.begin(9600);
 
-	Global_SysConfig = new SysConfig(2, 0, 0);
+	//Global_SysConfig = new SysConfig(2, 0, 0);
 	PinConfiguration::getInstance()->pinConfiguration();
+
 
 	coolBuzz = new Buzzer(PinConfiguration::buzzerPin);
 
-	mot_Driver = new Motor_Driver(Motor::getInstance());
+	//mot_Driver = new Motor_Driver(Motor::getInstance());
 
-	ON_button = new Button(PinConfiguration::onButton_pin);
-	ON_button->setPressCallback(onButton_callback);
+	ON_button = new Button(PinConfiguration::onButton_pin, INPUT, onButton_callback, LOW);
 
-	open_uSwitch = new Button(PinConfiguration::open_uSw_pin);
-	//open_uSwitch->setPressCallback(open_uSw_callback);
-
-	close_uSwitch = new Button(PinConfiguration::close_uSw_pin);
-	//close_uSwitch->setPressCallback(close_uSw_callback);
+	open_uSwitch = new Button(PinConfiguration::open_uSw_pin, INPUT, open_uSw_callback, LOW);
 
 	gLED = new LED(PinConfiguration::gLED_pin);
 
-	ardLED = new LED(PinConfiguration::ardLED);
+	//ardLED = new LED(PinConfiguration::ardLED);
 
-	LCD::getInstance()->LCD_Cover();
+	/*LCD::getInstance()->LCD_Cover();
 	delay(2000);
-	LCD::getInstance()->LCD_Clear();
+	LCD::getInstance()->LCD_Clear();*/
 
 	respVolume = new Potentiometer(PinConfiguration::Potentiometer_Volume, 7);
-	respCycle = new Potentiometer(PinConfiguration::Potentiometer_Cycle, sizeof(table_RC)/2);
-	
-	for (size_t i = 8; i <= 40; i++)
-	{
-		table_RC[i - 8] = i;
-	}
+	respCycle = new Potentiometer(PinConfiguration::Potentiometer_Cycle, 23);
+	IERatio = new Potentiometer(PinConfiguration::Potentiometer_IE, 4);
 
-	respVolume->set_Range(table_RV, sizeof table_RV);
 	respCycle->set_Range(table_RC, sizeof table_RC);
+	respVolume->set_Range(table_RV, sizeof table_RV);
+	IERatio->set_Range(table_IE, sizeof table_IE);
 
-	Motor::getInstance()->setSpeed(96);
-	
+	interrupts();
+
+	Motor::getInstance()->setSpeed(85);
+	Motor::getInstance()->initEnc(PinConfiguration::motorEncoderPin, INPUT, enc_callback, RISING);
 	//initial_Check();
-	
 }
-
 void loop()
 {
-	//Global_SysConfig->set_Resp_Rate(respCycle->Potentiometer_Read());
+	
 	//mot_Driver->update_resp_rate(Global_SysConfig);
-	//ON_button->check();
-	//mot_Driver->check();
-	LCD::getInstance()->LCD_Menu(respVolume->Potentiometer_Read(), respCycle->Potentiometer_Read());
-	Serial.println(respCycle->Potentiometer_Read());
+	//if(ON_button->get_On_Off()==BSTATE_ON)
+		//mot_Driver->check();
+	//LCD::getInstance()->LCD_Menu(respVolume->Potentiometer_Read(), respCycle->Potentiometer_Read(), IERatio->Potentiometer_Read());
+	Motor::getInstance()->setSpeed(30-respCycle->Potentiometer_Read());
+	if (ON_button->get_Clicked()==true && ON_button->get_On_Off()==BSTATE_ON){
+		Motor::getInstance()->motorStart();							
+		Motor::getInstance()->resetEncPeriod();
+		ON_button->set_Clicked(false);
+	}
+	else if(ON_button->get_Clicked()==true && ON_button->get_On_Off()==BSTATE_OFF){
+		Motor::getInstance()->setSpeed(95);	
+		delay(500);
+		Motor::getInstance()->motorStop();
+		ON_button->set_Clicked(false);
+	}
+	if(open_uSwitch->get_Clicked()==true){		
+		Motor::getInstance()->changeDirection();
+		open_uSwitch->set_Clicked(false);
+	}
+
+	if(encValid==1){
+		Serial.println(Motor::getInstance()->getEncRPM());
+		encValid = 0;
+	}
+	delay(100);
 	wdt_reset();
 }

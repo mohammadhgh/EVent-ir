@@ -28,7 +28,7 @@ public:
     const static int motorOut1 = 13;
     const static int motorOut2 = 9;
     const static int motorControl = 11;
-    const static int motorEncoderPin = 4;
+    const static int motorEncoderPin = 19;
 
     //----pushButtons
     const static int onButton_pin = 2;

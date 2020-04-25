@@ -1,4 +1,5 @@
 #include <motor.h>
+#include <math.h>
 
 Motor *Motor::INSTANCE = NULL;
 
@@ -9,6 +10,15 @@ Motor *Motor::getInstance()
         INSTANCE = new Motor();
     }
     return INSTANCE;
+}
+
+void Motor::initEnc(int pin, uint8_t ioMode, void (*callback_func)(void), int interruptMode){
+    pinMode(pin, ioMode);
+    attachInterrupt(digitalPinToInterrupt(pin), callback_func, interruptMode);
+}
+
+void Motor::setEncPeriod(int encPeriod){
+    this->encPeriod = encPeriod;
 }
 
 int Motor::getStatus()
@@ -81,44 +91,13 @@ void Motor::motorStart()
 void Motor::motorSwitch()
 {
     if (motorStatus == MOTOR_IS_ON)
-    {
         motorStop();
-    }
     else
-    {
         motorStart();
-    }
 }
 
-void Motor::encCheck()
-{
-    long nowTime = micros();
-
-    if(nowTime - this->encLastCheck > this->encDebounceTime)
-    {
-            this->encLastCheck = nowTime;
-
-            int nowState = digitalRead(PinConfiguration::motorEncoderPin);
-            
-            if(nowState==HIGH && this->encLastState==LOW)
-            {
-                if (nowTime - this->encLastTime > MOTOR_ENC_PERIOD_OFF)
-                {
-                    this->encPulseCount = 0;
-                    this->encPeriod = 0;
-                }
-                else
-                {
-                    this->encPulseCount++;
-                    this->encPeriod = nowTime - this->encLastTime;
-                }
-
-                this->encLastTime = nowTime;
-                
-            }
-
-            this->encLastState = nowState;
-    }
+int Motor::getEncPeriod(){
+    return this->encPeriod;
 }
 
 int Motor::getEncCount()
@@ -126,27 +105,20 @@ int Motor::getEncCount()
     return this->encPulseCount;
 }
 
-void Motor::resetEncCount()
+void Motor::resetEncPeriod()
 {
-    this->encPulseCount = 0;
-}
-
-int Motor::getEncPeriod()
-{
-    return this->encPeriod;
+    this->encPeriod = 0;
 }
 
 long Motor::getEncRPM()
 {
-    long RPM = 0;
+    float RPM = 0;
     int period = this->getEncPeriod();
-    RPM = (long)period * (long)MOTOR_PULSE_PER_TURN;
-    RPM = (long)60000000 / RPM;
-    if(RPM < 0)
-    {
-        RPM=0;
+    if(period>0){
+        RPM = (long)period * (long)MOTOR_PULSE_PER_TURN * (float)0.5; 
+        RPM = (long)60000000 / RPM;
     }
-    return RPM;
+    return round(RPM);
 }
 
 int Motor::getEncAngle()

@@ -33,24 +33,25 @@ private:
     int  encPulseCount = 0;
 public:
     static Motor *getInstance();
+    void initEnc(int pin, uint8_t ioMode, void (*callback_func)(void), int interruptMode);
     int  getStatus();
     void changeDirection();
     void setDirection(int direction);
     int  getDirection();
     void setMotorOut();
     void setSpeed(int a);
+    void setEncPeriod(int encPeriod);
     int  getSpeed();
     int  getSpeedPWM();
     void motorStop();
     void motorStart();
     void motorSwitch();
-
-    void encCheck();
+    void encCallback();
     int  getEncCount();
-    void resetEncCount();
-    int  getEncPeriod();
+    void resetEncPeriod();
     long getEncRPM();
     int  getEncAngle();
+    int  getEncPeriod();
 };
 
 #endif

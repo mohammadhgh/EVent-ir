@@ -26,14 +26,31 @@ int SysConfig::get_Tidal_Volume()
     return this->Tidal_Volume;
 }
 
-int SysConfig::get_Inh_Time()
+float SysConfig::get_Inh_Time()
 {
     return this->Inhale_Time;
 }
 
-int SysConfig::get_Exh_Time()
+float SysConfig::get_Exh_Time()
 {
     return this->Exhale_Time;
+}
+
+float SysConfig::get_Inhale_Omega(){
+    return this->MotorInhaleOmega;
+}
+
+float SysConfig::get_Exhale_Omega(){
+    return this->MotorExhaleOmega;    
+}
+
+
+float SysConfig::get_Inhale_RPM(){
+    return this->MotorInhaleRPM;
+}
+
+float SysConfig::get_Exhale_RPM(){
+    return this->MotorExhaleRPM;
 }
 
 unsigned long SysConfig::get_Start_Time()
@@ -49,8 +66,10 @@ void SysConfig::set_IE_Ratio(int IE_Ratio)
 void SysConfig::set_Resp_Rate(int Resp_Rate)
 {
     this->Resp_Rate = Resp_Rate;
-    this->set_Inh_Time();
-    this->set_Exh_Time();
+    set_Inh_Time();
+    set_Exh_Time();
+    set_Motor_Omega();
+    set_Motor_RPM();
 }
 
 void SysConfig::set_Tidal_Volume(int Tidal_Volume)
@@ -60,18 +79,30 @@ void SysConfig::set_Tidal_Volume(int Tidal_Volume)
 
 void SysConfig::set_Inh_Time()
 {
-    float num = (float)60000;
+    float num = (float)60;
     float den = (get_Resp_Rate() * (get_IE_Ratio() + 1));
     float result = num / den;
-    this->Inhale_Time = (int)result;
+    this->Inhale_Time = result;
 }
 
 void SysConfig::set_Exh_Time()
 {
-    float num = (float)60000 * get_IE_Ratio();
+    float num = (float)60 * get_IE_Ratio();
     float den = (get_Resp_Rate() * (get_IE_Ratio() + 1));
     float result = num / den;
-    this->Exhale_Time = (int)result;
+    this->Exhale_Time = result;
+}
+
+void SysConfig::set_Motor_Omega()
+{
+    this->MotorInhaleOmega = COMPLETE_CLOSE_OMEGA/this->Inhale_Time;
+    this->MotorExhaleOmega = COMPLETE_CLOSE_OMEGA/this->Exhale_Time;   
+}
+
+void SysConfig::set_Motor_RPM()
+{
+    this->MotorInhaleRPM = DEGREE_TO_RPM*this->MotorInhaleOmega;    
+    this->MotorExhaleRPM = DEGREE_TO_RPM*this->MotorExhaleOmega;
 }
 
 void SysConfig::set_Start_Time()

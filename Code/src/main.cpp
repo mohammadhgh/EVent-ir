@@ -46,21 +46,6 @@ int RC = 0;
 volatile int encFalled=0;
 volatile int encValid=0;
 
-void enc_callback(){
-	
-	if (encFalled==0){
-		TCNT5=0;
-		TCCR5B |= (1<<CS11);			
-		encFalled=1;
-	}
-	else{
-		TCCR5B = 0;
-		encFalled=0;
-		Motor::getInstance()->setEncPeriod(TCNT5);
-		encValid = 1;
-	}
-}
-
 /* ------------- Initial Check ------------*/
 
 void static initial_Check()
@@ -71,13 +56,19 @@ void static initial_Check()
 		Motor::getInstance()->setDirection(DIRECTION_OPEN);
 		Motor::getInstance()->motorStart();
 		while (open_uSwitch->get_Clicked()==false)
-			delay(1);
-		open_uSwitch->set_Clicked(false);
+			delay(1);	
+		open_uSwitch->set_Clicked(false);	
 		Motor::getInstance()->motorStop();
+		Serial.println(Motor::getInstance()->convertOmegatoRPM(AMBO_TOUCH_ANGLE, 1.0)+4);
+		Motor::getInstance()->setSpeed(Motor::getInstance()->convertOmegatoRPM(AMBO_TOUCH_ANGLE, 1.0)+4);
+		delay(100);
+		Motor::getInstance()->setDirection(DIRECTION_CLOSE);
+		Motor::getInstance()->motorStart();
+		delay(1300);
+		Motor::getInstance()->motorStop();	
+		delay(10000);
 	}
 }
-
-
 
 /*
 void blinking()
@@ -105,7 +96,7 @@ void setup()
 	
 	Serial.begin(9600);
 
-	//Global_SysConfig = new SysConfig(2, 0, 0);
+	Global_SysConfig = new SysConfig(2, 20, 0);
 	PinConfiguration::getInstance()->pinConfiguration();
 
 
@@ -135,38 +126,52 @@ void setup()
 
 	interrupts();
 
-	Motor::getInstance()->setSpeed(85);
+	Motor::getInstance()->setSpeed(4);
+	//Motor::getInstance()->setDirection(DIRECTION_CLOSE);
 	Motor::getInstance()->initEnc(PinConfiguration::motorEncoderPin, INPUT, enc_callback, RISING);
-	//initial_Check();
+	initial_Check();
 }
 void loop()
 {
 	
 	//mot_Driver->update_resp_rate(Global_SysConfig);
-	//if(ON_button->get_On_Off()==BSTATE_ON)
-		//mot_Driver->check();
 	//LCD::getInstance()->LCD_Menu(respVolume->Potentiometer_Read(), respCycle->Potentiometer_Read(), IERatio->Potentiometer_Read());
-	Motor::getInstance()->setSpeed(30-respCycle->Potentiometer_Read());
+	Global_SysConfig->set_Resp_Rate(respCycle->Potentiometer_Read());
+	
+	if(Motor::getInstance()->getDirection()==DIRECTION_CLOSE){
+		
+		Motor::getInstance()->setSpeed(Global_SysConfig->get_Inhale_RPM());	
+	}
+	else
+	{
+		Motor::getInstance()->setSpeed(Global_SysConfig->get_Exhale_RPM());
+	}
+	
 	if (ON_button->get_Clicked()==true && ON_button->get_On_Off()==BSTATE_ON){
 		Motor::getInstance()->motorStart();							
 		Motor::getInstance()->resetEncPeriod();
 		ON_button->set_Clicked(false);
 	}
 	else if(ON_button->get_Clicked()==true && ON_button->get_On_Off()==BSTATE_OFF){
-		Motor::getInstance()->setSpeed(95);	
-		delay(500);
+		Motor::getInstance()->setSpeed(5);	
+		delay(100);
 		Motor::getInstance()->motorStop();
 		ON_button->set_Clicked(false);
 	}
-	if(open_uSwitch->get_Clicked()==true){		
+	if(open_uSwitch->get_Clicked()==true){
+		Serial.println(Motor::getInstance()->getDirection());		
 		Motor::getInstance()->changeDirection();
+		Serial.println(Motor::getInstance()->getDirection());
 		open_uSwitch->set_Clicked(false);
 	}
 
 	if(encValid==1){
-		Serial.println(Motor::getInstance()->getEncRPM());
+		//Serial.println("pwm");
+		//Serial.println(Motor::getInstance()->getSpeed());
+		//Serial.println("rpm");
+		//Serial.println(Motor::getInstance()->getEncRPM());
 		encValid = 0;
 	}
-	delay(100);
+	delay(500);
 	wdt_reset();
 }

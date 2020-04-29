@@ -59,7 +59,7 @@ ISR(TIMER4_COMPA_vect)        // interrupt service routine that wraps a user def
 	if(open_uSwitch->get_Status()==BSTATE_LOW){
 		open_uSwitch->set_Clicked(true);
 	}	
-	OCR4B = 1024*5;		
+	OCR4B = 1024*3;		
 	TIMSK4 |= (1 << OCIE4B);		 
 }
 

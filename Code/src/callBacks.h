@@ -6,5 +6,6 @@
 
     void onButton_callback();
     void open_uSw_callback();
+    void enc_callback();
 
 #endif

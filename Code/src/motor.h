@@ -17,16 +17,21 @@
 
 #define MOTOR_ENC_PERIOD_OFF    100000
 
+#define RPM_PWM_Ratio           (float)-0.7626
+#define RPM_PWM_Constant        (float)94.931
+#define DEGREE_TO_RPM           (float)0.166667
+
 class Motor
 {
 private:
     static Motor *INSTANCE;
-    int motorSpeed = 80;
+    float motorSpeed = 5;
     int motorStatus = MOTOR_IS_OFF;
     int direction = DIRECTION_OPEN;
 
     long encLastTime = 0;
     long encLastCheck = 0;
+    int  encLastPeriod = 0;
     int  encPeriod = 0;
     int  encLastState = LOW;
     int  encDebounceTime = 1;
@@ -36,12 +41,14 @@ public:
     void initEnc(int pin, uint8_t ioMode, void (*callback_func)(void), int interruptMode);
     int  getStatus();
     void changeDirection();
+    float convertOmegatoRPM(float omega, float time);
+    float convertRMPtoPWM(float RPM);
     void setDirection(int direction);
     int  getDirection();
     void setMotorOut();
-    void setSpeed(int a);
+    void setSpeed(float newSpeed);
     void setEncPeriod(int encPeriod);
-    int  getSpeed();
+    float getSpeed();
     int  getSpeedPWM();
     void motorStop();
     void motorStart();
@@ -49,7 +56,7 @@ public:
     void encCallback();
     int  getEncCount();
     void resetEncPeriod();
-    long getEncRPM();
+    float getEncRPM();
     int  getEncAngle();
     int  getEncPeriod();
 };

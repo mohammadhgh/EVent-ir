@@ -96,7 +96,7 @@ void SysConfig::set_Exh_Time()
 void SysConfig::set_Motor_Omega()
 {
     this->MotorInhaleOmega = COMPLETE_CLOSE_OMEGA/this->Inhale_Time;
-    this->MotorExhaleOmega = COMPLETE_CLOSE_OMEGA/this->Exhale_Time;   
+    this->MotorExhaleOmega = AMBO_OPEN_OMEGA/this->Exhale_Time;   
 }
 
 void SysConfig::set_Motor_RPM()

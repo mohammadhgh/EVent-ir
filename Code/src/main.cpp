@@ -37,7 +37,7 @@ Potentiometer *respCycle;
 Potentiometer *IERatio;
 
 int table_RV[] = {200, 300, 400, 500, 600, 700, 800};
-int table_RC[33];
+int table_RC[23];
 int table_IE[] = {1, 2, 3, 4};
 
 int RV = 0;
@@ -59,15 +59,25 @@ void static initial_Check()
 			delay(1);	
 		open_uSwitch->set_Clicked(false);	
 		Motor::getInstance()->motorStop();
-		Serial.println(Motor::getInstance()->convertOmegatoRPM(AMBO_TOUCH_ANGLE, 1.0)+4);
-		Motor::getInstance()->setSpeed(Motor::getInstance()->convertOmegatoRPM(AMBO_TOUCH_ANGLE, 1.0)+4);
+		Serial.println(Motor::getInstance()->convertOmegatoRPM(AMBO_TOUCH_ANGLE, 1.0)+3);
+		Motor::getInstance()->setSpeed(Motor::getInstance()->convertOmegatoRPM(AMBO_TOUCH_ANGLE, 1.0)+3);
 		delay(100);
 		Motor::getInstance()->setDirection(DIRECTION_CLOSE);
 		Motor::getInstance()->motorStart();
-		delay(1300);
+		delay(1000);
 		Motor::getInstance()->motorStop();	
-		delay(10000);
+		delay(1000);
 	}
+}
+
+void static onMotor_Close()
+{
+	Motor::getInstance()->setSpeed(5);
+	Motor::getInstance()->setDirection(DIRECTION_CLOSE);
+	while (open_uSwitch->get_Clicked()==false)
+		delay(1);	
+	open_uSwitch->set_Clicked(false);	
+	Motor::getInstance()->motorStop();
 }
 
 /*
@@ -87,7 +97,7 @@ void setup()
 {
 	noInterrupts(); 
 
-	for (size_t i = 8; i <= 40; i++)
+	for (size_t i = 8; i <= 30; i++)
 		table_RC[i - 8] = i;		
 
 	Init_Timer3();
@@ -97,12 +107,12 @@ void setup()
 	Serial.begin(9600);
 
 	Global_SysConfig = new SysConfig(2, 20, 0);
-	PinConfiguration::getInstance()->pinConfiguration();
 
+	PinConfiguration::getInstance()->pinConfiguration();
 
 	coolBuzz = new Buzzer(PinConfiguration::buzzerPin);
 
-	//mot_Driver = new Motor_Driver(Motor::getInstance());
+	mot_Driver = new Motor_Driver(Motor::getInstance());
 
 	ON_button = new Button(PinConfiguration::onButton_pin, INPUT, onButton_callback, LOW);
 
@@ -134,44 +144,40 @@ void setup()
 void loop()
 {
 	
-	//mot_Driver->update_resp_rate(Global_SysConfig);
-	//LCD::getInstance()->LCD_Menu(respVolume->Potentiometer_Read(), respCycle->Potentiometer_Read(), IERatio->Potentiometer_Read());
-	Global_SysConfig->set_Resp_Rate(respCycle->Potentiometer_Read());
 	
-	if(Motor::getInstance()->getDirection()==DIRECTION_CLOSE){
-		
-		Motor::getInstance()->setSpeed(Global_SysConfig->get_Inhale_RPM());	
-	}
+	//LCD::getInstance()->LCD_Menu(respVolume->Potentiometer_Read(), respCycle->Potentiometer_Read(), IERatio->Potentiometer_Read());
+	//Global_SysConfig->set_Resp_Rate(respCycle->Potentiometer_Read());
+	mot_Driver->update_resp_rate(respCycle->Potentiometer_Read());
+	mot_Driver->check();
+	/*if(Motor::getInstance()->getDirection()==DIRECTION_CLOSE){
+		Motor::getInstance()->setSpeed(Global_SysConfig->get_Inhale_RPM()+7);	
 	else
-	{
-		Motor::getInstance()->setSpeed(Global_SysConfig->get_Exhale_RPM());
-	}
+		Motor::getInstance()->setSpeed(Global_SysConfig->get_Exhale_RPM()+7);
+	}*/
 	
 	if (ON_button->get_Clicked()==true && ON_button->get_On_Off()==BSTATE_ON){
-		Motor::getInstance()->motorStart();							
-		Motor::getInstance()->resetEncPeriod();
+		mot_Driver->update_resp_rate(respCycle->Potentiometer_Read());
+        mot_Driver->init_driver();				
 		ON_button->set_Clicked(false);
-	}
-	else if(ON_button->get_Clicked()==true && ON_button->get_On_Off()==BSTATE_OFF){
-		Motor::getInstance()->setSpeed(5);	
-		delay(100);
-		Motor::getInstance()->motorStop();
-		ON_button->set_Clicked(false);
-	}
-	if(open_uSwitch->get_Clicked()==true){
-		Serial.println(Motor::getInstance()->getDirection());		
-		Motor::getInstance()->changeDirection();
-		Serial.println(Motor::getInstance()->getDirection());
-		open_uSwitch->set_Clicked(false);
 	}
 
-	if(encValid==1){
+	else if(ON_button->get_Clicked()==true && ON_button->get_On_Off()==BSTATE_OFF){
+		onMotor_Close();
+		ON_button->set_Clicked(false);
+	}
+
+	/*if(open_uSwitch->get_Clicked()==true){
+		Motor::getInstance()->changeDirection();
+		open_uSwitch->set_Clicked(false);
+	}*/
+
+	//if(encValid==1){
 		//Serial.println("pwm");
 		//Serial.println(Motor::getInstance()->getSpeed());
 		//Serial.println("rpm");
 		//Serial.println(Motor::getInstance()->getEncRPM());
-		encValid = 0;
-	}
-	delay(500);
+		//encValid = 0;
+	//}
+	//delay(500);
 	wdt_reset();
 }

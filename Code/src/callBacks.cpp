@@ -12,7 +12,7 @@ extern volatile int encValid;
 void onButton_callback()
 {
 	detachInterrupt(digitalPinToInterrupt(PinConfiguration::onButton_pin));
-    OCR3A   = 512;					
+    OCR3A   = 781;					
 	TCCR3B |= (1 << WGM12)|(1<<CS10) | (1<<CS12) ;
 }
 
@@ -20,9 +20,8 @@ void onButton_callback()
 void open_uSw_callback()
 {
 	detachInterrupt(digitalPinToInterrupt(PinConfiguration::open_uSw_pin));	
-	OCR4A  = 512;
+	OCR4A  = 781;
 	TCCR4B |= (1 << WGM12)|(1<<CS10) | (1<<CS12) ;	
-	open_uSwitch->set_Clicked(true);
 }
 
 /* ------------ encoder callback ---------------- */

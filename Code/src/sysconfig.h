@@ -6,6 +6,7 @@
 
 #define AMBO_TOUCH_ANGLE        (float)16.34
 #define COMPLETE_CLOSE_OMEGA    (float)41.46
+#define AMBO_OPEN_OMEGA         (float)25.12
 #define DEGREE_TO_RPM           (float)0.166667
 
 

@@ -34,7 +34,7 @@ ISR(TIMER3_COMPA_vect)        // interrupt service routine that wraps a user def
 		ON_button->set_On_Off();
 		ON_button->set_Clicked(true);		
 	}	
-	OCR3B = 1024*3;		
+	OCR3B = 1562*2;		
 	TIMSK3 |= (1 << OCIE3B);		 
 }
 
@@ -45,7 +45,7 @@ ISR(TIMER3_COMPB_vect)        // interrupt service routine that wraps a user def
 		TCCR3B = 0;			
 		TIMSK3 = 0;
 		OCR3B  = 0;
-		OCR3A  = 512;
+		OCR3A  = 781;
 		TIMSK3= (1 << OCIE3A);  
 		ON_button->enableInterrupt(onButton_callback);			
 	}
@@ -59,7 +59,7 @@ ISR(TIMER4_COMPA_vect)        // interrupt service routine that wraps a user def
 	if(open_uSwitch->get_Status()==BSTATE_LOW){
 		open_uSwitch->set_Clicked(true);
 	}	
-	OCR4B = 1024*3;		
+	OCR4B = 1562*2;		
 	TIMSK4 |= (1 << OCIE4B);		 
 }
 
@@ -71,7 +71,7 @@ ISR(TIMER4_COMPB_vect)        // interrupt service routine that wraps a user def
 		TCCR4B = 0;			
 		TIMSK4 = 0;
 		OCR4B  = 0;
-		OCR4A  = 512;
+		OCR4A  = 781;
 		TIMSK4= (1 << OCIE4A);  	
 		open_uSwitch->enableInterrupt(open_uSw_callback);		
 	}

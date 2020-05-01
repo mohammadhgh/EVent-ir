@@ -12,6 +12,11 @@ Motor *Motor::getInstance()
     return INSTANCE;
 }
 
+Motor::Motor(){
+    for (size_t i = 0; i < RPM_AVG_N; i++)
+        this->RPMs[i]=0;
+}
+
 void Motor::initEnc(int pin, uint8_t ioMode, void (*callback_func)(void), int interruptMode){
     pinMode(pin, ioMode);
     attachInterrupt(digitalPinToInterrupt(pin), callback_func, interruptMode);
@@ -65,8 +70,8 @@ void Motor::setMotorOut()
 
 void Motor::setSpeed(int newSpeed)
 {
-    this->motorSpeed = newSpeed > 100 ? 100 : newSpeed;
-    analogWrite(PinConfiguration::motorControl, getSpeedPWM());
+    this->motorSpeed = newSpeed > 255 ? 255 : newSpeed;
+    analogWrite(PinConfiguration::motorControl, newSpeed);
 }
 
 int Motor::getSpeed()
@@ -110,15 +115,31 @@ void Motor::resetEncPeriod()
     this->encPeriod = 0;
 }
 
-long Motor::getEncRPM()
+float Motor::getEncRPM()
 {
     float RPM = 0;
+    float tempRPM = 0;
     int period = this->getEncPeriod();
-    if(period>0){
-        RPM = (long)period * (long)MOTOR_PULSE_PER_TURN * (float)0.5; 
+    if(period>100){
+        RPM = (float)period * (float)MOTOR_PULSE_PER_TURN * (float)4; 
         RPM = (long)60000000 / RPM;
+        RPMs[rpmIndex]=RPM;
+        for (size_t i = 0; i < RPM_AVG_N; i++)
+        {
+            tempRPM+=this->RPMs[i];
+        }        
+        if (this->rpmIndex<RPM_AVG_N)
+            this->rpmIndex++;
+        else
+            this->rpmIndex = 0;
+        this->oldRPM = tempRPM;               
     }
-    return round(RPM);
+    else
+    {
+        tempRPM=this->oldRPM;
+    }
+          
+    return tempRPM/(float)RPM_AVG_N;
 }
 
 int Motor::getEncAngle()

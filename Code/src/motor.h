@@ -13,26 +13,31 @@
 #define MOTOR_IS_ON             HIGH
 #define MOTOR_IS_OFF            LOW
 
-#define MOTOR_PULSE_PER_TURN    1150
+#define MOTOR_PULSE_PER_TURN    1220
 
 #define MOTOR_ENC_PERIOD_OFF    100000
 
+#define RPM_AVG_N               8
 class Motor
 {
 private:
     static Motor *INSTANCE;
-    int motorSpeed = 80;
+    int motorSpeed = 245;
     int motorStatus = MOTOR_IS_OFF;
     int direction = DIRECTION_OPEN;
 
-    long encLastTime = 0;
-    long encLastCheck = 0;
-    int  encPeriod = 0;
-    int  encLastState = LOW;
-    int  encDebounceTime = 1;
-    int  encPulseCount = 0;
+    long  encLastTime = 0;
+    long  encLastCheck = 0;
+    int   encPeriod = 0;
+    int   encLastState = LOW;
+    int   encDebounceTime = 1;
+    int   encPulseCount = 0;
+    int   rpmIndex=0;
+    float oldRPM=0;
+    float RPMs[RPM_AVG_N];
 public:
     static Motor *getInstance();
+    Motor();
     void initEnc(int pin, uint8_t ioMode, void (*callback_func)(void), int interruptMode);
     int  getStatus();
     void changeDirection();
@@ -49,7 +54,7 @@ public:
     void encCallback();
     int  getEncCount();
     void resetEncPeriod();
-    long getEncRPM();
+    float getEncRPM();
     int  getEncAngle();
     int  getEncPeriod();
 };

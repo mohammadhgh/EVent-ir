@@ -21,19 +21,7 @@ void open_uSw_callback()
 {
 	detachInterrupt(digitalPinToInterrupt(PinConfiguration::open_uSw_pin));	
 	OCR4A  = 781;
-	TCCR4B |= (1 << WGM12)|(1<<CS10) | (1<<CS12) ;
-	if (encFalled==0){
-		TCNT5=0;
-		//TCCR5B |= (1<<CS11) | (1<<CS10);			
-		TCCR5B |= (1<<CS12) | (1<<CS10);			
-		encFalled=1;
-	}
-	else{
-		TCCR5B = 0;
-		encFalled=0;
-		Motor::getInstance()->setEncPeriod(TCNT5);
-		encValid = 1;
-	}		
+	TCCR4B |= (1 << WGM12)|(1<<CS10) | (1<<CS12) ;	
 }
 
 /* ------------ encoder callback ---------------- */

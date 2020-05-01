@@ -137,57 +137,38 @@ void setup()
 	interrupts();
 
 	Motor::getInstance()->setSpeed(4);
-	Motor::getInstance()->setDirection(DIRECTION_CLOSE);
-	//Motor::getInstance()->initEnc(PinConfiguration::motorEncoderPin, INPUT, enc_callback, LOW);
-	//initial_Check();
+	//Motor::getInstance()->setDirection(DIRECTION_CLOSE);
+	Motor::getInstance()->initEnc(PinConfiguration::motorEncoderPin, INPUT, enc_callback, RISING);
+	initial_Check();
 }
 void loop()
 {
-	
-	
 	//LCD::getInstance()->LCD_Menu(respVolume->Potentiometer_Read(), respCycle->Potentiometer_Read(), IERatio->Potentiometer_Read());
-
-	//mot_Driver->update_resp_rate(respCycle->Potentiometer_Read());
-	//mot_Driver->check();
-	/*if(Motor::getInstance()->getDirection()==DIRECTION_CLOSE){
-		Motor::getInstance()->setSpeed(Global_SysConfig->get_Inhale_RPM()+7);	
-	else
-		Motor::getInstance()->setSpeed(Global_SysConfig->get_Exhale_RPM()+7);
-	}*/
-	Motor::getInstance()->setSpeed(respCycle->Potentiometer_Read()-8);
+	mot_Driver->update_resp_rate(respCycle->Potentiometer_Read());
+	mot_Driver->check();
+	
 	if (ON_button->get_Clicked()==true && ON_button->get_On_Off()==BSTATE_ON){
-		//mot_Driver->update_resp_rate(respCycle->Potentiometer_Read());
-        //mot_Driver->init_driver();
-		Motor::getInstance()->resetEncPeriod();				
-		Motor::getInstance()->motorStart();				
+		mot_Driver->update_resp_rate(respCycle->Potentiometer_Read());
+        mot_Driver->init_driver();				
 		ON_button->set_Clicked(false);
 	}
 
 	else if(ON_button->get_Clicked()==true && ON_button->get_On_Off()==BSTATE_OFF){
-		//onMotor_Close();
-		Motor::getInstance()->motorStop();
-		TCCR5B = 0;
-		TCNT5  = 0;
-		encValid = 0;	
+		onMotor_Close();
 		ON_button->set_Clicked(false);
 	}
 
 	/*if(open_uSwitch->get_Clicked()==true){
 		Motor::getInstance()->changeDirection();
-		Motor::getInstance()->resetEncPeriod();	
 		open_uSwitch->set_Clicked(false);
 	}*/
 
-	if(encValid==1){
+	//if(encValid==1){
 		//Serial.println("pwm");
 		//Serial.println(Motor::getInstance()->getSpeed());
-		//Serial.println("resp");
-		//Serial.println(respCycle->Potentiometer_Read()-8);
 		//Serial.println("rpm");
 		//Serial.println(Motor::getInstance()->getEncRPM());
-		Serial.println(Motor::getInstance()->getEncPeriod());
-		encValid = 0;
-	}
-	//delay(500);
+		//encValid = 0;
+	//}
 	wdt_reset();
 }

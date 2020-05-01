@@ -74,7 +74,6 @@ void Motor::setMotorOut()
 void Motor::setSpeed(float newSpeed)
 {
     this->motorSpeed = convertRMPtoPWM(newSpeed);
-    Serial.println(this->motorSpeed);
     analogWrite(PinConfiguration::motorControl, getSpeedPWM());
 }
 

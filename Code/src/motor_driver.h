@@ -16,6 +16,7 @@ private:
     Motor* pMotor;
     SysConfig* local_sysconfig;
     int inhaleExhale;
+    
 public:
     Motor_Driver(Motor* motor);
     void update_sysconfig(SysConfig* newconfig);

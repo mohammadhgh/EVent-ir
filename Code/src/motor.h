@@ -36,6 +36,7 @@ private:
     int  encLastState = LOW;
     int  encDebounceTime = 1;
     int  encPulseCount = 0;
+    float oldRPM=0;
 public:
     static Motor *getInstance();
     void initEnc(int pin, uint8_t ioMode, void (*callback_func)(void), int interruptMode);

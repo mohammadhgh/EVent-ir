@@ -74,6 +74,7 @@ void Motor::setMotorOut()
 void Motor::setSpeed(float newSpeed)
 {
     this->motorSpeed = convertRMPtoPWM(newSpeed);
+    Serial.println(this->motorSpeed);
     analogWrite(PinConfiguration::motorControl, getSpeedPWM());
 }
 
@@ -84,7 +85,6 @@ float Motor::getSpeed()
 int Motor::getSpeedPWM()
 {
     return map(round(this->motorSpeed), 0, 100, 0, 255);
-    wdt_enable(WDTO_500MS);
 }
 void Motor::motorStop()
 {
@@ -126,6 +126,9 @@ float Motor::getEncRPM()
         RPM = (long)period * (long)MOTOR_PULSE_PER_TURN * (float)4; 
         RPM = (float)60000000 / RPM;
     }
+    if (RPM>150)
+        RPM=this->oldRPM;
+    this->oldRPM=RPM;    
     return RPM;
 }
 

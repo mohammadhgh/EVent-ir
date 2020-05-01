@@ -15,6 +15,7 @@
 #include <LCD.h>
 #include <timers.h>
 #include <callBacks.h>
+#include <PID.h>
 #include <string.h>
 #include <Stream.h>
 
@@ -36,6 +37,8 @@ Potentiometer *respVolume;
 Potentiometer *respCycle;
 Potentiometer *IERatio;
 
+PID *pid;
+
 int table_RV[] = {200, 300, 400, 500, 600, 700, 800};
 int table_RC[23];
 int table_IE[] = {1, 2, 3, 4};
@@ -45,8 +48,9 @@ int RC = 0;
 
 volatile int encFalled=0;
 volatile int encValid=0;
-
+int motorSpeed=0;
 unsigned long lastMicros = 0;
+unsigned long lastMilis = 0;
 
 /* ------------- Initial Check ------------*/
 
@@ -105,9 +109,11 @@ void setup()
 	respVolume->set_Range(table_RV, sizeof table_RV);
 	IERatio->set_Range(table_IE, sizeof table_IE);
 
+	pid = new PID((float)-6.9835,(float)-36.4547,(float)-0.033556);
+
 	interrupts();
 
-	Motor::getInstance()->setSpeed(250);
+	Motor::getInstance()->setSpeed(255);
 	//Motor::getInstance()->setDirection(DIRECTION_CLOSE);
 	Motor::getInstance()->initEnc(PinConfiguration::motorEncoderPin, INPUT, enc_callback, RISING);
 	//initial_Check();
@@ -119,9 +125,10 @@ void loop()
 	//if(ON_button->get_On_Off()==BSTATE_ON)
 		//mot_Driver->check();
 	//LCD::getInstance()->LCD_Menu(respVolume->Potentiometer_Read(), respCycle->Potentiometer_Read(), IERatio->Potentiometer_Read());
-	Motor::getInstance()->setSpeed(179-respCycle->Potentiometer_Read());
+	//Motor::getInstance()->setSpeed(179-respCycle->Potentiometer_Read());
 	if (ON_button->get_Clicked()==true && ON_button->get_On_Off()==BSTATE_ON){
 		Motor::getInstance()->resetEncPeriod();
+		//Motor::getInstance()->setSpeed(respCycle->Potentiometer_Read());
 		Motor::getInstance()->motorStart();							
 		ON_button->set_Clicked(false);
 	}
@@ -129,8 +136,11 @@ void loop()
 		Motor::getInstance()->setSpeed(235);	
 		delay(500);
 		Motor::getInstance()->motorStop();
+		Motor::getInstance()->setSpeed(255);
+		pid->resetParams();
 		ON_button->set_Clicked(false);
 	}
+
 	if(open_uSwitch->get_Clicked()==true){
 		TCNT5=0;
 		encFalled = 0;
@@ -139,14 +149,21 @@ void loop()
 		open_uSwitch->set_Clicked(false);
 	}
 
-	if(encValid==1){
+	/*if(encValid==1){
 		Motor::getInstance()->getEncRPM();
-		//Serial.println(Motor::getInstance()->getEncRPM());
 		encValid = 0;
-	}
+	}*/
 	//Serial.println(179-respCycle->Potentiometer_Read());
+	if(Motor::getInstance()->getStatus()==MOTOR_IS_ON){
+		if(millis()-lastMilis>=10){			
+			lastMilis=millis();			
+			motorSpeed=pid->Calc(respCycle->Potentiometer_Read(), Motor::getInstance()->getEncRPM());
+			Motor::getInstance()->setSpeed(motorSpeed);
+			//Serial.println(motorSpeed);
+			//Serial.println(Motor::getInstance()->getEncRPM());
+			//Serial.println(respCycle->Potentiometer_Read());
+		}
+	}
 	
-	Serial.println(micros()-lastMicros);
-	lastMicros = micros();
 	wdt_reset();
 }

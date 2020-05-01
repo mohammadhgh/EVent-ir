@@ -123,7 +123,7 @@ float Motor::getEncRPM()
     if(period>100){
         RPM = (float)period * (float)MOTOR_PULSE_PER_TURN * (float)4; 
         RPM = (long)60000000 / RPM;
-        RPMs[rpmIndex]=RPM;
+        /*RPMs[rpmIndex]=RPM;
         for (size_t i = 0; i < RPM_AVG_N; i++)
         {
             tempRPM+=this->RPMs[i];
@@ -132,14 +132,17 @@ float Motor::getEncRPM()
             this->rpmIndex++;
         else
             this->rpmIndex = 0;
-        this->oldRPM = tempRPM;               
+        this->oldRPM = tempRPM;*/ 
+        oldRPM = RPM;              
     }
     else
     {
-        tempRPM=this->oldRPM;
+        RPM=oldRPM;
+        //tempRPM=this->oldRPM;
     }
           
-    return tempRPM/(float)RPM_AVG_N;
+    //return tempRPM/(float)RPM_AVG_N;
+    return RPM;
 }
 
 int Motor::getEncAngle()

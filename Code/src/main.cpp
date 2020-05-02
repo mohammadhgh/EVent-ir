@@ -109,8 +109,8 @@ void setup()
 	respVolume->set_Range(table_RV, sizeof table_RV);
 	IERatio->set_Range(table_IE, sizeof table_IE);
 
-	pid = new PID((float)-6.9835,(float)-36.4547,(float)-0.033556);
-
+	pid = new PID((float)18,(float)3.32*2,(float)0);
+	pid->setOutputRange(0,255);
 	interrupts();
 
 	Motor::getInstance()->setSpeed(255);
@@ -155,12 +155,13 @@ void loop()
 	}*/
 	//Serial.println(179-respCycle->Potentiometer_Read());
 	if(Motor::getInstance()->getStatus()==MOTOR_IS_ON){
-		if(millis()-lastMilis>=10){			
+		if(millis()-lastMilis>=200){			
 			lastMilis=millis();			
 			motorSpeed=pid->Calc(respCycle->Potentiometer_Read(), Motor::getInstance()->getEncRPM());
 			Motor::getInstance()->setSpeed(motorSpeed);
 			//Serial.println(motorSpeed);
 			//Serial.println(Motor::getInstance()->getEncRPM());
+			//Serial.println("speed");
 			//Serial.println(respCycle->Potentiometer_Read());
 		}
 	}

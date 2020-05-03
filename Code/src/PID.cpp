@@ -12,19 +12,24 @@ int PID::Calc(float desired, float pv){
     //Serial.println("error");
     //Serial.println(error);
     
-    integral = (error+integral)*(float)0.2;
+    integral = (error+integral)*(float)0.3;
     
-    derivative = (error - errorPre)/(float)0.2;
+    derivative = (error - errorPre)/(float)0.3;
     
     float pwm = KP*error + KI*integral + KD*derivative;
+
+    
     //Serial.println("unlimited");
     //Serial.println(pwm);
-    sprintf(tbp,"%ld\t%ld\t%ld",round(desired*100), round(pv*100), round(pwm*100));
-    Serial.println(tbp);
-    errorPre = error;
 
-    pwm = limitOutput(pwm);
+    errorPre = error;
+    float pwm1=pwm;
+
     pwm = 255 - pwm;
+    pwm = limitOutput(pwm);
+    
+    sprintf(tbp,"%ld\t%ld\t%ld\t%ld",round(desired*100), round(pv*100), round(pwm1*100), round(pwm*100));
+    Serial.println(tbp);
     //Serial.println("final");
     //Serial.println(pwm);
     return round(pwm); 

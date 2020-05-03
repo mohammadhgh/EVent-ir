@@ -52,6 +52,7 @@ int motorSpeed=0;
 unsigned long lastMicros = 0;
 unsigned long lastMilis = 0;
 
+char tbp1[16]="";
 /* ------------- Initial Check ------------*/
 
 void static initial_Check()
@@ -109,7 +110,7 @@ void setup()
 	respVolume->set_Range(table_RV, sizeof table_RV);
 	IERatio->set_Range(table_IE, sizeof table_IE);
 
-	pid = new PID((float)18,(float)3.32*2,(float)0);
+	pid = new PID((float)0.8,(float)2.8,(float)0);
 	pid->setOutputRange(0,255);
 	interrupts();
 
@@ -155,14 +156,19 @@ void loop()
 	}*/
 	//Serial.println(179-respCycle->Potentiometer_Read());
 	if(Motor::getInstance()->getStatus()==MOTOR_IS_ON){
-		if(millis()-lastMilis>=200){			
+		if(millis()-lastMilis>=300){			
 			lastMilis=millis();			
-			motorSpeed=pid->Calc(respCycle->Potentiometer_Read(), Motor::getInstance()->getEncRPM());
+			motorSpeed=pid->Calc(20, Motor::getInstance()->getEncRPM());
+			//motorSpeed=pid->Calc(respCycle->Potentiometer_Read(), Motor::getInstance()->getEncRPM());
 			Motor::getInstance()->setSpeed(motorSpeed);
+			//Motor::getInstance()->setSpeed(motorSpeed);
 			//Serial.println(motorSpeed);
 			//Serial.println(Motor::getInstance()->getEncRPM());
 			//Serial.println("speed");
 			//Serial.println(respCycle->Potentiometer_Read());
+			//delay(5);
+			//sprintf(tbp1,"%ld",round(Motor::getInstance()->getEncRPM()*100));			
+			//Serial.println(tbp1);
 		}
 	}
 	

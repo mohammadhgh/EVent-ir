@@ -1,7 +1,7 @@
 
 #include <PID.h>
-char tbp[20]="";
-PID::PID(float KI, float KP, float KD){
+
+PID::PID(float KP, float KI, float KD){
     this->KP=KP;
     this->KI=KI;
     this->KD=KD;
@@ -9,30 +9,35 @@ PID::PID(float KI, float KP, float KD){
 
 int PID::Calc(float desired, float pv){
     error = desired - pv;
-    //Serial.println("error");
-    //Serial.println(error);
-    
-    integral = (error+integral)*(float)0.3;
-    
-    derivative = (error - errorPre)/(float)0.3;
-    
-    float pwm = KP*error + KI*integral + KD*derivative;
 
-    
-    //Serial.println("unlimited");
-    //Serial.println(pwm);
+    integral = abs(error) < 20 ? integral + error*timeStep : integral;
+
+    derivative = (error - errorPre)/timeStep;
 
     errorPre = error;
-    float pwm1=pwm;
-
-    pwm = 255 - pwm;
-    pwm = limitOutput(pwm);
     
-    sprintf(tbp,"%ld\t%ld\t%ld\t%ld",round(desired*100), round(pv*100), round(pwm1*100), round(pwm*100));
-    Serial.println(tbp);
-    //Serial.println("final");
-    //Serial.println(pwm);
+    float pwm = 255 - (KP*error + KI*integral + KD*derivative);
+    realPidVal = pwm ; 
+
+    pwm = limitOutput(pwm);
+
     return round(pwm); 
+}
+
+void PID::setTimeStep(float timeStep){
+    this->timeStep=timeStep;
+}
+
+float PID::getTimeStep(){
+    return this->timeStep;
+}
+
+float PID::getError(){
+    return this->error;
+}
+
+float PID::getPidRealVal(){
+    return this->realPidVal;
 }
 
 void PID::setOutputRange(int min, int max)
@@ -54,5 +59,4 @@ void PID::resetParams(){
     this->errorPre=0;
     this->integral=0;
     this->derivative=0;
-    this->lastIntegral=0;
 }

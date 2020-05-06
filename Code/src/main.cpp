@@ -16,8 +16,10 @@
 #include <timers.h>
 #include <callBacks.h>
 #include <PID.h>
+#include <trajectory.h>
 #include <string.h>
 #include <Stream.h>
+#include <math.h>
 
 long testTimer = 0;
 
@@ -39,6 +41,8 @@ Potentiometer *IERatio;
 
 PID *pid;
 
+Trajectory *trajectory;
+
 int table_RV[] = {200, 300, 400, 500, 600, 700, 800};
 int table_RC[23];
 int table_IE[] = {1, 2, 3, 4};
@@ -47,13 +51,17 @@ int RV = 0;
 int RC = 0;
 
 volatile int encFalled=0;
-volatile int encValid=0;
+
 int motorSpeed=0;
-unsigned long lastMicros = 0;
 unsigned long lastMilis = 0;
 
 char tbp[30]="";
 int printCounter=0;
+int j=0;
+
+float x[50];
+float RPM[50];
+
 /* ------------- Initial Check ------------*/
 
 void static initial_Check()
@@ -115,6 +123,9 @@ void setup()
 	pid->setTimeStep(5e-3);
 	pid->setOutputRange(0,255);
 
+	trajectory = new Trajectory(20, 0.055, 0, 0, 0.0167);
+	trajectory->calcTrajec();
+
 	interrupts();
 
 	Motor::getInstance()->setSpeed(255);
@@ -147,28 +158,23 @@ void loop()
 
 	if(open_uSwitch->get_Clicked()==true){
 		TCNT5 = 0;
-		encFalled = 0;
-		encValid = 0;		
+		encFalled = 0;	
 		Motor::getInstance()->changeDirection();
 		pid->resetParams();
 		open_uSwitch->set_Clicked(false);
 	}
-
-	/*if(encValid==1){
-		Motor::getInstance()->getEncRPM();
-		encValid = 0;
-	}*/
 	
 	if(Motor::getInstance()->getStatus()==MOTOR_IS_ON){
-		if(millis()-lastMilis>=(pid->getTimeStep())*1e3){								
-			motorSpeed=pid->Calc(respCycle->Potentiometer_Read(), Motor::getInstance()->getEncRPM());
+		if(millis()-lastMilis>=(pid->getTimeStep())*1e3){		
+			motorSpeed=pid->Calc(trajectory->getRPM((int)(j/4))+1), Motor::getInstance()->getEncRPM());											
 			Motor::getInstance()->setSpeed(motorSpeed);
 			lastMilis=millis();
 			sprintf(tbp,"%d\t%ld\t", respCycle->Potentiometer_Read(), round(Motor::getInstance()->getEncRPM()*100)/100);		
 			Serial.print(tbp);
 			//Serial.print(pid->getError());
 			//Serial.print("\t");							
-			Serial.println(pid->getPidRealVal());							
+			Serial.println(pid->getPidRealVal());
+			j++;							
 		}
 		//if(printCounter==10e3){	
 

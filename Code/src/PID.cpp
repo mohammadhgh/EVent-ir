@@ -10,7 +10,7 @@ PID::PID(float KP, float KI, float KD){
 int PID::Calc(float desired, float pv){
     error = desired - pv;
 
-    integral = abs(error) < 20 ? integral + error*timeStep : integral;
+    integral += error*timeStep;
 
     derivative = (error - errorPre)/timeStep;
 

@@ -111,7 +111,7 @@ void setup()
 	respVolume->set_Range(table_RV, sizeof table_RV);
 	IERatio->set_Range(table_IE, sizeof table_IE);
 
-	pid = new PID((float)2.8,(float)64,(float)0.048);
+	pid = new PID((float)3,(float)48,(float)0.025);
 	pid->setTimeStep(5e-3);
 	pid->setOutputRange(0,255);
 

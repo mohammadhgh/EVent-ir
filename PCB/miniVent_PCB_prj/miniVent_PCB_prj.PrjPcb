@@ -1364,7 +1364,7 @@ GenerateClassCluster=0
 DocumentUniqueId=WRRJVYTS
 
 [Document79]
-DocumentPath=miniVent_PCB_prj.SCHLIB
+DocumentPath=..\Altium_Libs\Conn_TE_640454-4\parts\Conn_TE_640454-4_eec.SchLib
 AnnotationEnabled=1
 AnnotateStartValue=1
 AnnotationIndexControlEnabled=0
@@ -1378,7 +1378,24 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=PUVCBZAQ
+DocumentUniqueId=
+
+[Document80]
+DocumentPath=..\Altium_Libs\Conn_TE_640454-4\parts\Conn_TE_640454-4_eec_0.PcbLib
+AnnotationEnabled=1
+AnnotateStartValue=1
+AnnotationIndexControlEnabled=0
+AnnotateSuffix=
+AnnotateScope=All
+AnnotateOrder=-1
+DoLibraryUpdate=1
+DoDatabaseUpdate=1
+ClassGenCCAutoEnabled=1
+ClassGenCCAutoRoomEnabled=1
+ClassGenNCAutoScope=None
+DItemRevisionGUID=
+GenerateClassCluster=0
+DocumentUniqueId=
 
 [Configuration1]
 Name=Sources

@@ -91,7 +91,7 @@ void setup()
 	
 	Serial.begin(9600);
 
-	//Global_SysConfig = new SysConfig(2, 0, 0);
+	Global_SysConfig = new SysConfig(2, 20, 0);
 	PinConfiguration::getInstance()->pinConfiguration();
 
 
@@ -123,7 +123,7 @@ void setup()
 	pid->setTimeStep(5e-3);
 	pid->setOutputRange(0,255);
 
-	trajectory = new Trajectory(20, 0.055, 0, 0, 0.0167);
+	trajectory = new Trajectory(20, 20, 0, 0, 1);
 	trajectory->calcTrajec();
 
 	interrupts();
@@ -145,6 +145,7 @@ void loop()
 		//Motor::getInstance()->setSpeed(respCycle->Potentiometer_Read());
 		Motor::getInstance()->motorStart();							
 		ON_button->set_Clicked(false);
+		Global_SysConfig->set_Start_Time();
 	}
 	else if(ON_button->get_Clicked()==true && ON_button->get_On_Off()==BSTATE_OFF){
 		Motor::getInstance()->setSpeed(235);	
@@ -153,7 +154,7 @@ void loop()
 		delay(500);
 		Motor::getInstance()->resetEncPeriod();
 		pid->resetParams();	
-		ON_button->set_Clicked(false);
+		ON_button->set_Clicked(false);	
 	}
 
 	if(open_uSwitch->get_Clicked()==true){
@@ -166,16 +167,24 @@ void loop()
 	
 	if(Motor::getInstance()->getStatus()==MOTOR_IS_ON){
 		if(millis()-lastMilis>=(pid->getTimeStep())*1e3){		
-			motorSpeed=pid->Calc(trajectory->getRPM((int)(j/4))+1), Motor::getInstance()->getEncRPM());											
+			motorSpeed=pid->Calc(trajectory->getRPM((int)(j/4)+1), Motor::getInstance()->getEncRPM());											
 			Motor::getInstance()->setSpeed(motorSpeed);
-			lastMilis=millis();
-			sprintf(tbp,"%d\t%ld\t", respCycle->Potentiometer_Read(), round(Motor::getInstance()->getEncRPM()*100)/100);		
-			Serial.print(tbp);
+
+			//Serial.println(millis());
+			Serial.println(trajectory->getRPM((int)(j/4)+1));
+			//sprintf(tbp,"%d\t%ld\t", respCycle->Potentiometer_Read(), round(Motor::getInstance()->getEncRPM()*100)/100);		
+			//Serial.print(tbp);
 			//Serial.print(pid->getError());
 			//Serial.print("\t");							
-			Serial.println(pid->getPidRealVal());
-			j++;							
+			//Serial.println(pid->getPidRealVal());
+			j++;
+			if (j>79)
+				j=0;							
 		}
+		if(millis()-Global_SysConfig->get_Start_Time()>=1000){
+			Motor::getInstance()->motorStop();
+			j=0;
+		}	
 		//if(printCounter==10e3){	
 
 			//printCounter=0;			

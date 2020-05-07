@@ -35,6 +35,7 @@ void Trajectory::calcTrajec(){
 void Trajectory::calcRPM(){
     for(int i=0; i<resolution;i++){
         RPM[i]=(x[i+1]-x[i])/timeStep;
+        //Serial.println(RPM[i]);
     } 
 }
 

@@ -50,14 +50,15 @@ int table_IE[] = {1, 2, 3, 4};
 int RV = 0;
 int RC = 0;
 
-volatile int encFalled=0;
+volatile int encFalled = 0;
 
-int motorSpeed=0;
+int motorSpeed = 0;
 unsigned long lastMilis = 0;
 
-char tbp[30]="";
-int printCounter=0;
-int j=0;
+char tbp[30] = "";
+int printCounter = 0;
+int j = 0;
+const int loopParam = 4;
 
 float x[50];
 float RPM[50];
@@ -71,7 +72,7 @@ void static initial_Check()
 		Serial.println("Initial Setup");
 		Motor::getInstance()->setDirection(DIRECTION_OPEN);
 		Motor::getInstance()->motorStart();
-		while (open_uSwitch->get_Clicked()==false)
+		while (open_uSwitch->get_Clicked() == false)
 			delay(1);
 		open_uSwitch->set_Clicked(false);
 		Motor::getInstance()->motorStop();
@@ -80,20 +81,20 @@ void static initial_Check()
 
 void setup()
 {
-	noInterrupts(); 
+	noInterrupts();
 
 	for (size_t i = 8; i <= 30; i++)
-		table_RC[i - 8] = i;		
+		table_RC[i - 8] = i;
 
 	Init_Timer3();
 	Init_Timer4();
 	Init_Timer5();
-	
+	TCCR1B = (TCCR1B & 0b11111000) | 0x02;
+
 	Serial.begin(9600);
 
 	Global_SysConfig = new SysConfig(2, 20, 0);
 	PinConfiguration::getInstance()->pinConfiguration();
-
 
 	coolBuzz = new Buzzer(PinConfiguration::buzzerPin);
 
@@ -119,11 +120,12 @@ void setup()
 	respVolume->set_Range(table_RV, sizeof table_RV);
 	IERatio->set_Range(table_IE, sizeof table_IE);
 
-	pid = new PID((float)3,(float)48,(float)0.025);
-	pid->setTimeStep(5e-3);
-	pid->setOutputRange(0,255);
+	pid = new PID((float)3, (float)48, (float)0.025);
+	pid->setTimeStep(8e-3);
+	pid->setOutputRange(0, 255);
 
-	trajectory = new Trajectory(20, 20, 0, 0, 1);
+	float duration = 2;
+	trajectory = new Trajectory(duration / (loopParam * pid->getTimeStep()), 360, 0, 0, duration);
 	trajectory->calcTrajec();
 
 	interrupts();
@@ -135,62 +137,77 @@ void setup()
 }
 void loop()
 {
-	
+
 	//mot_Driver->update_resp_rate(Global_SysConfig);
 	//if(ON_button->get_On_Off()==BSTATE_ON)
-		//mot_Driver->check();
+	//mot_Driver->check();
 	//LCD::getInstance()->LCD_Menu(respVolume->Potentiometer_Read(), respCycle->Potentiometer_Read(), IERatio->Potentiometer_Read());
-	if (ON_button->get_Clicked()==true && ON_button->get_On_Off()==BSTATE_ON){
+	if (ON_button->get_Clicked() == true && ON_button->get_On_Off() == BSTATE_ON)
+	{
 		Motor::getInstance()->resetEncPeriod();
-		//Motor::getInstance()->setSpeed(respCycle->Potentiometer_Read());
-		Motor::getInstance()->motorStart();							
+		Motor::getInstance()->resetPC();
+		//Motor::getInstance()->setSpeed(200);
+		Motor::getInstance()->motorStart();
 		ON_button->set_Clicked(false);
 		Global_SysConfig->set_Start_Time();
 	}
-	else if(ON_button->get_Clicked()==true && ON_button->get_On_Off()==BSTATE_OFF){
-		Motor::getInstance()->setSpeed(235);	
-		delay(500);
+	else if (ON_button->get_Clicked() == true && ON_button->get_On_Off() == BSTATE_OFF)
+	{
 		Motor::getInstance()->motorStop();
-		delay(500);
 		Motor::getInstance()->resetEncPeriod();
+		Motor::getInstance()->resetPC();
 		pid->resetParams();	
-		ON_button->set_Clicked(false);	
+		ON_button->set_Clicked(false);
 	}
 
-	if(open_uSwitch->get_Clicked()==true){
+	if (open_uSwitch->get_Clicked() == true)
+	{
 		TCNT5 = 0;
-		encFalled = 0;	
+		encFalled = 0;
 		Motor::getInstance()->changeDirection();
 		pid->resetParams();
 		open_uSwitch->set_Clicked(false);
 	}
-	
-	if(Motor::getInstance()->getStatus()==MOTOR_IS_ON){
-		if(millis()-lastMilis>=(pid->getTimeStep())*1e3){		
-			motorSpeed=pid->Calc(trajectory->getRPM((int)(j/4)+1), Motor::getInstance()->getEncRPM());											
-			Motor::getInstance()->setSpeed(motorSpeed);
 
-			//Serial.println(millis());
-			Serial.println(trajectory->getRPM((int)(j/4)+1));
-			//sprintf(tbp,"%d\t%ld\t", respCycle->Potentiometer_Read(), round(Motor::getInstance()->getEncRPM()*100)/100);		
-			//Serial.print(tbp);
-			//Serial.print(pid->getError());
-			//Serial.print("\t");							
-			//Serial.println(pid->getPidRealVal());
-			j++;
-			if (j>79)
-				j=0;							
+	if (Motor::getInstance()->getStatus() == MOTOR_IS_ON)
+	{
+		while (j < loopParam * trajectory->getResolution())
+		{
+
+			if (millis() - lastMilis >= (pid->getTimeStep()) * 1e3)
+			{
+				motorSpeed = pid->Calc(trajectory->getRPM((int)(j / loopParam)), Motor::getInstance()->getEncRPM());
+				Motor::getInstance()->setSpeed(motorSpeed);
+				Serial.print(j);
+				Serial.print("\t");
+				Serial.print(trajectory->getRPM((int)(j / loopParam)));
+				Serial.print("\t");
+				Serial.println(Motor::getInstance()->getSpeed());
+				//sprintf(tbp,"%d\t%ld\t", respCycle->Potentiometer_Read(), round(Motor::getInstance()->getEncRPM()*100)/100);
+				//Serial.print(tbp);
+				//Serial.print(pid->getError());
+				//Serial.print("\t");
+				//Serial.println(pid->getPidRealVal());
+				j++;
+			}
 		}
-		if(millis()-Global_SysConfig->get_Start_Time()>=1000){
-			Motor::getInstance()->motorStop();
-			j=0;
-		}	
-		//if(printCounter==10e3){	
+		j = 0;
+		Serial.println(Motor::getInstance()->getPC());
+		Motor::getInstance()->motorStop();
+		Motor::getInstance()->resetEncPeriod();		
+		pid->resetParams();
+		ON_button->set_On_Off();
+		
+		// if(millis()-Global_SysConfig->get_Start_Time()>=800){
+		// 	Motor::getInstance()->motorStop();
+		// 	j=0;
+		// }
+		//if(printCounter==10e3){
 
-			//printCounter=0;			
+		//printCounter=0;
 		//}
 		//printCounter++;
 	}
-	
+
 	wdt_reset();
 }

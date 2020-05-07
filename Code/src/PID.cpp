@@ -16,8 +16,10 @@ int PID::Calc(float desired, float pv){
 
     errorPre = error;
     
-    float pwm = 255 - (KP*error + KI*integral + KD*derivative);
+    float pwm = 255 - (KP*error + KI*integral + KD*derivative);  
     realPidVal = pwm ; 
+
+
 
     pwm = limitOutput(pwm);
 

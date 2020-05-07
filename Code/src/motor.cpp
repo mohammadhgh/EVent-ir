@@ -24,6 +24,15 @@ void Motor::initEnc(int pin, uint8_t ioMode, void (*callback_func)(void), int in
 
 void Motor::setEncPeriod(int encPeriod){
     this->encPeriod = encPeriod;
+    this->incrementPC();
+}
+
+void Motor::incrementPC(){
+    this->PC+=2;;
+}
+
+void Motor::resetPC(){
+    this->PC=0;
 }
 
 int Motor::getStatus()
@@ -143,6 +152,10 @@ float Motor::getEncRPM()
           
     //return tempRPM/(float)RPM_AVG_N;
     return RPM;
+}
+
+int Motor::getPC(){
+    return this->PC;
 }
 
 int Motor::getEncAngle()

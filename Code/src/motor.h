@@ -33,6 +33,7 @@ private:
     int   encDebounceTime = 1;
     int   encPulseCount = 0;
     int   rpmIndex=0;
+    int   PC=0; //Pulse Counter
     float oldRPM=0;
     float RPMs[RPM_AVG_N];
 public:
@@ -46,6 +47,8 @@ public:
     void setMotorOut();
     void setSpeed(int a);
     void setEncPeriod(int encPeriod);
+    void incrementPC();
+    void resetPC();
     int  getSpeed();
     int  getSpeedPWM();
     void motorStop();
@@ -57,6 +60,7 @@ public:
     float getEncRPM();
     int  getEncAngle();
     int  getEncPeriod();
+    int  getPC();
 };
 
 #endif

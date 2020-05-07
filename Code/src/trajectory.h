@@ -4,7 +4,6 @@
 #include <math.h>
 #include <Arduino.h>
 
-
 class Trajectory
 {
 private:
@@ -25,13 +24,12 @@ private:
     float *RPM;
 
 public:
-    Trajectory(int resolution,float deltaDegree,float easeInFactor,float easeOutFactor, float endTime);
-    void  updateRatios();
-    void  calcTrajec();
-    void  calcRPM();
+    Trajectory(int resolution, float deltaDegree, float easeInFactor, float easeOutFactor, float endTime);
+    void updateRatios();
+    void calcTrajec();
+    void calcRPM();
     float getRPM(int index);
-
+    int getResolution();
 };
 
 #endif
-

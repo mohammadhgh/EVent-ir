@@ -41,6 +41,15 @@ unsigned long SysConfig::get_Start_Time()
     return this->Start_Time;
 }
 
+void SysConfig::set_loopParams(float duration, int  loopParam, float  timeStep)
+{
+    this->duration  = duration ;
+    this->loopParam = loopParam; 
+    this->timeStep  = timeStep ;
+    resolution = round(duration / (loopParam * timeStep));
+    calcedRPM = new float[loopParam*resolution]; 
+}
+
 void SysConfig::set_IE_Ratio(int IE_Ratio)
 {
     this->IE_Ratio = IE_Ratio;

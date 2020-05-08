@@ -122,12 +122,13 @@ int Motor::getEncCount()
 void Motor::resetEncPeriod()
 {
     this->encPeriod = 0;
+    this->oldRPM = 0;
 }
 
 float Motor::getEncRPM()
 {
     float RPM = 0;
-    float tempRPM = 0;
+    //float tempRPM = 0;
     int period = this->getEncPeriod();
     if(period>100){
         RPM = (float)period * (float)MOTOR_PULSE_PER_TURN * (float)4; 

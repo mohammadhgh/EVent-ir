@@ -7,7 +7,7 @@ Trajectory::Trajectory(int resolution, float deltaDegree, float easeInFactor, fl
     this->easeInFactor = easeInFactor;
     this->easeOutFactor = easeOutFactor;
     this->endTime = endTime;
-    this->x = new float[resolution + 1];
+    this->x   = new float[resolution + 1];
     this->RPM = new float[resolution + 1];
     updateRatios();
 }
@@ -39,7 +39,6 @@ void Trajectory::calcRPM()
     for (int i = 0; i < resolution; i++)
     {
         RPM[i] = (x[i + 1] - x[i]) / (timeStep * 60);
-        //Serial.println(RPM[i]);
     }
 }
 

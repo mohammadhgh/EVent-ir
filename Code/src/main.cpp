@@ -81,7 +81,6 @@ static void onMotorStart()
 	Motor::getInstance()->motorStart();
 	OCR4A  = round(15625*pid->getTimeStep())-1;
 	TCCR4B |= (1 << WGM12)|(1<<CS10) | (1<<CS12) ;	
-	Global_SysConfig->set_Start_Time();
 }
 
 static void onMotorStop()
@@ -92,6 +91,12 @@ static void onMotorStop()
 	pid->resetParams();
 	TCCR4B = 0;
 	TCNT4 = 0;		
+}
+
+static void onChangeDirection(){
+	Motor::getInstance()->resetEncPeriod();
+	Motor::getInstance()->resetPC();
+	pid->resetParams();	
 }
 
 void setup()
@@ -109,7 +114,7 @@ void setup()
 	Serial.begin(9600);
 
 	Global_SysConfig = new SysConfig(2, 20, 0);
-	Global_SysConfig ->set_loopParams(0.5, 4, 5e-3);
+	Global_SysConfig ->set_loopParams(0.65, 4, 5e-3);
 	
 	PinConfiguration::getInstance()->pinConfiguration();
 
@@ -138,7 +143,7 @@ void setup()
 	IERatio->set_Range(table_IE, sizeof table_IE);
 
 	pid = new PID((float)3, (float)48, (float)0.025);
-	pid->setTimeStep(5e-3);
+	pid->setTimeStep(Global_SysConfig->timeStep);
 	pid->setOutputRange(0, 255);
 
 	trajectory = new Trajectory(Global_SysConfig->resolution, 360, 0, 0, Global_SysConfig->duration);
@@ -188,6 +193,7 @@ void loop()
 		}
 
 		if (j == Global_SysConfig->loopParam * trajectory->getResolution()){
+			/*float motorDeltaAngle = (float)Motor::getInstance()->getPC()*(float)360/float(1220);
 			onMotorStop();
 			ON_button->set_On_Off();						
 			for (int i = 0; i < j; i++)
@@ -196,8 +202,11 @@ void loop()
 				Serial.print("\t");
 				Serial.print(Global_SysConfig->calcedRPM[i]);
 				Serial.print("\t");
-				Serial.println(trajectory->getRPM((int)(i / Global_SysConfig->loopParam)));			
-			}		
+				Serial.println(trajectory->getRPM((int)(i / Global_SysConfig->loopParam)));					
+			}
+			Serial.println(motorDeltaAngle);*/			
+			Motor::getInstance()->changeDirection();
+			onChangeDirection();
 			j = 0;
 		}
 	}

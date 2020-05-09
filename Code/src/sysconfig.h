@@ -17,7 +17,7 @@ private:
 public:
     float duration  = 1;
     int   loopParam = 4;
-    int   timeStep  = 5e-3; 
+    float timeStep  = 5e-3; 
     int   resolution = 0; 
     float *calcedRPM;
     SysConfig(int IE_Ratio, int Resp_Rate, int Tidal_Volume);

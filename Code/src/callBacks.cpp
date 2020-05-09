@@ -6,7 +6,6 @@
 extern Button *ON_button;
 extern Button *open_uSwitch;
 extern volatile int encFalled;
-extern volatile int encValid;
 
 /* -------------- on button callback ----------------- */
 void onButton_callback()
@@ -35,6 +34,5 @@ void enc_callback(){
 		TCCR5B = 0;
 		encFalled=0;
 		Motor::getInstance()->setEncPeriod(TCNT5);
-		encValid = 1;
 	}
 }

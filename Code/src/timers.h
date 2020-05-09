@@ -4,6 +4,7 @@
 #include <Arduino.h>
 #include <avr/wdt.h>
 
+    void Init_Timer1();
     void Init_Timer3();
     void Init_Timer4();
     void Init_Timer5();

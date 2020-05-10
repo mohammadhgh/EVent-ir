@@ -20,6 +20,7 @@ public:
     float timeStep  = 5e-3; 
     int   resolution = 0; 
     float *calcedRPM;
+
     SysConfig(int IE_Ratio, int Resp_Rate, int Tidal_Volume);
     int get_IE_Ratio();
     int get_Resp_Rate();

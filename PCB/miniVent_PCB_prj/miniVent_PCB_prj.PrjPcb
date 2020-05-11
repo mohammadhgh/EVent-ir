@@ -667,23 +667,6 @@ GenerateClassCluster=0
 DocumentUniqueId=
 
 [Document38]
-DocumentPath=ESP32.SchDoc
-AnnotationEnabled=1
-AnnotateStartValue=1
-AnnotationIndexControlEnabled=0
-AnnotateSuffix=
-AnnotateScope=All
-AnnotateOrder=7
-DoLibraryUpdate=1
-DoDatabaseUpdate=1
-ClassGenCCAutoEnabled=1
-ClassGenCCAutoRoomEnabled=0
-ClassGenNCAutoScope=None
-DItemRevisionGUID=
-GenerateClassCluster=0
-DocumentUniqueId=GPMETPYV
-
-[Document39]
 DocumentPath=..\Altium_Libs\Conn_JST Sales America Inc._B2B-PH-K-S(LF)(SN)\parts\Conn_JST_Sales_America_Inc._B2B-PH-K-S_LF_SN_eec.SchLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -700,7 +683,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=GMAFGGYV
 
-[Document40]
+[Document39]
 DocumentPath=..\Altium_Libs\Conn_JST Sales America Inc._B2B-PH-K-S(LF)(SN)\parts\Conn_JST_Sales_America_Inc._B2B-PH-K-S_LF_SN_eec_0.PcbLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -717,7 +700,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
 
-[Document41]
+[Document40]
 DocumentPath=..\Altium_Libs\Conn_JST_B3B-PH-K-S(LF)(SN)\parts\Conn_JST_B3B-PH-K-S_LF_SN_eec.SchLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -734,7 +717,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=PPPDYLVX
 
-[Document42]
+[Document41]
 DocumentPath=..\Altium_Libs\Conn_JST_B3B-PH-K-S(LF)(SN)\parts\Conn_JST_B3B-PH-K-S_LF_SN_eec_0.PcbLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -751,7 +734,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
 
-[Document43]
+[Document42]
 DocumentPath=..\Altium_Libs\Conn_Samtec Inc._TSS-110-01-G-D\parts\Conn_Samtec_Inc._TSS-110-01-G-D_eec.SchLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -768,7 +751,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=DODTOYFV
 
-[Document44]
+[Document43]
 DocumentPath=..\Altium_Libs\Conn_Samtec Inc._TSS-110-01-G-D\parts\Conn_Samtec_Inc._TSS-110-01-G-D_eec_0.PcbLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -785,7 +768,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
 
-[Document45]
+[Document44]
 DocumentPath=..\Altium_Libs\Trans_ON Semiconductor_FDN360P\parts\Trans_ON_Semiconductor_FDN360P_eec.SchLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -802,7 +785,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=KKYPRDYD
 
-[Document46]
+[Document45]
 DocumentPath=..\Altium_Libs\Trans_ON Semiconductor_FDN360P\parts\Trans_ON_Semiconductor_FDN360P_eec_IPC_A.PcbLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -819,7 +802,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
 
-[Document47]
+[Document46]
 DocumentPath=..\Altium_Libs\Trans_ON Semiconductor_FDN360P\parts\Trans_ON_Semiconductor_FDN360P_eec_IPC_B.PcbLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -836,7 +819,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
 
-[Document48]
+[Document47]
 DocumentPath=..\Altium_Libs\Trans_ON Semiconductor_FDN360P\parts\Trans_ON_Semiconductor_FDN360P_eec_IPC_C.PcbLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -853,7 +836,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
 
-[Document49]
+[Document48]
 DocumentPath=..\Altium_Libs\Speak_Kingstate_KXG1205C\parts\Speak_Kingstate_KXG1205C_eec.SchLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -870,7 +853,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=MUYEBSRS
 
-[Document50]
+[Document49]
 DocumentPath=..\Altium_Libs\Speak_Kingstate_KXG1205C\parts\Speak_Kingstate_KXG1205C_eec_MFG.PcbLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -887,7 +870,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
 
-[Document51]
+[Document50]
 DocumentPath=..\Altium_Libs\Conn_Phoenix Contact_1803439\parts\Conn_Phoenix_Contact_1803439_eec.SchLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -904,7 +887,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=TQBFSQTD
 
-[Document52]
+[Document51]
 DocumentPath=..\Altium_Libs\Conn_Phoenix Contact_1803439\parts\Conn_Phoenix_Contact_1803439_eec_0.PcbLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -921,7 +904,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
 
-[Document53]
+[Document52]
 DocumentPath=..\Altium_Libs\Conn_Phoenix Contact_1843606\parts\Conn_Phoenix_Contact_1803439_eec.SchLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -938,7 +921,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=ESBURQUV
 
-[Document54]
+[Document53]
 DocumentPath=..\Altium_Libs\Conn_Phoenix Contact_1843606\parts\Conn_Phoenix_Contact_1803439_eec_0.PcbLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -955,7 +938,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
 
-[Document55]
+[Document54]
 DocumentPath=..\Altium_Libs\Conn_Phoenix Contact_1843606\parts\Conn_Phoenix_Contact_1843606_eec.SchLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -972,7 +955,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=MROOPQSO
 
-[Document56]
+[Document55]
 DocumentPath=..\Altium_Libs\Conn_Phoenix Contact_1843606\parts\Conn_Phoenix_Contact_1843606_eec_MFG.PcbLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -989,7 +972,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
 
-[Document57]
+[Document56]
 DocumentPath=..\Altium_Libs\Conn_Phoenix Contact_1803468\parts\Conn_Phoenix_Contact_1803468_eec.SchLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -1006,7 +989,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=XEDSKDPL
 
-[Document58]
+[Document57]
 DocumentPath=..\Altium_Libs\Conn_Phoenix Contact_1803468\parts\Conn_Phoenix_Contact_1803468_eec_0.PcbLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -1023,7 +1006,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
 
-[Document59]
+[Document58]
 DocumentPath=Pressure_Sensor.SchDoc
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -1040,7 +1023,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=HBXOCURZ
 
-[Document60]
+[Document59]
 DocumentPath=..\..\..\knitVision\knitvision_pcb\CIS_PCB_Project.IntLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -1057,7 +1040,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
 
-[Document61]
+[Document60]
 DocumentPath=..\..\..\knitVision\knitvision_pcb\CIS_PCB_Project.SCHLIB
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -1074,7 +1057,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=SDZKOOEC
 
-[Document62]
+[Document61]
 DocumentPath=..\..\..\knitVision\knitvision_pcb\CIS_PCB_Project_1.SCHLIB
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -1091,7 +1074,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=RURWNRQH
 
-[Document63]
+[Document62]
 DocumentPath=..\..\..\knitVision\knitvision_pcb\CIS_PCB_Project_2.SCHLIB
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -1108,7 +1091,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=APIOQDUX
 
-[Document64]
+[Document63]
 DocumentPath=..\..\..\knitVision\knitvision_pcb\KnitVision_0_2.PcbLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -1125,7 +1108,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
 
-[Document65]
+[Document64]
 DocumentPath=..\..\..\knitVision\knitvision_pcb\KnitVision_0_21.PcbLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -1142,7 +1125,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
 
-[Document66]
+[Document65]
 DocumentPath=..\..\..\knitVision\knitvision_pcb\Inspector.PcbLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -1159,7 +1142,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
 
-[Document67]
+[Document66]
 DocumentPath=..\..\..\knitVision\knitvision_pcb\Inspector1.PcbLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -1176,7 +1159,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
 
-[Document68]
+[Document67]
 DocumentPath=miniVent.PcbLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -1191,9 +1174,9 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=QJQVWRIW
 
-[Document69]
+[Document68]
 DocumentPath=miniVent.SchLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -1210,7 +1193,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=QYRDWQFU
 
-[Document70]
+[Document69]
 DocumentPath=esp.PcbLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -1227,7 +1210,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
 
-[Document71]
+[Document70]
 DocumentPath=ESP.SchLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -1244,7 +1227,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=XVNDYEPP
 
-[Document72]
+[Document71]
 DocumentPath=..\Altium_Libs\IC_Texas Instruments_LM311DR\parts\IC_Texas_Instruments_LM311DR_eec_0.PcbLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -1261,7 +1244,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
 
-[Document73]
+[Document72]
 DocumentPath=miniVent_PCB_v1_0.PcbDoc
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -1278,7 +1261,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=XBETWGRN
 
-[Document74]
+[Document73]
 DocumentPath=..\Altium_Libs\IC_National Semiconductor_LM1117MP-ADJ\parts\National_Semiconductor_LM1117MP_ADJ.SchLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -1295,7 +1278,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=FPOBGUIC
 
-[Document75]
+[Document74]
 DocumentPath=..\Altium_Libs\IC_National Semiconductor_LM1117MP-ADJ\parts\National_Semiconductor_LM1117MP_ADJ_0.PcbLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -1312,7 +1295,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
 
-[Document76]
+[Document75]
 DocumentPath=..\Altium_Libs\IC_National Semiconductor_LM1117MP-ADJ\parts\National_Semiconductor_LM1117MP_ADJ_1.PcbLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -1329,7 +1312,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
 
-[Document77]
+[Document76]
 DocumentPath=..\Altium_Libs\IC_National Semiconductor_LM1117MP-ADJ\parts\National_Semiconductor_LM1117MP_ADJ_2.PcbLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -1346,7 +1329,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
 
-[Document78]
+[Document77]
 DocumentPath=miniVent_PCB_v1_0.PcbLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -1363,7 +1346,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=WRRJVYTS
 
-[Document79]
+[Document78]
 DocumentPath=..\Altium_Libs\Conn_TE_640454-4\parts\Conn_TE_640454-4_eec.SchLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -1380,7 +1363,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=ERIGXNDW
 
-[Document80]
+[Document79]
 DocumentPath=..\Altium_Libs\Conn_TE_640454-4\parts\Conn_TE_640454-4_eec_0.PcbLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -1397,7 +1380,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
 
-[Document81]
+[Document80]
 DocumentPath=D:\Users\mohammad\Documents\Electronics\AltiumLib\LibraryPackages_octacore.ir\Library Packages\(MY)\General 1.IntLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -1414,7 +1397,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
 
-[Document82]
+[Document81]
 DocumentPath=D:\Users\mohammad\Documents\Electronics\AltiumLib\LibraryPackages_octacore.ir\Library Packages\(MY)\General 2.IntLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -1431,7 +1414,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
 
-[Document83]
+[Document82]
 DocumentPath=D:\Users\mohammad\Documents\Electronics\AltiumLib\LibraryPackages_octacore.ir\Library Packages\(MY)\General 3.IntLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -1448,7 +1431,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
 
-[Document84]
+[Document83]
 DocumentPath=D:\Users\mohammad\Documents\Electronics\AltiumLib\LibraryPackages_octacore.ir\Library Packages\(MY)\Mechanical And Graphical.IntLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -1465,7 +1448,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
 
-[Document85]
+[Document84]
 DocumentPath=D:\Users\mohammad\Documents\Electronics\AltiumLib\LibraryPackages_octacore.ir\Library Packages\(MY)\Miscellaneous Connectors.IntLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -1482,7 +1465,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
 
-[Document86]
+[Document85]
 DocumentPath=D:\Users\mohammad\Documents\Electronics\AltiumLib\LibraryPackages_octacore.ir\Library Packages\(MY)\Miscellaneous Devices.IntLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -1499,7 +1482,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
 
-[Document87]
+[Document86]
 DocumentPath=D:\Users\mohammad\Documents\Electronics\AltiumLib\LibraryPackages_octacore.ir\Library Packages\(MY)\Passive Components.IntLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -1516,7 +1499,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
 
-[Document88]
+[Document87]
 DocumentPath=D:\Users\mohammad\Documents\Electronics\AltiumLib\LibraryPackages_octacore.ir\Library Packages\(MY)\Sockets And Connectors.IntLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -1533,7 +1516,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
 
-[Document89]
+[Document88]
 DocumentPath=miniVent_PCB_prj.OutJob
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -1550,7 +1533,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
 
-[Document90]
+[Document89]
 DocumentPath=..\Altium_Libs\SamacSys.PcbLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -1567,7 +1550,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=MPRJBCLL
 
-[Document91]
+[Document90]
 DocumentPath=..\Altium_Libs\SamacSys.SchLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -1899,6 +1882,18 @@ OutputDocumentPath1=
 OutputVariantName1=[No Variations]
 OutputDefault1=0
 PageOptions1=Record=PageOptions|CenterHorizontal=True|CenterVertical=True|PrintScale=1.00|XCorrection=1.00|YCorrection=1.00|PrintKind=1|BorderSize=5000000|LeftOffset=0|BottomOffset=0|Orientation=2|PaperLength=1000|PaperWidth=1000|Scale=100|PaperSource=7|PrintQuality=-3|MediaType=1|DitherType=10|PrintScaleMode=1|PaperKind=A4|PaperIndex=9
+Configuration1_Name1=ColumnNameFormat
+Configuration1_Item1=CaptionAsName
+Configuration1_Name2=ForceUpdateSettings
+Configuration1_Item2=False
+Configuration1_Name3=General
+Configuration1_Item3=OpenExported=False|AddToProject=False|ReportBOMViolationsInMessages=False|ForceFit=False|NotFitted=False|Database=False|DatabasePriority=False|IncludePcbData=False|IncludeVaultData=False|IncludeCloudData=False|IncludeDocumentData=True|IncludeAlternatives=False|ShowExportOptions=True|TemplateFilename=|TemplateVaultGuid=|TemplateRevisionGuid=|BatchMode=5|FormWidth=1200|FormHeight=710|SupplierProdQty=1|SupplierAutoQty=False|SupplierUseCachedPricing=False|SupplierCurrency=USD|SolutionsPerItem=1|SuppliersPerSolution=1|ViewType=0|UseDirectApi=False|BomSetName=
+Configuration1_Name4=GroupOrder
+Configuration1_Item4=Comment=True|Footprint=True
+Configuration1_Name5=SortOrder
+Configuration1_Item5=Designator=Up|Comment=Up|Footprint=Up
+Configuration1_Name6=VisibleOrder
+Configuration1_Item6=Comment=120|Description=120|Designator=120|Footprint=120|LibRef=120|Quantity=120
 OutputType2=ComponentCrossReference
 OutputName2=Component Cross Reference Report
 OutputDocumentPath2=

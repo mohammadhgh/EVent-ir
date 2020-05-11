@@ -1,29 +1,38 @@
 
 #include <PID.h>
 
-PID::PID(float KP, float KI, float KD){
+PID::PID(float KP, float KI, float KD, int ignorePIDCount){
     this->KP=KP;
     this->KI=KI;
     this->KD=KD;
+    this->ignorePIDCount = ignorePIDCount;
 }
 
 int PID::Calc(float desired, float pv){
-    error = desired - pv;
 
-    integral += error*timeStep;
+    if(ignoreCounter==0 || ignoreCounter>ignorePIDCount){
+        error = desired - pv;
 
-    derivative = (error - errorPre)/timeStep;
+        integral += error*timeStep;
 
-    errorPre = error;
+        derivative = (error - errorPre)/timeStep;
+
+        errorPre = error;
+        
+        //float pwm = 255 - (KP*error + KI*integral + KD*derivative);  
+
+        float pwm = (KP*error + KI*integral + KD*derivative);
+
+        realPidVal = pwm ; 
+
+        pwm = limitOutput(pwm);
+
+        oldPWM = pwm;
+    }
     
-    float pwm = 255 - (KP*error + KI*integral + KD*derivative);  
-    realPidVal = pwm ; 
+    ignoreCounter++;
 
-
-
-    pwm = limitOutput(pwm);
-
-    return round(pwm); 
+    return round(oldPWM); 
 }
 
 void PID::setTimeStep(float timeStep){
@@ -61,4 +70,5 @@ void PID::resetParams(){
     this->errorPre=0;
     this->integral=0;
     this->derivative=0;
+    this->ignoreCounter=0;
 }

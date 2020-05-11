@@ -13,8 +13,11 @@ private:
     int   minOutput=0;
     int   maxOutput=255;
     float timeStep=5e-3; //Unit is in Seconds
+    float oldPWM=0;
+    float ignorePIDCount=0;
+    int ignoreCounter=0;
 public:
-    PID(float KP, float KI, float KD);
+    PID(float KP, float KI, float KD, int ignorePIDCount);
     int   Calc(float desired, float pv);
     void  setTimeStep(float timeStep);
     float getTimeStep();

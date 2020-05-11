@@ -41,11 +41,11 @@ unsigned long SysConfig::get_Start_Time()
     return this->Start_Time;
 }
 
-void SysConfig::set_loopParams(float duration, int  loopParam, float  timeStep)
+void SysConfig::set_loopParams(float duration, int  loopParam, float  ts)
 {
     this->duration  = duration ;
     this->loopParam = loopParam; 
-    this->timeStep  = timeStep ;
+    this->timeStep  = ts ;
     resolution = round(duration / (loopParam * timeStep));
     calcedRPM = new float[loopParam*resolution]; 
 }

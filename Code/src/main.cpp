@@ -20,6 +20,7 @@
 #include <string.h>
 #include <Stream.h>
 #include <math.h>
+#include "DegreeTracker.h"
 
 long testTimer = 0;
 
@@ -43,11 +44,16 @@ PID *pid;
 
 Trajectory *trajectory;
 
+DegreeTracker *degreeTracker;
+
 int table_RV[] = {200, 300, 400, 500, 600, 700, 800};
 int table_RC[23];
 int table_IE[] = {1, 2, 3, 4};
+float calcedLeftTime[100];
+float calcedLeftDegree[100];
+float actualMotorSpeed[100];
+float MotorSpeedCom[100];
 
-int RV = 0;
 int RC = 0;
 
 volatile int encFalled = 0;
@@ -56,7 +62,8 @@ int motorSpeed = 0;
 unsigned long lastMilis = 0;
 
 int j = 0;
-int timeStepValid = 0;
+int myCounter = 0;
+volatile int timeStepValid = 0;
 
 /* ------------- Initial Check ------------*/
 
@@ -79,8 +86,8 @@ static void onMotorStart()
 	Motor::getInstance()->resetEncPeriod();
 	Motor::getInstance()->resetPC();
 	Motor::getInstance()->motorStart();
-	OCR4A  = round(15625*pid->getTimeStep())-1;
-	TCCR4B |= (1 << WGM12)|(1<<CS10) | (1<<CS12) ;	
+	OCR4A = round(15625 * pid->getTimeStep()) - 1;
+	TCCR4B |= (1 << WGM12) | (1 << CS10) | (1 << CS12);
 }
 
 static void onMotorStop()
@@ -89,15 +96,18 @@ static void onMotorStop()
 	Motor::getInstance()->resetEncPeriod();
 	Motor::getInstance()->resetPC();
 	pid->resetParams();
+	degreeTracker->resetPosition();
 	TCCR4B = 0;
-	TCNT4 = 0;		
+	TCNT4 = 0;
 }
 
-static void onChangeDirection(){
+static void onChangeDirection()
+{
 	Motor::getInstance()->resetEncPeriod();
 	Motor::getInstance()->resetPC();
-	Motor::getInstance()->resetPC();
-	pid->resetParams();	
+	pid->resetParams();
+	degreeTracker->resetPosition();
+	Motor::getInstance()->changeDirection();
 }
 
 void setup()
@@ -115,8 +125,8 @@ void setup()
 	Serial.begin(9600);
 
 	Global_SysConfig = new SysConfig(2, 20, 0);
-	Global_SysConfig ->set_loopParams(0.65, 4, 5e-3);
-	
+	Global_SysConfig->set_loopParams(0.37, 4, 5e-3);
+
 	PinConfiguration::getInstance()->pinConfiguration();
 
 	coolBuzz = new Buzzer(PinConfiguration::buzzerPin);
@@ -136,43 +146,47 @@ void setup()
 	LCD::getInstance()->LCD_Clear();*/
 
 	respVolume = new Potentiometer(PinConfiguration::Potentiometer_Volume, 7);
-	respCycle = new Potentiometer(PinConfiguration::Potentiometer_Cycle, 23);
-	IERatio = new Potentiometer(PinConfiguration::Potentiometer_IE, 4);
+	respCycle  = new Potentiometer(PinConfiguration::Potentiometer_Cycle, 23);
+	IERatio    = new Potentiometer(PinConfiguration::Potentiometer_IE, 4);
 
 	respCycle->set_Range(table_RC, sizeof table_RC);
 	respVolume->set_Range(table_RV, sizeof table_RV);
 	IERatio->set_Range(table_IE, sizeof table_IE);
 
-	pid = new PID((float)3, (float)48, (float)0.025);
+	pid = new PID(3, 48, 0.025, 15);
 	pid->setTimeStep(Global_SysConfig->timeStep);
 	pid->setOutputRange(0, 255);
 
-	trajectory = new Trajectory(Global_SysConfig->resolution, 360, 0, 0, Global_SysConfig->duration);
-	trajectory->calcTrajec();
+	//trajectory = new Trajectory(Global_SysConfig->resolution, 360, 0, 0, Global_SysConfig->duration);
+	//trajectory->calcTrajec();
+
+	degreeTracker = new DegreeTracker((float)50, Global_SysConfig->duration, Global_SysConfig->timeStep);
 
 	interrupts();
 
 	Motor::getInstance()->setSpeed(255);
-	//Motor::getInstance()->setDirection(DIRECTION_CLOSE);
+	Motor::getInstance()->setDirection(DIRECTION_OPEN);
 	Motor::getInstance()->initEnc(PinConfiguration::motorEncoderPin, INPUT, enc_callback, RISING);
 	//initial_Check();
 }
 
 void loop()
-{	
+{
 	//mot_Driver->update_resp_rate(Global_SysConfig);
 	//mot_Driver->check();
 	//LCD::getInstance()->LCD_Menu(respVolume->Potentiometer_Read(), respCycle->Potentiometer_Read(), IERatio->Potentiometer_Read());
-	if (ON_button->get_Clicked() == true && ON_button->get_On_Off() == BSTATE_ON){
+	if (ON_button->get_Clicked() == true && ON_button->get_On_Off() == BSTATE_ON)
+	{
 		onMotorStart();
 		ON_button->set_Clicked(false);
 	}
-		
-	else if (ON_button->get_Clicked() == true && ON_button->get_On_Off() == BSTATE_OFF){
+
+	else if (ON_button->get_Clicked() == true && ON_button->get_On_Off() == BSTATE_OFF)
+	{
 		onMotorStop();
 		ON_button->set_Clicked(false);
 	}
-		
+
 	if (open_uSwitch->get_Clicked() == true)
 	{
 		TCNT5 = 0;
@@ -181,36 +195,71 @@ void loop()
 		pid->resetParams();
 		open_uSwitch->set_Clicked(false);
 	}
-	//Serial.println(sizeof(Global_SysConfig->calcedRPM));
+	//Serial.println(Global_SysConfig->timeStep);Serial.println(Global_SysConfig->timeStep);
 	if (Motor::getInstance()->getStatus() == MOTOR_IS_ON)
 	{
 		if (timeStepValid)
-		{		
+		{
 			timeStepValid = 0;
-			Global_SysConfig->calcedRPM[j] = Motor::getInstance()->getEncRPM();
-			motorSpeed = pid->Calc(trajectory->getRPM((int)(j / Global_SysConfig->loopParam)), Global_SysConfig->calcedRPM[j]);
-			Motor::getInstance()->setSpeed(motorSpeed);
-			j++;
+			degreeTracker->updateTime();
+			degreeTracker->updatePosition(Motor::getInstance()->getPC());
+			
+			motorSpeed = pid->Calc(degreeTracker->updateDesiredRPM(), Motor::getInstance()->getEncRPM());
+			Motor::getInstance()->setSpeed(motorSpeed);			
+
+			calcedLeftTime[myCounter]   = degreeTracker->getLeftTime();
+			calcedLeftDegree[myCounter] = degreeTracker->getLeftDeltaDegree();			
+			MotorSpeedCom[myCounter] 	= degreeTracker->updateDesiredRPM();
+			actualMotorSpeed[myCounter] = motorSpeed; //Motor::getInstance()->getEncRPM();
+			myCounter++;
+
+			if (degreeTracker->getLeftTime() < 0 && j < 2)
+			{
+				j++;
+				if (j == 1)
+				{
+					onChangeDirection();
+				}
+				else if (j == 2)
+				{
+					onMotorStop();
+					ON_button->set_On_Off();
+				}
+			}
+			else if (degreeTracker->getLeftDeltaDegree() < 0 && j < 2)
+			{
+				j++;
+				if (j == 1)
+				{
+					onChangeDirection();
+				}
+				else if (j == 2)
+				{
+					onMotorStop();
+					ON_button->set_On_Off();
+				}
+			}
 		}
 
-		if (j == Global_SysConfig->loopParam * trajectory->getResolution()){
-			/*float motorDeltaAngle = (float)Motor::getInstance()->getPC()*(float)360/float(1220);
-			onMotorStop();
-			ON_button->set_On_Off();						
-			for (int i = 0; i < j; i++)
+		if (j == 2)
+		{
+			for (int i = 0; i < myCounter; i++)
 			{
 				Serial.print(i);
 				Serial.print("\t");
-				Serial.print(Global_SysConfig->calcedRPM[i]);
+				Serial.print(calcedLeftTime[i],3);
 				Serial.print("\t");
-				Serial.println(trajectory->getRPM((int)(i / Global_SysConfig->loopParam)));					
+				Serial.print(calcedLeftDegree[i],3);
+				Serial.print("\t");
+				Serial.print(actualMotorSpeed[i],3);
+				Serial.print("\t");
+				Serial.println(MotorSpeedCom[i],3);
 			}
-			Serial.println(motorDeltaAngle);*/			
-			Motor::getInstance()->changeDirection();
-			onChangeDirection();
 			j = 0;
+			Serial.print("\n END \n");
+			ON_button->set_On_Off();
 		}
-	}
 
-	wdt_reset();
+		wdt_reset();
+	}
 }

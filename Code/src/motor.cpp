@@ -28,7 +28,7 @@ void Motor::setEncPeriod(int encPeriod){
 }
 
 void Motor::incrementPC(){
-    this->PC+=2;;
+    this->PC+=2;; // Why are we counting 2 times per pulse?
 }
 
 void Motor::resetPC(){

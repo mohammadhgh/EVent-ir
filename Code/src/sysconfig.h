@@ -27,7 +27,7 @@ public:
     int get_Inh_Time();
     int get_Exh_Time();
     unsigned long get_Start_Time();
-    void set_loopParams(float duration, int  loopParam, float  timeStep);
+    void set_loopParams(float duration, int  loopParam, float  ts);
     void set_IE_Ratio(int IE_Ratio);
     void set_Resp_Rate(int Resp_Rate);
     void set_Tidal_Volume(int Tidal_Volume);

@@ -9,11 +9,11 @@ Buzzer::Buzzer(int pin)
 
 void Buzzer::beep(int beeps_count)
 {
-    for(int i=0; i<beeps_count; i++)
+    for (int i = 0; i < beeps_count; i++)
     {
         tone(this->pin, this->sound_freq, this->on_delay);
         delay(this->on_delay);
-        noTone(this->pin);
-        delay(this->on_delay);
+        //  noTone(this->pin);
+        // delay(this->on_delay);
     }
 }

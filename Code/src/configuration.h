@@ -43,9 +43,13 @@ public:
     const static int ardLED = 13;
 
     //----Potentiometer
-    const static int Potentiometer_Volume = A8;
-    const static int Potentiometer_Cycle = A9;
-    const static int Potentiometer_IE = A10;
+    const static int Potentiometer_Volume = A0;
+    const static int Potentiometer_Cycle = A1;
+    const static int Potentiometer_IE = A2;
+
+    //----Pressure_Snsor
+    const static int PR_Sck = 4;
+    const static int PR_Out = 6;
 
     void pinConfiguration();
 };

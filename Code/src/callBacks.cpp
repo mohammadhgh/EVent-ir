@@ -27,11 +27,11 @@ void open_uSw_callback()
 void enc_callback(){
 	if (encFalled==0){
 		TCNT5=0;
-		TCCR5B |= (1<<CS11) | (1<<CS10);			
+		TCCR5B |= (1<<CS11) | (1<<CS10); // Prescaler = 64 , 250KHz	
 		encFalled=1;
 	}
 	else{
-		TCCR5B = 0;
+		TCCR5B = 0; //
 		encFalled=0;
 		Motor::getInstance()->setEncPeriod(TCNT5);
 	}

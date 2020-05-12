@@ -57,6 +57,7 @@ public:
     void encCallback();
     int  getEncCount();
     void resetEncPeriod();
+    void resetEncRPM();
     float getEncRPM();
     int  getEncAngle();
     int  getEncPeriod();

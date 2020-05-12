@@ -30,9 +30,13 @@ void enc_callback(){
 		TCCR5B |= (1<<CS11) | (1<<CS10);			
 		encFalled=1;
 	}
-	else{
-		TCCR5B = 0;
+	else{	
 		encFalled=0;
 		Motor::getInstance()->setEncPeriod(TCNT5);
+		TCNT5=0;
+	}
+	if(TCNT5>8000){
+		TCNT5=0;
+		Motor::getInstance()->resetEncRPM();
 	}
 }

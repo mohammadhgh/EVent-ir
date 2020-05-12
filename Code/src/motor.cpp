@@ -125,6 +125,11 @@ void Motor::resetEncPeriod()
     this->oldRPM = 0;
 }
 
+void Motor::resetEncRPM(){
+    resetEncPeriod();
+    this->oldRPM = 0;
+}
+
 float Motor::getEncRPM()
 {
     float RPM = 0;

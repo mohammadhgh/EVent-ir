@@ -49,10 +49,11 @@ DegreeTracker *degreeTracker;
 int table_RV[] = {200, 300, 400, 500, 600, 700, 800};
 int table_RC[23];
 int table_IE[] = {1, 2, 3, 4};
-float calcedLeftTime[100];
-float calcedLeftDegree[100];
-float actualMotorSpeed[100];
-float MotorSpeedCom[100];
+float calcedLeftTime[300];
+float calcedLeftDegree[300];
+float actualMotorSpeed[300];
+float MotorSpeedCom[300];
+float pidValue[300];
 
 int RC = 0;
 
@@ -102,7 +103,8 @@ static void onMotorStop()
 }
 
 static void onChangeDirection()
-{
+{	
+	Motor::getInstance()->setSpeed(255);
 	Motor::getInstance()->resetEncPeriod();
 	Motor::getInstance()->resetPC();
 	pid->resetParams();
@@ -125,7 +127,7 @@ void setup()
 	Serial.begin(9600);
 
 	Global_SysConfig = new SysConfig(2, 20, 0);
-	Global_SysConfig->set_loopParams(0.37, 4, 5e-3);
+	Global_SysConfig->set_loopParams(0.7, 4, 5e-3);
 
 	PinConfiguration::getInstance()->pinConfiguration();
 
@@ -153,18 +155,18 @@ void setup()
 	respVolume->set_Range(table_RV, sizeof table_RV);
 	IERatio->set_Range(table_IE, sizeof table_IE);
 
-	pid = new PID(3, 48, 0.025, 15);
+	pid = new PID(3, 48, 0.025, 17);
 	pid->setTimeStep(Global_SysConfig->timeStep);
 	pid->setOutputRange(0, 255);
 
 	//trajectory = new Trajectory(Global_SysConfig->resolution, 360, 0, 0, Global_SysConfig->duration);
 	//trajectory->calcTrajec();
 
-	degreeTracker = new DegreeTracker((float)50, Global_SysConfig->duration, Global_SysConfig->timeStep);
+	degreeTracker = new DegreeTracker((float)35, Global_SysConfig->duration, Global_SysConfig->timeStep);
 
 	interrupts();
 
-	Motor::getInstance()->setSpeed(255);
+	Motor::getInstance()->setSpeed(128);
 	Motor::getInstance()->setDirection(DIRECTION_OPEN);
 	Motor::getInstance()->initEnc(PinConfiguration::motorEncoderPin, INPUT, enc_callback, RISING);
 	//initial_Check();
@@ -208,10 +210,32 @@ void loop()
 			Motor::getInstance()->setSpeed(motorSpeed);			
 
 			calcedLeftTime[myCounter]   = degreeTracker->getLeftTime();
-			calcedLeftDegree[myCounter] = degreeTracker->getLeftDeltaDegree();			
+			calcedLeftDegree[myCounter] = degreeTracker->getLeftDeltaDegree();
+			actualMotorSpeed[myCounter] = Motor::getInstance()->getEncRPM();			
 			MotorSpeedCom[myCounter] 	= degreeTracker->updateDesiredRPM();
-			actualMotorSpeed[myCounter] = motorSpeed; //Motor::getInstance()->getEncRPM();
+			pidValue[myCounter] = motorSpeed;
 			myCounter++;
+
+			/*if (degreeTracker->getLeftTime()<0 || degreeTracker->getLeftDeltaDegree()<0){
+				onMotorStop();
+				for (int i = 0; i < myCounter; i++)
+				{
+					Serial.print(i);
+					Serial.print("\t");
+					Serial.print(calcedLeftTime[i],3);
+					Serial.print("\t");
+					Serial.print(calcedLeftDegree[i],3);
+					Serial.print("\t");
+					Serial.print(actualMotorSpeed[i],3);
+					Serial.print("\t");
+					Serial.print(MotorSpeedCom[i],3);
+					Serial.print("\t");
+					Serial.println(pidValue[i],3);
+				}
+				j = 0;
+				Serial.print("\n END \n");
+				ON_button->set_On_Off();				
+			}*/
 
 			if (degreeTracker->getLeftTime() < 0 && j < 2)
 			{
@@ -253,7 +277,9 @@ void loop()
 				Serial.print("\t");
 				Serial.print(actualMotorSpeed[i],3);
 				Serial.print("\t");
-				Serial.println(MotorSpeedCom[i],3);
+				Serial.print(MotorSpeedCom[i],3);
+				Serial.print("\t");
+				Serial.println(pidValue[i],3);
 			}
 			j = 0;
 			Serial.print("\n END \n");

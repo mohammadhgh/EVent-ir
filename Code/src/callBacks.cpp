@@ -2,14 +2,12 @@
 #include <motor.h>
 #include <callBacks.h>
 #include <configuration.h>
+#include <timers.h>
 
 extern Button *ON_button;
 extern Button *open_uSwitch;
 extern volatile int encFalled;
-extern int timerPinVal;
-extern int TNCTVal[200];
-extern int motorStopped;
-int m=0;
+
 /* -------------- on button callback ----------------- */
 void onButton_callback()
 {
@@ -28,26 +26,10 @@ void open_uSw_callback()
 
 /* ------------ encoder callback ---------------- */
 void enc_callback(){
-
-	TCCR5B |= (1<<CS11) | (1<<CS10);	
+	Timer5Start();	
 	if(TCNT5>99){
 		Motor::getInstance()->setEncPeriod(TCNT5);
 		Motor::getInstance()->incrementPC();
 	}
 	TCNT5=0;
-	/*if(motorStopped==1){
-		TNCTVal[m]=TCNT5;
-		m++;
-	}	
-	if (encFalled==0){
-		TCNT5=0;				
-		encFalled=1;
-	}
-	else{	
-		encFalled=0;
-		Motor::getInstance()->setEncPeriod(TCNT5);
-		TCNT5=0;
-	}*/
-
-
 }

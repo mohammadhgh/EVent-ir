@@ -19,12 +19,11 @@ private:
     float pulseStep=0;
 public:
     DegreeTracker(float desiredDeltaDegree, float desiredDeltaTime, float timeStep);
+    void updateDesiredDelatTime(float desiredDeltaTime);
     void updateTime();
     void updatePosition(int pulseCount);
     float updateDesiredRPM();
     void resetPosition(void);
-    // bool stopIfTrue(void);
-    // bool getLeftTime(void);
     float getLeftDeltaDegree(void);
     float getLeftTime(void);
 

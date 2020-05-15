@@ -85,3 +85,23 @@ ISR(TIMER4_COMPB_vect)        // interrupt service routine that wraps a user def
 	}
 }
 
+void Timer4Start(int period){
+	TCNT4 = 0;
+	OCR4A = period;
+	TCCR4B |= (1 << WGM12) | (1 << CS10) | (1 << CS12);
+}
+
+void Timer4Stop(){
+	TCCR4B = 0;
+	TCNT4 = 0;
+}
+
+void Timer5Start(){
+	TCCR5B |= (1<<CS11) | (1<<CS10);
+}
+
+void Timer5Stop(){
+	TCCR5B = 0;
+	TCNT5 = 0;
+}
+

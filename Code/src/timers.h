@@ -9,4 +9,10 @@
     void Init_Timer4();
     void Init_Timer5();
 
+    void Timer4Start(int period);
+    void Timer4Stop();
+    
+    void Timer5Start();
+    void Timer5Stop();
+
 #endif

@@ -1,4 +1,4 @@
-// by Amir Sk
+// by Amir Sk , MHG, MHM, ASG
 // Apr. 5rd 2020
 
 #include <Arduino.h>
@@ -49,13 +49,12 @@ DegreeTracker *degreeTracker;
 int table_RV[] = {200, 300, 400, 500, 600, 700, 800};
 int table_RC[23];
 int table_IE[] = {1, 2, 3, 4};
-float calcedLeftTime[200];
-float calcedLeftDegree[200];
-
+float calcedLeftTime[400];
+float calcedLeftDegree[400];
 //int MotorSpeedDesired[300];
-int MotorSpeedActual[200];
-float MotorPwm[200];
-int TNCTVal[200];
+int   MotorSpeedActual[400];
+float MotorPwm[400];
+
 
 int RC = 0;
 
@@ -64,7 +63,7 @@ volatile int encFalled = 0;
 int motorSpeed = 0;
 unsigned long lastMilis = 0;
 
-int j = 0; int f[3]; float t[3]; 
+int j = 0; int k = 0; 
 int myCounter = 0;
 volatile int timeStepValid = 0;
 int startDir=0;
@@ -92,34 +91,34 @@ void static initial_Check()
 	}
 }
 
-static void onMotorStart()
-{
+static void resetParams(){
 	Motor::getInstance()->resetEncPeriod();
 	Motor::getInstance()->resetPC();
-	Motor::getInstance()->motorStart();
 	pid->resetParams();
 	degreeTracker->resetPosition();
+}
+
+static void onMotorStart()
+{
+	resetParams();
+	Motor::getInstance()->motorStart();
 	timeStepValid = 0;
-	TCNT4 = 0;
-	OCR4A = round(15625 * pid->getTimeStep()) - 1;
-	TCCR4B |= (1 << WGM12) | (1 << CS10) | (1 << CS12);
+	Timer4Start(round(15625 * pid->getTimeStep()) - 1);
 }
 
 static void onMotorStop()
 {
 	Motor::getInstance()->motorStop();
-	Motor::getInstance()->resetEncPeriod();
-	Motor::getInstance()->resetPC();
-	pid->resetParams();
-	degreeTracker->resetPosition();
-	TCCR4B = 0;
-	TCNT4 = 0;
+	resetParams();
+	Timer4Stop();
 }
 
-static void onChangeDirection()
-{	
-	//Motor::getInstance()->setSpeed(255);
-	Motor::getInstance()->changeDirection();
+static void motorSpeedCheck(){
+	if(round(Motor::getInstance()->getEncRPM())>30){
+		Serial.println("check");
+		onMotorStop();
+		comeAndGo=0;
+	}
 }
 
 void setup()
@@ -159,18 +158,15 @@ void setup()
 	respVolume->set_Range(table_RV, sizeof table_RV);
 	IERatio->set_Range(table_IE, sizeof table_IE);
 
-	pid = new PID(3, 48, 0.025, 10);
+	pid = new PID(3, 48, 0.025, 16);
 	pid->setTimeStep(Global_SysConfig->timeStep);
 	pid->setOutputRange(0, 255);
-
-	//trajectory = new Trajectory(Global_SysConfig->resolution, 360, 0, 0, Global_SysConfig->duration);
-	//trajectory->calcTrajec();
 
 	degreeTracker = new DegreeTracker((float)35, Global_SysConfig->duration, Global_SysConfig->timeStep);
 
 	interrupts();
 
-	Motor::getInstance()->setSpeed(245);
+	Motor::getInstance()->setSpeed(240);
 	Motor::getInstance()->initEnc(PinConfiguration::motorEncoderPin, INPUT, enc_callback, RISING);
 	//initial_Check();
 }
@@ -180,6 +176,9 @@ void loop()
 	//mot_Driver->update_resp_rate(Global_SysConfig);
 	//mot_Driver->check();
 	//LCD::getInstance()->LCD_Menu(respVolume->Potentiometer_Read(), respCycle->Potentiometer_Read(), IERatio->Potentiometer_Read());
+	if(motorStopped==0)
+		motorSpeedCheck();
+	
 	if (ON_button->get_Clicked() == true && ON_button->get_On_Off() == BSTATE_ON)
 	{
 		Motor::getInstance()->setDirection(DIRECTION_OPEN);
@@ -205,20 +204,18 @@ void loop()
 		}
 		
 		Serial.println(j);	
-		Serial.println(f[0]);	
+		/*Serial.println(f[0]);	
 		Serial.println(t[0],3);	
 		Serial.println(f[1]);	
 		Serial.println(t[1],3);	
 		Serial.println(f[2]);	
-		Serial.println(t[2],3);
-		/*for(int i=0; i<200; i++){
-			Serial.println(TNCTVal[i]);
-		}*/	
+		Serial.println(t[2],3);*/
+
 		j=0;	
 		myCounter=0;
 		onMotorStop();
 		comeAndGo=0;
-		Motor::getInstance()->setSpeed(245);
+		Motor::getInstance()->setSpeed(240);
 	}
 
 	if (open_uSwitch->get_Clicked() == true)
@@ -236,10 +233,10 @@ void loop()
 			timeStepValid = 0;	
 	
 			degreeTracker->updateTime();
-			degreeTracker->updatePosition(Motor::getInstance()->getPC());
-			
+			degreeTracker->updatePosition(Motor::getInstance()->getPC());			
 			motorSpeed = pid->Calc(degreeTracker->updateDesiredRPM(), Motor::getInstance()->getEncRPM());
-			Motor::getInstance()->setSpeed(motorSpeed);			
+			Motor::getInstance()->setSpeed(motorSpeed);	
+
 			calcedLeftTime[myCounter]    = degreeTracker->getLeftTime();
 			calcedLeftDegree[myCounter]  = degreeTracker->getLeftDeltaDegree();
 			MotorPwm[myCounter] 		 = motorSpeed;
@@ -247,61 +244,71 @@ void loop()
 
 			myCounter++;
 			
-			if (degreeTracker->getLeftTime()<0.045){
+			if (degreeTracker->getLeftTime()<0.04){
 				motorStopped = 1;
-				f[0]=Motor::getInstance()->getPC();
-				t[0]=degreeTracker->getLeftTime();
+				//f[0]=Motor::getInstance()->getPC();
+				//t[0]=degreeTracker->getLeftTime();
 				Motor::getInstance()->motorStop();
 				j++;				
 			}	
 		}
 	}
-	else if (j==1 || j==2){
+	else if (j==1){
 		if (timeStepValid)
 		{			
 			timeStepValid = 0;
 			
-			if(Motor::getInstance()->getEncRPM()<2.0){
-				f[2]=Motor::getInstance()->getPC();
-				t[2]=degreeTracker->getLeftTime();
+			/*if(Motor::getInstance()->getEncRPM()<2.0){
+				//f[2]=Motor::getInstance()->getPC();
+				//t[2]=degreeTracker->getLeftTime();
 				j++;
-			}
+			}*/
+
 			degreeTracker->updateTime();
 			degreeTracker->updatePosition(Motor::getInstance()->getPC());	
+			degreeTracker->updateDesiredRPM();
 		
 			calcedLeftTime[myCounter]    = degreeTracker->getLeftTime();
 			calcedLeftDegree[myCounter]  = degreeTracker->getLeftDeltaDegree();
 			MotorPwm[myCounter] 		 = motorSpeed;
 			MotorSpeedActual[myCounter]  = round(Motor::getInstance()->getEncRPM());
-			if(calcedLeftDegree[myCounter]<0 && j==1){
+
+			/*if(calcedLeftDegree[myCounter]<0 && j==1){
 				f[1]=Motor::getInstance()->getPC();
 				t[1]=degreeTracker->getLeftTime();
 				j++;
-			}
-			if(myCounter<199)
+			}*/
+
+			if(myCounter<399)
 				myCounter++;
 		}
 	}
-	//if(comeAndGo==1){
-		//if(TCNT5>4000){
-		if(degreeTracker->getLeftTime()<0){
-			timerPinVal = not(timerPinVal);
-			digitalWrite(PinConfiguration::timerTestPin, timerPinVal);	
-			TCCR5B = 0;
-			TCNT5 = 0;
-			j=0;
-			myCounter=0;		
-			onMotorStop();
-			changeDir=not(changeDir);
-			if(changeDir)
-				Motor::getInstance()->setDirection(DIRECTION_CLOSE);
-			else
-				Motor::getInstance()->setDirection(DIRECTION_OPEN);
-			Motor::getInstance()->setSpeed(245);
-			delay(80);
-			onMotorStart();			
+
+	if(degreeTracker->getLeftTime()<0){	
+		k++;
+		j=0;
+		motorStopped=0;		
+		Timer5Stop();		
+		onMotorStop();
+		changeDir=not(changeDir);
+		if(changeDir){
+			Motor::getInstance()->setDirection(DIRECTION_CLOSE);
+			degreeTracker->updateDesiredDelatTime(1.2);
 		}
-	//}
+		else{
+			Motor::getInstance()->setDirection(DIRECTION_OPEN);
+			degreeTracker->updateDesiredDelatTime(0.6);
+		}
+		Motor::getInstance()->setSpeed(240);
+		Serial.println(k);
+		delay(70);
+		if(k<2)
+			onMotorStart();
+		else{
+			k=0;
+		}
+					
+	}
 		
 	wdt_reset();
 }

@@ -43,6 +43,4 @@ void PinConfiguration::pinConfiguration()
 	//TimerTest Pin
 	pinMode(timerTestPin, OUTPUT);
 	digitalWrite(timerTestPin, LOW);
-
-	Serial.println("1");
 }

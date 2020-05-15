@@ -12,7 +12,7 @@ int PID::Calc(float desired, float pv){
     float pwm = 0;
     if(ignoreCounter==0)
     {
-        pwm =229;
+        pwm =240;
         oldPWM = pwm;
     }
     if(ignoreCounter>ignorePIDCount)

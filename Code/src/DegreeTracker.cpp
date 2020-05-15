@@ -12,6 +12,11 @@ DegreeTracker::DegreeTracker(float desiredDeltaDegree, float desiredDeltaTime, f
     this->pulseStep          = (float)360 / (float)MOTOR_PULSE_PER_TURN;
 }
 
+void DegreeTracker::updateDesiredDelatTime(float desiredDeltaTime)
+{
+    this->desiredDeltaTime = desiredDeltaTime;
+}
+
 void DegreeTracker::updateTime()
 {
     this->passedTime +=  this->timeStep;

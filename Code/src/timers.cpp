@@ -61,6 +61,7 @@ ISR(TIMER4_COMPA_vect)        // interrupt service routine that wraps a user def
 	// Amir: PID Loop Timer, Prescaler(1024) and Interrupt are set to activate the function every 5ms.
 	TCNT4  = 0;
 	timeStepValid = 1;
+
 	/*TIMSK4 = 0;
 	OCR4A  = 0;	
 	if(open_uSwitch->get_Status()==BSTATE_LOW){

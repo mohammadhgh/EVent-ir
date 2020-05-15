@@ -48,6 +48,9 @@ public:
     const static int Potentiometer_Cycle = A9;
     const static int Potentiometer_IE = A10;
 
+    //-----TimerTestPin
+    const static int timerTestPin = 6;
+
     void pinConfiguration();
 };
 

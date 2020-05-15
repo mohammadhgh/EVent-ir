@@ -30,34 +30,11 @@ float DegreeTracker::updateDesiredRPM()
 void DegreeTracker::resetPosition(void)
 {
     this->passedDeltaDegree = 0;
-    this->passedTime = 0;
-    this->leftDeltaDegree = desiredDeltaDegree;
-    this->leftTime   = desiredDeltaTime;
-    this->desiredRPM = desiredDeltaDegree / (desiredDeltaTime * 6);
+    this->passedTime        = 0;
+    this->leftDeltaDegree   = desiredDeltaDegree;
+    this->leftTime          = desiredDeltaTime;
+    this->desiredRPM        = desiredDeltaDegree / (desiredDeltaTime * 6);
 }
-// bool DegreeTracker::stopIfTrue(void)
-// {
-//     if (this->leftDeltaDegree < 2)
-//     {
-//         return true;
-//     }
-//     else
-//     {
-//         return false;
-//     }
-// }
-
-// bool DegreeTracker::getLeftTime(void)
-// {
-//     if (this->leftDeltaDegree <= 0)
-//     {
-//         return true;
-//     }
-//     else
-//     {
-//         return false;
-//     }
-// }
 
 float DegreeTracker::getLeftDeltaDegree(void)
 {

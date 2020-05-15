@@ -39,4 +39,10 @@ void PinConfiguration::pinConfiguration()
 	//----LEDs
 	pinMode(gLED_pin, OUTPUT);
 	digitalWrite(gLED_pin, LOW);
+
+	//TimerTest Pin
+	pinMode(timerTestPin, OUTPUT);
+	digitalWrite(timerTestPin, LOW);
+
+	Serial.println("1");
 }

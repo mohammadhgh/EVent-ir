@@ -158,7 +158,7 @@ void setup()
 	respVolume->set_Range(table_RV, sizeof table_RV);
 	IERatio->set_Range(table_IE, sizeof table_IE);
 
-	pid = new PID(3, 48, 0.025, 16);
+	pid = new PID(3, 48, 0.025, 10);
 	pid->setTimeStep(Global_SysConfig->timeStep);
 	pid->setOutputRange(0, 255);
 
@@ -215,7 +215,7 @@ void loop()
 		myCounter=0;
 		onMotorStop();
 		comeAndGo=0;
-		Motor::getInstance()->setSpeed(240);
+		Motor::getInstance()->setSpeed(235);
 	}
 
 	if (open_uSwitch->get_Clicked() == true)
@@ -244,7 +244,7 @@ void loop()
 
 			myCounter++;
 			
-			if (degreeTracker->getLeftTime()<0.04){
+			if (degreeTracker->getLeftTime()<0.03){
 				motorStopped = 1;
 				//f[0]=Motor::getInstance()->getPC();
 				//t[0]=degreeTracker->getLeftTime();
@@ -299,7 +299,7 @@ void loop()
 			Motor::getInstance()->setDirection(DIRECTION_OPEN);
 			degreeTracker->updateDesiredDelatTime(0.6);
 		}
-		Motor::getInstance()->setSpeed(240);
+		Motor::getInstance()->setSpeed(235);
 		Serial.println(k);
 		delay(70);
 		if(k<2)

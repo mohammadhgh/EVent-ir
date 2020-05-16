@@ -7,7 +7,7 @@ extern Button *open_uSwitch;
 extern int timeStepValid;
 
 void Init_Timer1(){
-	TCCR1B = (TCCR1B & 0b11111000) | 0x01;
+	TCCR1B = (TCCR1B & 0b11111000) | 0x02;
 }
 
 void Init_Timer3(){

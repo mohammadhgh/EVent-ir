@@ -2,6 +2,7 @@
 #include <motor.h>
 #include <callBacks.h>
 #include <configuration.h>
+#include <timers.h>
 
 extern Button *ON_button;
 extern Button *open_uSwitch;
@@ -25,14 +26,10 @@ void open_uSw_callback()
 
 /* ------------ encoder callback ---------------- */
 void enc_callback(){
-	if (encFalled==0){
-		TCNT5=0;
-		TCCR5B |= (1<<CS11) | (1<<CS10); // Prescaler = 64 , 250KHz	
-		encFalled=1;
-	}
-	else{
-		TCCR5B = 0; //
-		encFalled=0;
+	Timer5Start();	
+	if(TCNT5>99){
 		Motor::getInstance()->setEncPeriod(TCNT5);
+		Motor::getInstance()->incrementPC();
 	}
+	TCNT5=0;
 }

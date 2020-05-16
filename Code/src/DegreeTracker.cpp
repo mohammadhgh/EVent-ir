@@ -1,31 +1,31 @@
 #include "DegreeTracker.h"
-DegreeTracker::DegreeTracker(float desiredDeltaDegree, float desiredDeltaTime)
+DegreeTracker::DegreeTracker(float desiredDeltaDegree, float desiredDeltaTime, float timeStep)
 {
     this->desiredDeltaDegree = desiredDeltaDegree;
-    this->desiredDeltaTime = desiredDeltaTime;
-    this->passedDeltaDegree = 0;
-    this->passedTime = 0;
-    this->leftDeltaDegree = desiredDeltaDegree;
-    this->leftTime = desiredDeltaTime;
-    this->desiredRPM = desiredDeltaDegree / (desiredDeltaTime * 60);
+    this->desiredDeltaTime   = desiredDeltaTime;
+    this->passedDeltaDegree  = 0;
+    this->passedTime         = 0;
+    this->timeStep           = timeStep;
+    this->leftDeltaDegree    = desiredDeltaDegree;
+    this->leftTime           = desiredDeltaTime;
+    this->desiredRPM         = desiredDeltaDegree / (desiredDeltaTime * 6);
+    this->pulseStep          = (float)360 / (float)MOTOR_PULSE_PER_TURN;
 }
 
-void DegreeTracker::updateTime(float timeStep)
+void DegreeTracker::updateDesiredDelatTime(float desiredDeltaTime)
 {
-    this->passedTime += timeStep;
-    this->leftTime -= timeStep;
+    this->desiredDeltaTime = desiredDeltaTime;
+}
+
+void DegreeTracker::updateTime()
+{
+    this->passedTime +=  this->timeStep;
+    this->leftTime   -=  this->timeStep;
 }
 void DegreeTracker::updatePosition(int pulseCount)
-{
-    float pulseStep = (float)360 / (float)MOTOR_PULSE_PER_TURN;
-    this->definedpulsestep = pulseStep;
-    // Serial.print("\n ******");
-    // Serial.print(pulseStep);
-    // Serial.print("\n ******");
-    // Serial.print(pulseCount);
-    // Serial.print("\n ******");
+{ 
     this->passedDeltaDegree = pulseStep * (float)pulseCount;
-    this->leftDeltaDegree = this->desiredDeltaDegree - this->passedDeltaDegree;
+    this->leftDeltaDegree   = this->desiredDeltaDegree - this->passedDeltaDegree;
 }
 float DegreeTracker::updateDesiredRPM()
 {
@@ -35,34 +35,11 @@ float DegreeTracker::updateDesiredRPM()
 void DegreeTracker::resetPosition(void)
 {
     this->passedDeltaDegree = 0;
-    this->passedTime = 0;
-    this->leftDeltaDegree = desiredDeltaDegree;
-    this->leftTime = desiredDeltaTime;
-    this->desiredRPM = desiredDeltaDegree / (desiredDeltaTime * 6);
+    this->passedTime        = 0;
+    this->leftDeltaDegree   = desiredDeltaDegree;
+    this->leftTime          = desiredDeltaTime;
+    this->desiredRPM        = desiredDeltaDegree / (desiredDeltaTime * 6);
 }
-// bool DegreeTracker::stopIfTrue(void)
-// {
-//     if (this->leftDeltaDegree < 2)
-//     {
-//         return true;
-//     }
-//     else
-//     {
-//         return false;
-//     }
-// }
-
-// bool DegreeTracker::getLeftTime(void)
-// {
-//     if (this->leftDeltaDegree <= 0)
-//     {
-//         return true;
-//     }
-//     else
-//     {
-//         return false;
-//     }
-// }
 
 float DegreeTracker::getLeftDeltaDegree(void)
 {

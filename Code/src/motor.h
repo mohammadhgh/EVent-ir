@@ -13,7 +13,7 @@
 #define MOTOR_IS_ON             HIGH
 #define MOTOR_IS_OFF            LOW
 
-#define MOTOR_PULSE_PER_TURN    1110
+#define MOTOR_PULSE_PER_TURN    1220
 
 #define MOTOR_ENC_PERIOD_OFF    100000
 
@@ -57,6 +57,7 @@ public:
     void encCallback();
     int  getEncCount();
     void resetEncPeriod();
+    void resetEncRPM();
     float getEncRPM();
     int  getEncAngle();
     int  getEncPeriod();

@@ -29,6 +29,7 @@ public:
     const static int motorOut2 = 9;
     const static int motorControl = 11;
     const static int motorEncoderPin = 19;
+    const static int motorDirectionPin = 12;
 
     //----pushButtons
     const static int onButton_pin = 2;
@@ -46,6 +47,9 @@ public:
     const static int Potentiometer_Volume = A8;
     const static int Potentiometer_Cycle = A9;
     const static int Potentiometer_IE = A10;
+
+    //-----TimerTestPin
+    const static int timerTestPin = 6;
 
     void pinConfiguration();
 };

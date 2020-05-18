@@ -82,12 +82,16 @@ void static initial_Check()
 	if (open_uSwitch->get_Status() == BSTATE_HIGH)
 	{
 		Serial.println("Initial Setup");
+		Motor::getInstance()->setSpeed(Global_SysConfig->motorInitPWM-2);
 		Motor::getInstance()->setDirection(DIRECTION_OPEN);
 		Motor::getInstance()->motorStart();
 		while (open_uSwitch->get_Clicked() == false)
 			delay(1);
 		open_uSwitch->set_Clicked(false);
+		Serial.println(Motor::getInstance()->getPC());
 		Motor::getInstance()->motorStop();
+		Motor::getInstance()->setSpeed(Global_SysConfig->motorInitPWM);
+		Serial.println(Motor::getInstance()->getPC());
 	}
 }
 
@@ -136,7 +140,7 @@ void setup()
 	Serial.begin(115200);
 
 	Global_SysConfig = new SysConfig(2, 20, 0);
-	Global_SysConfig->set_loopParams(0.6, 4, 5e-3);
+	Global_SysConfig->setParams(6e-1, 5e-3, 235);
 
 	PinConfiguration::getInstance()->pinConfiguration();
 
@@ -167,9 +171,9 @@ void setup()
 
 	interrupts();
 
-	Motor::getInstance()->setSpeed(225);
+	Motor::getInstance()->setSpeed(Global_SysConfig->motorInitPWM);
 	Motor::getInstance()->initEnc(PinConfiguration::motorEncoderPin, INPUT, enc_callback, RISING);
-	//initial_Check();
+	initial_Check();
 }
 
 void loop()
@@ -218,7 +222,7 @@ void loop()
 		myCounter=0;
 		onMotorStop();
 		comeAndGo=0;
-		Motor::getInstance()->setSpeed(225);
+		Motor::getInstance()->setSpeed(Global_SysConfig->motorInitPWM);
 	}
 
 	if (open_uSwitch->get_Clicked() == true)
@@ -253,20 +257,20 @@ void loop()
 				//f[0]=Motor::getInstance()->getPC();
 				//t[0]=degreeTracker->getLeftTime();
 				Motor::getInstance()->motorStop();
-				j++;				
+								
 			}	
 		}
 	}
-	else if (j==1){
+	/*else if (j==1){
 		if (timeStepValid)
 		{			
 			timeStepValid = 0;
 			
-			/*if(Motor::getInstance()->getEncRPM()<2.0){
-				//f[2]=Motor::getInstance()->getPC();
-				//t[2]=degreeTracker->getLeftTime();
-				j++;
-			}*/
+			// if(Motor::getInstance()->getEncRPM()<2.0){
+			// 	f[2]=Motor::getInstance()->getPC();
+			// 	t[2]=degreeTracker->getLeftTime();
+			// 	j++;
+			// }
 
 			degreeTracker->updateTime();
 			degreeTracker->updatePosition(Motor::getInstance()->getPC());	
@@ -277,33 +281,35 @@ void loop()
 			MotorPwm[myCounter] 		 = motorSpeed;
 			MotorSpeedActual[myCounter]  = round(Motor::getInstance()->getEncRPM());
 
-			/*if(calcedLeftDegree[myCounter]<0 && j==1){
-				f[1]=Motor::getInstance()->getPC();
-				t[1]=degreeTracker->getLeftTime();
-				j++;
-			}*/
+			// if(calcedLeftDegree[myCounter]<0 && j==1){
+			// 	f[1]=Motor::getInstance()->getPC();
+			// 	t[1]=degreeTracker->getLeftTime();
+			// 	j++;
+			// }
 
 			if(myCounter<399)
 				myCounter++;
 		}
-	}
+	}*/
 
 	if(degreeTracker->getLeftTime()<0){	
 		//k++;
-		j=0;
+		//j++;
+		/*if(j==2)
+		j=0;*/
 		motorStopped=0;		
 		Timer5Stop();		
 		onMotorStop();
 		changeDir=not(changeDir);
 		if(changeDir){
 			Motor::getInstance()->setDirection(DIRECTION_OPEN);
-			degreeTracker->updateDesiredDelatTime(1.2);
+			degreeTracker->updateDesiredDelatTime(2*Global_SysConfig->duration);
 		}
 		else{
 			Motor::getInstance()->setDirection(DIRECTION_CLOSE);
-			degreeTracker->updateDesiredDelatTime(0.6);
+			degreeTracker->updateDesiredDelatTime(Global_SysConfig->duration);
 		}
-		Motor::getInstance()->setSpeed(235);
+		Motor::getInstance()->setSpeed(Global_SysConfig->motorInitPWM);
 		delay(70);
 		//if(k<2)
 			onMotorStart();

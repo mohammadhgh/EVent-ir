@@ -37,8 +37,8 @@ void PinConfiguration::pinConfiguration()
 	digitalWrite(buzzerPin, HIGH);
 
 	//----LEDs
-	pinMode(gLED_pin, OUTPUT);
-	digitalWrite(gLED_pin, LOW);
+	pinMode(bLED_pin, OUTPUT);
+	digitalWrite(bLED_pin, LOW);
 
 	//TimerTest Pin
 	pinMode(timerTestPin, OUTPUT);

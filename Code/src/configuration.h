@@ -40,7 +40,7 @@ public:
     const static int buzzerPin = 5; //PWM
 
     //----LEDs
-    const static int gLED_pin = 7;
+    const static int bLED_pin = 14;
     const static int ardLED = 13;
 
     //----Potentiometer

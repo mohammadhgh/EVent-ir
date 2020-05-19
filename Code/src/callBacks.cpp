@@ -4,24 +4,30 @@
 #include <configuration.h>
 #include <timers.h>
 
-extern Button *ON_button;
+extern Button *onButton;
 extern Button *open_uSwitch;
 extern volatile int encFalled;
 
 /* -------------- on button callback ----------------- */
-void onButton_callback()
+void onButton_callback_WithInteruppt()
 {
 	detachInterrupt(digitalPinToInterrupt(PinConfiguration::onButton_pin));
     OCR3A   = 781;					
 	TCCR3B |= (1 << WGM12)|(1<<CS10) | (1<<CS12) ;
 }
 
+void onButton_callback()
+{
+	onButton->set_On_Off();
+	onButton->set_Clicked(true);
+}
+
 /* ------------ open uSwithch callback ---------------- */
 void open_uSw_callback()
 {
 	detachInterrupt(digitalPinToInterrupt(PinConfiguration::open_uSw_pin));	
-	OCR4A  = 781;
-	TCCR4B |= (1 << WGM12)|(1<<CS10) | (1<<CS12) ;	
+	OCR3A  = 781;
+	TCCR3B |= (1 << WGM12)|(1<<CS10) | (1<<CS12) ;	
 }
 
 /* ------------ encoder callback ---------------- */

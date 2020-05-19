@@ -1,4 +1,4 @@
-// by Amir Sk , MHG, MHM, ASG
+// by Amir Sk , MHG, MHM, ASM
 // Apr. 5rd 2020
 
 #include <Arduino.h>
@@ -27,10 +27,10 @@ long testTimer = 0;
 /* Global Objects */
 SysConfig *Global_SysConfig;
 
-Button *ON_button;
+Button *onButton;
 Button *open_uSwitch;
 
-LED *gLED;
+LED *bLED;
 LED *ardLED;
 boolean a = false;
 Buzzer *coolBuzz;
@@ -55,43 +55,24 @@ float calcedLeftDegree[400];
 int   MotorSpeedActual[400];
 float MotorPwm[400];
 
-
-int RC = 0;
-
-volatile int encFalled = 0;
-
 int motorSpeed = 0;
-unsigned long lastMilis = 0;
+int myCounter = 0;
 
 int j = 0; int k = 0; 
-int myCounter = 0;
 volatile int timeStepValid = 0;
-int startDir=0;
-int currentDir=0;
-int dirChanged=0;
+
 int motorStopped=0;
-
+int motorMustStop=0;
 int timerPinVal=LOW;
-int changeDir=LOW;
 int comeAndGo=0;
+int changeDir=0;
 
+int ouSwithHitPC=0;
+int stopPC=0;
+ 
 /* ------------- Initial Check ------------*/
-
-void static initial_Check()
+static void resetParams()
 {
-	if (open_uSwitch->get_Status() == BSTATE_HIGH)
-	{
-		Serial.println("Initial Setup");
-		Motor::getInstance()->setDirection(DIRECTION_OPEN);
-		Motor::getInstance()->motorStart();
-		while (open_uSwitch->get_Clicked() == false)
-			delay(1);
-		open_uSwitch->set_Clicked(false);
-		Motor::getInstance()->motorStop();
-	}
-}
-
-static void resetParams(){
 	Motor::getInstance()->resetEncPeriod();
 	Motor::getInstance()->resetPC();
 	pid->resetParams();
@@ -114,10 +95,29 @@ static void onMotorStop()
 }
 
 static void motorSpeedCheck(){
-	if(round(Motor::getInstance()->getEncRPM())>30){
+	if(round(Motor::getInstance()->getEncRPM())>55)
+	{
 		Serial.println("check");
 		onMotorStop();
 		comeAndGo=0;
+	}
+}
+
+void static initial_Check()
+{
+	if (open_uSwitch->get_Status() == BSTATE_HIGH)
+	{
+		Serial.println("Initial Setup");
+		Motor::getInstance()->setSpeed(Global_SysConfig->motorInitPWM-2);
+		Motor::getInstance()->setDirection(DIRECTION_OPEN);
+		Motor::getInstance()->motorStart();
+		while (open_uSwitch->get_Clicked() == false){
+			delay(1);
+			motorSpeedCheck();
+		}
+		open_uSwitch->set_Clicked(false);
+		Motor::getInstance()->motorStop();
+		Motor::getInstance()->setSpeed(Global_SysConfig->motorInitPWM);
 	}
 }
 
@@ -136,7 +136,7 @@ void setup()
 	Serial.begin(115200);
 
 	Global_SysConfig = new SysConfig(2, 20, 0);
-	Global_SysConfig->set_loopParams(0.6, 4, 5e-3);
+	Global_SysConfig->setParams(6e-1, 5e-3, 235);
 
 	PinConfiguration::getInstance()->pinConfiguration();
 
@@ -144,11 +144,12 @@ void setup()
 
 	//mot_Driver = new Motor_Driver(Motor::getInstance());
 
-	ON_button = new Button(PinConfiguration::onButton_pin, INPUT, onButton_callback, LOW);
+	onButton = new Button(PinConfiguration::onButton_pin);
+	onButton->setPressCallback(onButton_callback);
 
 	open_uSwitch = new Button(PinConfiguration::open_uSw_pin, INPUT, open_uSw_callback, LOW);
 
-	gLED = new LED(PinConfiguration::gLED_pin);
+	bLED = new LED(PinConfiguration::bLED_pin);
 
 	respVolume = new Potentiometer(PinConfiguration::Potentiometer_Volume, 7);
 	respCycle  = new Potentiometer(PinConfiguration::Potentiometer_Cycle, 23);
@@ -158,7 +159,7 @@ void setup()
 	respVolume->set_Range(table_RV, sizeof table_RV);
 	IERatio->set_Range(table_IE, sizeof table_IE);
 
-	pid = new PID(3, 48, 0.025, 16);
+	pid = new PID(3, 48, 0.025, 10);
 	pid->setTimeStep(Global_SysConfig->timeStep);
 	pid->setOutputRange(0, 255);
 
@@ -166,9 +167,9 @@ void setup()
 
 	interrupts();
 
-	Motor::getInstance()->setSpeed(240);
+	Motor::getInstance()->setSpeed(Global_SysConfig->motorInitPWM);
 	Motor::getInstance()->initEnc(PinConfiguration::motorEncoderPin, INPUT, enc_callback, RISING);
-	//initial_Check();
+	initial_Check();
 }
 
 void loop()
@@ -176,53 +177,56 @@ void loop()
 	//mot_Driver->update_resp_rate(Global_SysConfig);
 	//mot_Driver->check();
 	//LCD::getInstance()->LCD_Menu(respVolume->Potentiometer_Read(), respCycle->Potentiometer_Read(), IERatio->Potentiometer_Read());
+	onButton->check();
+	
 	if(motorStopped==0)
 		motorSpeedCheck();
 	
-	if (ON_button->get_Clicked() == true && ON_button->get_On_Off() == BSTATE_ON)
+	if (onButton->get_Clicked() == true && onButton->get_On_Off() == BSTATE_ON)
 	{
-		Motor::getInstance()->setDirection(DIRECTION_OPEN);
+		Motor::getInstance()->setDirection(DIRECTION_CLOSE);
 		comeAndGo=1;
 		onMotorStart();
-		ON_button->set_Clicked(false);
+		onButton->set_Clicked(false);
 	}
 
-	else if (ON_button->get_Clicked() == true && ON_button->get_On_Off() == BSTATE_OFF)
+	else if (onButton->get_Clicked() == true && onButton->get_On_Off() == BSTATE_OFF)
 	{
-		ON_button->set_Clicked(false);
-		for (int i = 0; i < myCounter; i++)
-		{
-			Serial.print(i);
-			Serial.print("\t");
-			Serial.print(calcedLeftTime[i],3);
-			Serial.print("\t");
-			Serial.print(calcedLeftDegree[i],3);
-			Serial.print("\t");
-			Serial.print(MotorPwm[i]);
-			Serial.print("\t");
-			Serial.println(MotorSpeedActual[i]);
+		motorMustStop=1;
+		onButton->set_Clicked(false);				
+	}
+	if(k==2){
+		k=0;
+		if(motorMustStop==1){		
+			onMotorStop();
+			motorMustStop=0;		
+			for (int i = 0; i < myCounter; i++)
+			{
+				Serial.print(i);
+				Serial.print("\t");
+				Serial.print(calcedLeftTime[i],3);
+				Serial.print("\t");
+				Serial.print(calcedLeftDegree[i],3);
+				Serial.print("\t");
+				Serial.print(MotorPwm[i]);
+				Serial.print("\t");
+				Serial.println(MotorSpeedActual[i]);
+			}
+			Serial.println(ouSwithHitPC);			
+			j=0;	
+			myCounter=0;			
+			comeAndGo=0;
+			Motor::getInstance()->setSpeed(Global_SysConfig->motorInitPWM);				
 		}
-		
-		Serial.println(j);	
-		/*Serial.println(f[0]);	
-		Serial.println(t[0],3);	
-		Serial.println(f[1]);	
-		Serial.println(t[1],3);	
-		Serial.println(f[2]);	
-		Serial.println(t[2],3);*/
-
-		j=0;	
-		myCounter=0;
-		onMotorStop();
-		comeAndGo=0;
-		Motor::getInstance()->setSpeed(240);
 	}
 
 	if (open_uSwitch->get_Clicked() == true)
 	{
-		TCNT5 = 0;
-		Motor::getInstance()->changeDirection();
-		pid->resetParams();
+		//TCNT5 = 0;
+		//Motor::getInstance()->changeDirection();
+		ouSwithHitPC=Motor::getInstance()->getPC();
+		//bLED->switch_led();
+		//pid->resetParams();
 		open_uSwitch->set_Clicked(false);
 	}
 
@@ -242,27 +246,23 @@ void loop()
 			MotorPwm[myCounter] 		 = motorSpeed;
 			MotorSpeedActual[myCounter]  = round(Motor::getInstance()->getEncRPM());
 
-			myCounter++;
+			if(myCounter<399)
+				myCounter++;
 			
 			if (degreeTracker->getLeftTime()<0.04){
 				motorStopped = 1;
 				//f[0]=Motor::getInstance()->getPC();
 				//t[0]=degreeTracker->getLeftTime();
 				Motor::getInstance()->motorStop();
-				j++;				
+				j++;
+								
 			}	
 		}
 	}
 	else if (j==1){
 		if (timeStepValid)
 		{			
-			timeStepValid = 0;
-			
-			/*if(Motor::getInstance()->getEncRPM()<2.0){
-				//f[2]=Motor::getInstance()->getPC();
-				//t[2]=degreeTracker->getLeftTime();
-				j++;
-			}*/
+			timeStepValid = 0;			
 
 			degreeTracker->updateTime();
 			degreeTracker->updatePosition(Motor::getInstance()->getPC());	
@@ -273,12 +273,6 @@ void loop()
 			MotorPwm[myCounter] 		 = motorSpeed;
 			MotorSpeedActual[myCounter]  = round(Motor::getInstance()->getEncRPM());
 
-			/*if(calcedLeftDegree[myCounter]<0 && j==1){
-				f[1]=Motor::getInstance()->getPC();
-				t[1]=degreeTracker->getLeftTime();
-				j++;
-			}*/
-
 			if(myCounter<399)
 				myCounter++;
 		}
@@ -286,27 +280,26 @@ void loop()
 
 	if(degreeTracker->getLeftTime()<0){	
 		k++;
+		//j++;
+		///if(j==2)
 		j=0;
-		motorStopped=0;		
+		motorStopped=0;	
+		int currentPC=Motor::getInstance()->getPC();	
 		Timer5Stop();		
 		onMotorStop();
 		changeDir=not(changeDir);
 		if(changeDir){
-			Motor::getInstance()->setDirection(DIRECTION_CLOSE);
-			degreeTracker->updateDesiredDelatTime(1.2);
-		}
-		else{
 			Motor::getInstance()->setDirection(DIRECTION_OPEN);
-			degreeTracker->updateDesiredDelatTime(0.6);
+			degreeTracker->updateDesiredDelatTime(2*Global_SysConfig->duration);
 		}
-		Motor::getInstance()->setSpeed(240);
-		Serial.println(k);
-		delay(70);
-		if(k<2)
-			onMotorStart();
 		else{
-			k=0;
+			Motor::getInstance()->setDirection(DIRECTION_CLOSE);
+			//degreeTracker->updateDesiredDeltaDegree(35+(currentPC-ouSwithHitPC)*(float)360 / (float)MOTOR_PULSE_PER_TURN);
+			degreeTracker->updateDesiredDelatTime(Global_SysConfig->duration);
 		}
+		Motor::getInstance()->setSpeed(Global_SysConfig->motorInitPWM);
+		delay(50);
+		onMotorStart();	
 					
 	}
 		

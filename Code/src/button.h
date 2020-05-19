@@ -21,18 +21,23 @@ private:
     bool ignoreUp;
     bool clicked;
     int  on_off_Stat;
+    bool interrupted;
     void (*pressCallback)(void);
     
 public:
     Button(int pin, uint8_t ioMode, void (*callback_func)(void), int interruptMode);
+    Button(int pin);
     void setPressCallback(void (*callback_func)(void));
     void callBackFunc();
     void enableInterrupt(void (*callback_func)(void));
     bool get_Clicked();
     int  get_Status();
     int  get_On_Off();
+    bool isInterrupted();
     void set_On_Off();
     void set_Clicked(bool clicked);
+    void setIsInterrupted(bool interrupted);
+    void check();    
 };
 
 #endif

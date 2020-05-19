@@ -17,21 +17,28 @@ void DegreeTracker::updateDesiredDelatTime(float desiredDeltaTime)
     this->desiredDeltaTime = desiredDeltaTime;
 }
 
+void DegreeTracker::updateDesiredDeltaDegree(float desiredDeltaDegree){
+    this->desiredDeltaDegree = desiredDeltaDegree;
+}
+
 void DegreeTracker::updateTime()
 {
     this->passedTime +=  this->timeStep;
     this->leftTime   -=  this->timeStep;
 }
+
 void DegreeTracker::updatePosition(int pulseCount)
 { 
     this->passedDeltaDegree = pulseStep * (float)pulseCount;
     this->leftDeltaDegree   = this->desiredDeltaDegree - this->passedDeltaDegree;
 }
+
 float DegreeTracker::updateDesiredRPM()
 {
     this->desiredRPM = this->leftDeltaDegree / (this->leftTime * 6);
     return this->desiredRPM;
 }
+
 void DegreeTracker::resetPosition(void)
 {
     this->passedDeltaDegree = 0;

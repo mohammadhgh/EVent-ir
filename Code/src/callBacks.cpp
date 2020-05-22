@@ -7,6 +7,7 @@
 extern Button *onButton;
 extern Button *open_uSwitch;
 extern volatile int encFalled;
+extern volatile int ouSwithHitPC;
 
 /* -------------- on button callback ----------------- */
 void onButton_callback_WithInteruppt()
@@ -26,6 +27,7 @@ void onButton_callback()
 void open_uSw_callback()
 {
 	detachInterrupt(digitalPinToInterrupt(PinConfiguration::open_uSw_pin));	
+	ouSwithHitPC=Motor::getInstance()->getPC();
 	OCR3A  = 781;
 	TCCR3B |= (1 << WGM12)|(1<<CS10) | (1<<CS12) ;	
 }

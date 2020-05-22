@@ -163,7 +163,7 @@ void setup()
 	pid->setTimeStep(Global_SysConfig->timeStep);
 	pid->setOutputRange(0, 255);
 
-	degreeTracker = new DegreeTracker((float)35, Global_SysConfig->duration, Global_SysConfig->timeStep);
+	degreeTracker = new DegreeTracker((float)32, Global_SysConfig->duration, Global_SysConfig->timeStep);
 
 	interrupts();
 
@@ -184,6 +184,7 @@ void loop()
 	
 	if (onButton->get_Clicked() == true && onButton->get_On_Off() == BSTATE_ON)
 	{
+		Serial.println("start");
 		Motor::getInstance()->setDirection(DIRECTION_CLOSE);
 		comeAndGo=1;
 		onMotorStart();
@@ -220,15 +221,14 @@ void loop()
 		}
 	}
 
-	if (open_uSwitch->get_Clicked() == true)
+	/*if (open_uSwitch->get_Clicked() == true)
 	{
 		//TCNT5 = 0;
 		//Motor::getInstance()->changeDirection();
-		ouSwithHitPC=Motor::getInstance()->getPC();
 		//bLED->switch_led();
 		//pid->resetParams();
 		open_uSwitch->set_Clicked(false);
-	}
+	}*/
 
 	if (Motor::getInstance()->getStatus() == MOTOR_IS_ON)	
 	{		
@@ -291,14 +291,30 @@ void loop()
 		if(changeDir){
 			Motor::getInstance()->setDirection(DIRECTION_OPEN);
 			degreeTracker->updateDesiredDelatTime(2*Global_SysConfig->duration);
+			degreeTracker->updateDesiredDeltaDegree(32);
+			//degreeTracker->resetPosition();			
 		}
 		else{
 			Motor::getInstance()->setDirection(DIRECTION_CLOSE);
-			//degreeTracker->updateDesiredDeltaDegree(35+(currentPC-ouSwithHitPC)*(float)360 / (float)MOTOR_PULSE_PER_TURN);
+			if (open_uSwitch->get_Clicked() == true){
+				degreeTracker->updateDesiredDeltaDegree(32+(currentPC-ouSwithHitPC)*(float)360/(float)MOTOR_PULSE_PER_TURN);
+				degreeTracker->resetPosition();
+				open_uSwitch->set_Clicked(false);
+				Serial.println(ouSwithHitPC);
+				Serial.println(currentPC);				
+				Serial.println(degreeTracker->getLeftDeltaDegree());				
+			}
+			else
+			{
+				degreeTracker->updateDesiredDeltaDegree(32);
+				//degreeTracker->resetPosition();
+			}
+			
 			degreeTracker->updateDesiredDelatTime(Global_SysConfig->duration);
 		}
 		Motor::getInstance()->setSpeed(Global_SysConfig->motorInitPWM);
-		delay(50);
+
+		delay(45);
 		onMotorStart();	
 					
 	}

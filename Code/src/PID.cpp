@@ -26,6 +26,8 @@ int PID::Calc(float desired, float pv){
         errorPre = error;
         
         pwm = 255 - (KP*error + KI*integral + KD*derivative);  
+        
+        //pwm = KP*error + KI*integral + KD*derivative;  
 
         realPidVal = pwm ; 
 

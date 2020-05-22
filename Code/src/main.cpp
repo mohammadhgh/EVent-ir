@@ -31,6 +31,7 @@ Button *onButton;
 Button *open_uSwitch;
 
 LED *bLED;
+LED *wLED;
 LED *ardLED;
 boolean a = false;
 Buzzer *coolBuzz;
@@ -70,7 +71,7 @@ int changeDir=0;
 int ouSwithHitPC=0;
 int stopPC=0;
  
-/* ------------- Initial Check ------------*/
+/* ------------- Static Functions ------------*/
 static void resetParams()
 {
 	Motor::getInstance()->resetEncPeriod();
@@ -84,18 +85,18 @@ static void onMotorStart()
 	resetParams();
 	Motor::getInstance()->motorStart();
 	timeStepValid = 0;
-	Timer4Start(round(15625 * pid->getTimeStep()) - 1);
+	Timer1Start(round(15625 * pid->getTimeStep()) - 1);
 }
 
 static void onMotorStop()
 {
 	Motor::getInstance()->motorStop();
 	resetParams();
-	Timer4Stop();
+	Timer1Stop();
 }
 
 static void motorSpeedCheck(){
-	if(round(Motor::getInstance()->getEncRPM())>55)
+	if(round(Motor::getInstance()->getEncRPM())>90)
 	{
 		Serial.println("check");
 		onMotorStop();
@@ -108,12 +109,13 @@ void static initial_Check()
 	if (open_uSwitch->get_Status() == BSTATE_HIGH)
 	{
 		Serial.println("Initial Setup");
-		Motor::getInstance()->setSpeed(Global_SysConfig->motorInitPWM-2);
+		Motor::getInstance()->setSpeed(Global_SysConfig->motorInitPWM+2);
 		Motor::getInstance()->setDirection(DIRECTION_OPEN);
 		Motor::getInstance()->motorStart();
 		while (open_uSwitch->get_Clicked() == false){
 			delay(1);
 			motorSpeedCheck();
+			//Serial.println(Motor::getInstance()->getEncRPM());
 		}
 		open_uSwitch->set_Clicked(false);
 		Motor::getInstance()->motorStop();
@@ -136,7 +138,7 @@ void setup()
 	Serial.begin(115200);
 
 	Global_SysConfig = new SysConfig(2, 20, 0);
-	Global_SysConfig->setParams(6e-1, 5e-3, 235);
+	Global_SysConfig->setParams(6e-1, 5e-3, 5);
 
 	PinConfiguration::getInstance()->pinConfiguration();
 
@@ -150,6 +152,7 @@ void setup()
 	open_uSwitch = new Button(PinConfiguration::open_uSw_pin, INPUT, open_uSw_callback, LOW);
 
 	bLED = new LED(PinConfiguration::bLED_pin);
+	wLED = new LED(PinConfiguration::wLED_pin);
 
 	respVolume = new Potentiometer(PinConfiguration::Potentiometer_Volume, 7);
 	respCycle  = new Potentiometer(PinConfiguration::Potentiometer_Cycle, 23);
@@ -167,8 +170,9 @@ void setup()
 
 	interrupts();
 
+	digitalWrite(PinConfiguration::motorDriverOnOff, HIGH);
 	Motor::getInstance()->setSpeed(Global_SysConfig->motorInitPWM);
-	Motor::getInstance()->initEnc(PinConfiguration::motorEncoderPin, INPUT, enc_callback, RISING);
+	Motor::getInstance()->initEnc(PinConfiguration::motorEncoderPin, INPUT, enc_callback, FALLING);
 	initial_Check();
 }
 
@@ -178,6 +182,7 @@ void loop()
 	//mot_Driver->check();
 	//LCD::getInstance()->LCD_Menu(respVolume->Potentiometer_Read(), respCycle->Potentiometer_Read(), IERatio->Potentiometer_Read());
 	onButton->check();
+	
 	
 	if(motorStopped==0)
 		motorSpeedCheck();
@@ -233,9 +238,8 @@ void loop()
 	if (Motor::getInstance()->getStatus() == MOTOR_IS_ON)	
 	{		
 		if (timeStepValid)
-		{			
-			timeStepValid = 0;	
-	
+		{						
+			timeStepValid = 0;
 			degreeTracker->updateTime();
 			degreeTracker->updatePosition(Motor::getInstance()->getPC());			
 			motorSpeed = pid->Calc(degreeTracker->updateDesiredRPM(), Motor::getInstance()->getEncRPM());

@@ -13,12 +13,17 @@ PinConfiguration *PinConfiguration::getInstance()
 
 void PinConfiguration::pinConfiguration()
 {
+	//Dummy Input Pin
+	pinMode(dummyInput, INPUT);
+
 	// Motor pins
 	pinMode(motorOut1, OUTPUT);
 	digitalWrite(motorOut1, LOW);
 	pinMode(motorOut2, OUTPUT);
 	digitalWrite(motorOut2, LOW);
 	pinMode(motorControl, OUTPUT);
+	pinMode(motorDriverOnOff, OUTPUT);
+	digitalWrite(motorDriverOnOff, LOW);	
 
 	//----buttons
 	pinMode(onButton_pin, INPUT);
@@ -34,13 +39,14 @@ void PinConfiguration::pinConfiguration()
 
 	//----buzzer
 	pinMode(buzzerPin, OUTPUT);
-	digitalWrite(buzzerPin, HIGH);
+	digitalWrite(buzzerPin, LOW);
 
 	//----LEDs
 	pinMode(bLED_pin, OUTPUT);
 	digitalWrite(bLED_pin, LOW);
+	pinMode(wLED_pin, OUTPUT);
+	digitalWrite(wLED_pin, LOW);	
 
-	//TimerTest Pin
-	pinMode(timerTestPin, OUTPUT);
-	digitalWrite(timerTestPin, LOW);
+
+
 }

@@ -138,7 +138,7 @@ void setup()
 	Serial.begin(115200);
 
 	Global_SysConfig = new SysConfig(2, 20, 0);
-	Global_SysConfig->setParams(6e-1, 5e-3, 5);
+	Global_SysConfig->setParams(6e-1, 5e-3, 23);
 
 	PinConfiguration::getInstance()->pinConfiguration();
 
@@ -162,7 +162,7 @@ void setup()
 	respVolume->set_Range(table_RV, sizeof table_RV);
 	IERatio->set_Range(table_IE, sizeof table_IE);
 
-	pid = new PID(3, 48, 0.025, 10);
+	pid = new PID(1, 32, 0, 18);
 	pid->setTimeStep(Global_SysConfig->timeStep);
 	pid->setOutputRange(0, 255);
 
@@ -253,13 +253,12 @@ void loop()
 			if(myCounter<399)
 				myCounter++;
 			
-			if (degreeTracker->getLeftTime()<0.04){
+			if (degreeTracker->getLeftTime()<0.035){
 				motorStopped = 1;
 				//f[0]=Motor::getInstance()->getPC();
 				//t[0]=degreeTracker->getLeftTime();
 				Motor::getInstance()->motorStop();
-				j++;
-								
+				j++;							
 			}	
 		}
 	}

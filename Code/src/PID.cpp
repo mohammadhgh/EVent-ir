@@ -12,7 +12,7 @@ int PID::Calc(float desired, float pv){
     float pwm = 0;
     if(ignoreCounter==0)
     {
-        pwm = 235;
+        pwm = 20;
         oldPWM = pwm;
     }
     if(ignoreCounter>ignorePIDCount)
@@ -25,7 +25,9 @@ int PID::Calc(float desired, float pv){
 
         errorPre = error;
         
-        pwm = 255 - (KP*error + KI*integral + KD*derivative);  
+        //pwm = 255 - (KP*error + KI*integral + KD*derivative);  
+        
+        pwm = KP*error + KI*integral + KD*derivative;  
 
         realPidVal = pwm ; 
 

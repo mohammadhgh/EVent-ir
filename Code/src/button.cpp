@@ -4,25 +4,26 @@ Button::Button(int pin, uint8_t ioMode, void (*callback_func)(void), int interru
 {
     this->pin = pin;
     this->interruptMode = interruptMode;
-    this->btnDnTime = 0;
-    this->btnUpTime = 0;
-    this->lastState = HIGH;
-    this->ignoreUp = false;
-    this->clicked = false;
-    this->on_off_Stat = BSTATE_OFF;
+    this->btnDnTime     = 0;
+    this->btnUpTime     = 0;
+    this->lastState     = HIGH;
+    this->ignoreUp      = false;
+    this->clicked       = false;
+    this->on_off_Stat   = BSTATE_OFF;
     this->pressCallback = NULL;
-    this->interrupted = false;
-    pinMode(pin, ioMode);
+    this->interrupted   = false;
     attachInterrupt(digitalPinToInterrupt(pin), callback_func, interruptMode);
 }
 
 Button::Button(int pin)
 {
-    this->pin = pin;
-    this->btnDnTime = 0;
-    this->btnUpTime = 0;
-    this->lastState = HIGH;
-    this->ignoreUp  = false;
+    this->pin           = pin;
+    this->btnDnTime     = 0;
+    this->btnUpTime     = 0;
+    this->lastState     = HIGH;
+    this->ignoreUp      = false;
+    this->clicked       = false;
+    this->on_off_Stat   = BSTATE_OFF;
     this->pressCallback = NULL;
 }
 

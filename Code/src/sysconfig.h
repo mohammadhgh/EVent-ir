@@ -18,7 +18,7 @@ private:
 public:
     float duration  = 6e-1; 
     float timeStep  = 5e-3; 
-    int   motorInitPWM = 255;
+    int   motorInitPWM = 0;
 
     SysConfig(int IE_Ratio, int Resp_Rate, int Tidal_Volume);
     int get_IE_Ratio();

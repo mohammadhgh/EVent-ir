@@ -132,7 +132,7 @@ float Motor::getEncRPM()
     float RPM = 0;
     //float tempRPM = 0;
     int period = this->getEncPeriod();
-    if(period>100){
+    if(period>2){
         RPM = (float)period * (float)MOTOR_PULSE_PER_TURN * (float)4; 
         RPM = (long)60000000 / RPM;
         /*RPMs[rpmIndex]=RPM;

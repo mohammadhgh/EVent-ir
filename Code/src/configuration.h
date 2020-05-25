@@ -16,13 +16,11 @@ public:
     const static int holdTime = 1000;     //milli-seconds
     const static int uSwitch_hits_thr = 5;
 
+    //Dummy Input Pin
+    const static int dummyInput = 15;
+
     //----uSwitches
     const static int open_uSw_pin = 3;
-    long open_uSw_last = 0;
-    int open_uSw_hits = 0;
-    const static int close_uSw_pin = 5;
-    long close_uSw_last = 0;
-    int close_uSw_hits = 0;
 
     //----motor
     const static int motorOut1         = 18;
@@ -48,8 +46,9 @@ public:
     const static int Potentiometer_Cycle = A10;
     const static int Potentiometer_IE = A12;
 
-    //Dummy Input Pin
-    const static int dummyInput = 15;
+    //----Pressure_Snsor
+    const static int PR_Sck = 4;
+    const static int PR_Out = 6;
 
     void pinConfiguration();
 };

@@ -28,14 +28,11 @@ void PinConfiguration::pinConfiguration()
 	//----buttons
 	pinMode(onButton_pin, INPUT);
 	digitalWrite(onButton_pin, HIGH);
-	// attachInterrupt(digitalPinToInterrupt(onButton_pin), onButton_handler, LOW);
+
 
 	//----uSwitches
 	pinMode(open_uSw_pin, INPUT);
 	digitalWrite(open_uSw_pin, HIGH);
-
-	pinMode(close_uSw_pin, INPUT);
-	digitalWrite(close_uSw_pin, HIGH);
 
 	//----buzzer
 	pinMode(buzzerPin, OUTPUT);

@@ -42,9 +42,9 @@ public:
     const static int ardLED = 13;
 
     //----Potentiometer
-    const static int Potentiometer_Volume = A8;
+    const static int Potentiometer_Volume = A12;
     const static int Potentiometer_Cycle = A10;
-    const static int Potentiometer_IE = A12;
+    const static int Potentiometer_IE = A8;
 
     //----Pressure_Snsor
     const static int PR_Sck = 4;

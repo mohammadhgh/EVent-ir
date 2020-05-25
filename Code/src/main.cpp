@@ -55,7 +55,7 @@ void setup()
 
 	motorController = new MotorController();
 
-	LCD::getInstance()->LCD_Logo();
+	//LCD::getInstance()->LCD_Logo();
 
 	interrupts();
 
@@ -67,10 +67,13 @@ void setup()
 
 void loop()
 {
-	LCD::getInstance()->LCD_Menu(respVolume->Potentiometer_Read(), respCycle->Potentiometer_Read(), IERatio->Potentiometer_Read(), PR->Read_Pressure());
-	LCD::getInstance()->LCD_Clear();
+	//LCD::getInstance()->LCD_Menu(respVolume->Potentiometer_Read(), respCycle->Potentiometer_Read(), IERatio->Potentiometer_Read(), PR->Read_Pressure());
+	//LCD::getInstance()->LCD_Clear();
 
 	//LCD::getInstance()->LCD_graph();
+
+	//Serial.println(respCycle->Potentiometer_Read());
+	//Serial.println(IERatio->Potentiometer_Read());
 
 	onButton->check();
 	if (onButton->get_Clicked() == true && onButton->get_On_Off() == BSTATE_ON){

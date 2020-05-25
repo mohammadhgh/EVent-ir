@@ -32,23 +32,23 @@
  * Data pin definitions
  * This version uses pins 22-29 for LCD Data 
  */
-#define glcdPinData0    31
-#define glcdPinData1    33
-#define glcdPinData2    35
-#define glcdPinData3    37
-#define glcdPinData4    39
-#define glcdPinData5    41
-#define glcdPinData6    43
-#define glcdPinData7    45
+#define glcdPinData0    44
+#define glcdPinData1    26
+#define glcdPinData2    42
+#define glcdPinData3    28
+#define glcdPinData4    40
+#define glcdPinData5    30
+#define glcdPinData6    38
+#define glcdPinData7    32
 
 /*
  * Pins used for Control
  */
-#define glcdPinCSEL1     47    // CS1 Bit  
-#define glcdPinCSEL2     49    // CS2 Bit
-#define glcdPinRW        25    // R/W Bit
-#define glcdPinDI        23    // D/I Bit 
-#define glcdPinEN        29    // EN Bit
+#define glcdPinCSEL1     36    // CS1 Bit  
+#define glcdPinCSEL2     34    // CS2 Bit
+#define glcdPinRW        46    // R/W Bit
+#define glcdPinDI        22    // D/I Bit 
+#define glcdPinEN        24    // EN Bit
 
 #if NBR_CHIP_SELECT_PINS > 2
 #define glcdPinCSEL3     32   // third chip select if needed

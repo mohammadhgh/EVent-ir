@@ -1,174 +1,93 @@
-// by Amir Sk
+// by Amir Sk , MHG, MHM, ASM
 // Apr. 5rd 2020
 
-#include <Arduino.h>
-#include <configuration.h>
-#include <avr/wdt.h>
-#include <openGLCD.h>
-#include <sysconfig.h>
-#include <motor.h>
-#include <motor_driver.h>
-#include <buzzer.h>
-#include <button.h>
-#include <led.h>
-#include <Potentiometer.h>
-#include <LCD.h>
-#include <timers.h>
-#include <callBacks.h>
-#include <string.h>
-#include <Stream.h>
+#include "main.h"
 
-long testTimer = 0;
+/* ------------- Static Functions ------------*/
+// static void motorSpeedCheck(){
+// 	if(round(Motor::getInstance()->getEncRPM())>90)
+// 	{
+// 		Serial.println("check");
+// 		onMotorStop();
+// 		comeAndGo=0;
+// 	}
+// }
 
-/* Global Objects */
-SysConfig *Global_SysConfig;
-
-Button *ON_button;
-Button *open_uSwitch;
-
-LED *gLED;
-LED *ardLED;
-boolean a = false;
-Buzzer *coolBuzz;
-Motor_Driver *mot_Driver;
-
-Potentiometer *respVolume;
-Potentiometer *respCycle;
-Potentiometer *IERatio;
-
-int table_RV[] = {200, 300, 400, 500, 600, 700, 800};
-int table_RC[23];
-int table_IE[] = {1, 2, 3, 4};
-
-int RV = 0;
-int RC = 0;
-
-volatile int encFalled=0;
-volatile int encValid=0;
-
-/* ------------- Initial Check ------------*/
-
-void static initial_Check()
-{
-	if (open_uSwitch->get_Status() == BSTATE_HIGH)
-	{
-		Serial.println("Initial Setup");
-		Motor::getInstance()->setDirection(DIRECTION_OPEN);
-		Motor::getInstance()->motorStart();
-		while (open_uSwitch->get_Clicked()==false)
-			delay(1);	
-		open_uSwitch->set_Clicked(false);	
-		Motor::getInstance()->motorStop();
-		Serial.println(Motor::getInstance()->convertOmegatoRPM(AMBO_TOUCH_ANGLE, 1.0)+3);
-		Motor::getInstance()->setSpeed(Motor::getInstance()->convertOmegatoRPM(AMBO_TOUCH_ANGLE, 1.0)+3);
-		delay(100);
-		Motor::getInstance()->setDirection(DIRECTION_CLOSE);
-		Motor::getInstance()->motorStart();
-		delay(1000);
-		Motor::getInstance()->motorStop();	
-		delay(1000);
-	}
-}
-
-void static onMotor_Close()
-{
-	Motor::getInstance()->setSpeed(5);
-	Motor::getInstance()->setDirection(DIRECTION_CLOSE);
-	while (open_uSwitch->get_Clicked()==false)
-		delay(1);	
-	open_uSwitch->set_Clicked(false);	
-	Motor::getInstance()->motorStop();
-}
-
-/*
-void blinking()
-{
-	a = ON_button->get_Status();
-	if (a == 0)
-	{
-		gLED->set_high();
-		delay(500);
-		gLED->switch_led();
-	}
-}
-*/
 
 void setup()
 {
-	noInterrupts(); 
+	noInterrupts();
 
 	for (size_t i = 8; i <= 30; i++)
-		table_RC[i - 8] = i;		
+		table_RC[i - 8] = i;
 
+	Init_Timer1();
 	Init_Timer3();
 	Init_Timer4();
 	Init_Timer5();
-	
-	Serial.begin(9600);
+
+	Serial.begin(115200);
 
 	Global_SysConfig = new SysConfig(2, 20, 0);
+	Global_SysConfig->setParams(6e-1, 5e-3, 37);
 
 	PinConfiguration::getInstance()->pinConfiguration();
 
 	coolBuzz = new Buzzer(PinConfiguration::buzzerPin);
 
-	mot_Driver = new Motor_Driver(Motor::getInstance());
-
-	ON_button = new Button(PinConfiguration::onButton_pin, INPUT, onButton_callback, LOW);
+	onButton = new Button(PinConfiguration::onButton_pin);
+	onButton->setPressCallback(onButton_callback);
 
 	open_uSwitch = new Button(PinConfiguration::open_uSw_pin, INPUT, open_uSw_callback, LOW);
 
-	gLED = new LED(PinConfiguration::gLED_pin);
-
-	//ardLED = new LED(PinConfiguration::ardLED);
-
-	/*LCD::getInstance()->LCD_Cover();
-	delay(2000);
-	LCD::getInstance()->LCD_Clear();*/
+	bLED = new LED(PinConfiguration::bLED_pin);
+	wLED = new LED(PinConfiguration::wLED_pin);
 
 	respVolume = new Potentiometer(PinConfiguration::Potentiometer_Volume, 7);
 	respCycle = new Potentiometer(PinConfiguration::Potentiometer_Cycle, 23);
 	IERatio = new Potentiometer(PinConfiguration::Potentiometer_IE, 4);
 
+	PR = new PressureSensor(PinConfiguration::PR_Out, PinConfiguration::PR_Sck);
+
 	respCycle->set_Range(table_RC, sizeof table_RC);
 	respVolume->set_Range(table_RV, sizeof table_RV);
 	IERatio->set_Range(table_IE, sizeof table_IE);
 
+	motorController = new MotorController();
+
+	//LCD::getInstance()->LCD_Logo();
+
 	interrupts();
 
-	Motor::getInstance()->setSpeed(4);
-	//Motor::getInstance()->setDirection(DIRECTION_CLOSE);
-	Motor::getInstance()->initEnc(PinConfiguration::motorEncoderPin, INPUT, enc_callback, RISING);
-	initial_Check();
+	digitalWrite(PinConfiguration::motorDriverOnOff, HIGH);
+	Motor::getInstance()->initEnc(PinConfiguration::motorEncoderPin, INPUT, enc_callback, FALLING);
+	Timer1Start(round(15625 * Global_SysConfig->timeStep) - 1);
+
 }
+
 void loop()
 {
-	//LCD::getInstance()->LCD_Menu(respVolume->Potentiometer_Read(), respCycle->Potentiometer_Read(), IERatio->Potentiometer_Read());
-	mot_Driver->update_resp_rate(respCycle->Potentiometer_Read());
-	mot_Driver->check();
+	//LCD::getInstance()->LCD_Menu(respVolume->Potentiometer_Read(), respCycle->Potentiometer_Read(), IERatio->Potentiometer_Read(), PR->Read_Pressure());
+	//LCD::getInstance()->LCD_Clear();
+
+	//LCD::getInstance()->LCD_graph();
+
+	//Serial.println(respCycle->Potentiometer_Read());
+	//Serial.println(IERatio->Potentiometer_Read());
+
+	onButton->check();
+	if (onButton->get_Clicked() == true && onButton->get_On_Off() == BSTATE_ON){
+		onButton->set_Clicked(false);
+		motorController->startReciporating();
+	}
+	else if (onButton->get_Clicked() == true && onButton->get_On_Off() == BSTATE_OFF)
+	{
+		motorController->stopReciporating();
+		onButton->set_Clicked(false); 
+	}
 	
-	if (ON_button->get_Clicked()==true && ON_button->get_On_Off()==BSTATE_ON){
-		mot_Driver->update_resp_rate(respCycle->Potentiometer_Read());
-        mot_Driver->init_driver();				
-		ON_button->set_Clicked(false);
+	if(timeStepValid){
+		motorController->motorControllerHandler();	
 	}
-
-	else if(ON_button->get_Clicked()==true && ON_button->get_On_Off()==BSTATE_OFF){
-		onMotor_Close();
-		ON_button->set_Clicked(false);
-	}
-
-	/*if(open_uSwitch->get_Clicked()==true){
-		Motor::getInstance()->changeDirection();
-		open_uSwitch->set_Clicked(false);
-	}*/
-
-	//if(encValid==1){
-		//Serial.println("pwm");
-		//Serial.println(Motor::getInstance()->getSpeed());
-		//Serial.println("rpm");
-		//Serial.println(Motor::getInstance()->getEncRPM());
-		//encValid = 0;
-	//}
 	wdt_reset();
 }

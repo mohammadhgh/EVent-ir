@@ -8,7 +8,7 @@
 extern Button *onButton;
 extern Button *open_uSwitch;
 extern volatile int encFalled;
-extern volatile int ouSwithHitPC;
+extern volatile int on_uSwithHitPC;
 extern LED *bLED;
 extern LED *wLED;
 
@@ -22,7 +22,6 @@ void onButton_callback_WithInteruppt()
 
 void onButton_callback()
 {
-	Serial.println("start0");
 	onButton->set_On_Off();
 	onButton->set_Clicked(true);
 	wLED->switch_led();
@@ -32,7 +31,7 @@ void onButton_callback()
 void open_uSw_callback()
 {
 	detachInterrupt(digitalPinToInterrupt(PinConfiguration::open_uSw_pin));	
-	ouSwithHitPC=Motor::getInstance()->getPC();
+	on_uSwithHitPC=Motor::getInstance()->getPC();
 	bLED->switch_led();
 	OCR3A  = 157;
 	TCCR3B |= (1 << WGM12)| (1<<CS10) | (1<<CS12) ;	

@@ -1,3 +1,5 @@
+#ifndef PID_H
+#define PID_H
 #include <Arduino.h>
 class PID
 {
@@ -27,4 +29,5 @@ public:
     float limitOutput(float input);
     void  resetParams();
 };
+#endif
 

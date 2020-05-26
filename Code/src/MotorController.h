@@ -10,8 +10,9 @@
 #include "sysconfig.h"
 #include <timers.h>
 
-#define MINIUM_MOTOR_SPEED_IN_RPM 4
-#define MOTOR_STOP_TIME           30e-3
+#define MINIUM_MOTOR_SPEED_IN_RPM  3
+#define BEFORE_OUSWITCH_MAX_DEGREE 10
+#define MOTOR_STOP_TIME            35e-3
 
 extern Button *open_uSwitch;
 extern int on_uSwithHitPC;
@@ -42,7 +43,8 @@ enum ReciprocatingStates
     openningCycleInProgress,
     openningCycleReaching_uSwitch,
     openningCycleStopping,
-    openningCycleStopped
+    openningCycleStopped,
+    openSwitchNotHit
 
 };
 
@@ -58,15 +60,15 @@ private:
     ReciprocatingStates reciprocatingState = closingCycleStart;
 
     float positionError = 0;
-    int lastEncoderPulseCount = 0;
-    int onStopCommandPulseCount = 0;
+    int   lastEncoderPulseCount = 0;
+    int   onStopCommandPulseCount = 0;
     float desiredRotation = 25;
     float desiredRotationTime = 0.5;
     float inhaleExhaleRatio = 2;
-    int motorStopDoubleGaurd = 0;
-    int motorStopDoubleGaurdLimit = 4;
-    bool reciprocateStart = false;
-    bool reciprocateStop = false;
+    int   motorStopDoubleGaurd = 0;
+    int   motorStopDoubleGaurdLimit = 4;
+    bool  reciprocateStart = false;
+    bool  reciprocateStop = false;
 
     void setRequiredSpeed(float requiredSpeed);
     void setMotorOnMinimumSpeed(bool direction);
@@ -78,10 +80,10 @@ private:
 
 public:
     MotorController(/* args */);
+    void updatePots(int IERatio, int respCycle);
     void motorControllerHandler();
     void startReciporating();
     void stopReciporating();
-
 };
 
 #endif
@@ -95,16 +97,20 @@ MotorController::MotorController(/* args */)
     pid->setTimeStep(sysConfig->timeStep); // Integrate into constructor
     pid->setOutputRange(0, 255);           // Integrate into constructor
 
-    degreeTracker = new DegreeTracker((float)33, sysConfig->duration, sysConfig->timeStep);
+    degreeTracker = new DegreeTracker((float)17, sysConfig->duration, sysConfig->timeStep);
 }
 
 void MotorController::startReciporating(){
-    this->reciprocateStart = true;
-    
+    this->reciprocateStart = true;   
 }
 
 void MotorController::stopReciporating(){
     this->reciprocateStop = true;
+}
+
+void MotorController::updatePots(int IERatio, int respCycle){
+    sysConfig->set_IE_Ratio(IERatio);
+    sysConfig->set_Resp_Rate(respCycle);
 }
 
 void MotorController::motorControllerHandler()
@@ -173,8 +179,6 @@ void MotorController::initialMotorCalibrationHandler()
                 int motorPulseCount = Motor::getInstance()->getPC();
                 positionError = ((float)motorPulseCount - (float)on_uSwithHitPC) * (float)360 / (float)MOTOR_PULSE_PER_TURN;
                 calibrationState = initialCalibrationDone;
-                // Serial.print("CALIBRATION \t");
-                // Serial.println(positionError);
             }
             motorStopDoubleGaurd++;
         }
@@ -201,6 +205,7 @@ void MotorController::reciprocatingHandler()
     {
     case closingCycleStart:
         Motor::getInstance()->setDirection(DIRECTION_CLOSE);
+        //degreeTracker->updateDesiredDelatTime(sysConfig->get_Inh_Time());
         degreeTracker->updateDesiredDelatTime(desiredRotationTime);
         degreeTracker->updateDesiredDeltaDegree(desiredRotation + positionError);
         setRequiredSpeed(degreeTracker->updateDesiredRPM());
@@ -249,9 +254,9 @@ void MotorController::reciprocatingHandler()
 
     case openningCycleStart:
         Motor::getInstance()->setDirection(DIRECTION_OPEN);
+        //degreeTracker->updateDesiredDelatTime(sysConfig->get_Exh_Time());
         degreeTracker->updateDesiredDelatTime(desiredRotationTime);
         degreeTracker->updateDesiredDeltaDegree((desiredRotation + positionError)* float(0.9));
-        // Serial.println(desiredRotation + positionError);
         setRequiredSpeed(degreeTracker->updateDesiredRPM());
         onMotorStart();
         reciprocatingState = openningCycleInProgress;
@@ -276,6 +281,11 @@ void MotorController::reciprocatingHandler()
         if (open_uSwitch->get_Status() == BSTATE_HIGH)
         {
             setRequiredSpeed(MINIUM_MOTOR_SPEED_IN_RPM);
+            float passedDegreeFromStop = (Motor::getInstance()->getPC()-onStopCommandPulseCount)*(float)360 / (float)MOTOR_PULSE_PER_TURN;
+            if(passedDegreeFromStop>BEFORE_OUSWITCH_MAX_DEGREE){
+                Motor::getInstance()->motorStop();
+                reciprocatingState = openSwitchNotHit;
+            }            
         }
         else
         {
@@ -310,9 +320,11 @@ void MotorController::reciprocatingHandler()
     case openningCycleStopped:
         lastEncoderPulseCount = 0;
         reciprocatingState = closingCycleStart;
-        // delay(1000);
-
         break;
+
+    case openSwitchNotHit:
+        reciprocatingState = openSwitchNotHit;
+        break;  
 
     default:
         break;

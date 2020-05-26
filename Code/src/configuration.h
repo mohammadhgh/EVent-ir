@@ -47,8 +47,8 @@ public:
     const static int Potentiometer_IE = A8;
 
     //----Pressure_Snsor
-    const static int PR_Sck = 4;
-    const static int PR_Out = 6;
+    //const static int PR_Sck = 21;
+    //const static int PR_Out = 20;
 
     void pinConfiguration();
 };

@@ -47,7 +47,7 @@ void setup()
 	respCycle = new Potentiometer(PinConfiguration::Potentiometer_Cycle, 23);
 	IERatio = new Potentiometer(PinConfiguration::Potentiometer_IE, 4);
 
-	PR = new PressureSensor(PinConfiguration::PR_Out, PinConfiguration::PR_Sck);
+	//PR = new PressureSensor(PinConfiguration::PR_Out, PinConfiguration::PR_Sck);
 
 	respCycle->set_Range(table_RC, sizeof table_RC);
 	respVolume->set_Range(table_RV, sizeof table_RV);
@@ -67,7 +67,9 @@ void setup()
 
 void loop()
 {
-	//LCD::getInstance()->LCD_Menu(respVolume->Potentiometer_Read(), respCycle->Potentiometer_Read(), IERatio->Potentiometer_Read(), PR->Read_Pressure());
+	//Serial.println(millis());
+	//LCD::getInstance()->LCD_Menu(respVolume->Potentiometer_Read(), respCycle->Potentiometer_Read(), IERatio->Potentiometer_Read(), 0 /*PR->Read_Pressure()*/);
+	//Serial.println(millis());
 	//LCD::getInstance()->LCD_Clear();
 
 	//LCD::getInstance()->LCD_graph();
@@ -87,6 +89,7 @@ void loop()
 	}
 	
 	if(timeStepValid){
+		motorController->updatePots(IERatio->Potentiometer_Read(), respCycle->Potentiometer_Read());	
 		motorController->motorControllerHandler();	
 	}
 	wdt_reset();

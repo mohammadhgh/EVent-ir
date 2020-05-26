@@ -10,7 +10,7 @@
 #include "sysconfig.h"
 #include <timers.h>
 
-#define MINIUM_MOTOR_SPEED_IN_RPM  3
+#define MINIUM_MOTOR_SPEED_IN_RPM  4
 #define BEFORE_OUSWITCH_MAX_DEGREE 10
 #define MOTOR_STOP_TIME            35e-3
 

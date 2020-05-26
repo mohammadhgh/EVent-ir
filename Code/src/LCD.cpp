@@ -94,6 +94,19 @@ void LCD::LCD_Logo()
     GLCD.DrawBitmap(comp40, 0, 0);
     delay(5 * LogoDelay);
     GLCD.ClearScreen();
+    GLCD.DrawRoundRect(0, 0, GLCD.Width, GLCD.Height, 2);
+    GLCD.SelectFont(Iain5x7);
+
+    for (size_t i = 0; i < 64; i += 16)
+    {
+        GLCD.DrawLine(0, 16 + i, GLCD.Width, 16 + i);
+        GLCD.DrawLine(0, 17 + i, GLCD.Width, 17 + i);
+    }
+
+    GLCD.DrawString(F("Tidal Volume : "), 3, 3);
+    GLCD.DrawString(F("Resp Rate : "), 3, 19);
+    GLCD.DrawString(F("In/Ex Ratio: "), 3, 36);
+    GLCD.DrawString(F("PR (CmH2O) : "), 3, 53);
 }
 
 void LCD::LCD_Menu(int tidalVolume, int respRate, int IEratio, float PR)
@@ -109,31 +122,17 @@ void LCD::LCD_Menu(int tidalVolume, int respRate, int IEratio, float PR)
     String c = String(IEratio);
     String d = String(PR);
 
-    GLCD.DrawRoundRect(0, 0, GLCD.Width, GLCD.Height, 2);
-    GLCD.SelectFont(Iain5x7);
-
-    for (size_t i = 0; i < 64; i += 16)
-    {
-        GLCD.DrawLine(0, 16 + i, GLCD.Width, 16 + i);
-        GLCD.DrawLine(0, 17 + i, GLCD.Width, 17 + i);
-    }
-
-    GLCD.DrawString(F("Tidal Volume : "), 3, 3);
-    GLCD.CursorTo(16);
+    GLCD.CursorToXY(80, 3);
     GLCD.Puts(screenWiper(16, a, tidal_Vol));
 
-    GLCD.DrawString(F("Resp Rate : "), 3, 19);
-    GLCD.CursorTo(16);
+    GLCD.CursorToXY(80, 20);
     GLCD.Puts(screenWiper(16, b, resp_Rate));
 
-    GLCD.DrawString(F("In/Ex Ratio: "), 3, 36);
-    GLCD.CursorTo(16);
     GLCD.DrawString(F("1 :"), 80, 36);
     GLCD.CursorTo(18);
     GLCD.Puts(screenWiper(18, c, IE_ratio));
 
-    GLCD.DrawString(F("PR (CmH2O) : "), 3, 53);
-    GLCD.CursorTo(16);
+    GLCD.CursorToXY(80, 52);
     GLCD.Puts(screenWiper(16, d, PR_Sensor));
 }
 

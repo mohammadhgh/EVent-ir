@@ -10,8 +10,8 @@ private:
     int IE_Ratio;
     int Resp_Rate;
     int Tidal_Volume;
-    int Inhale_Time;
-    int Exhale_Time;
+    float Inhale_Time;
+    float Exhale_Time;
     
     unsigned long Start_Time;
   
@@ -24,8 +24,8 @@ public:
     int get_IE_Ratio();
     int get_Resp_Rate();
     int get_Tidal_Volume();
-    int get_Inh_Time();
-    int get_Exh_Time();
+    float get_Inh_Time();
+    float get_Exh_Time();
     unsigned long get_Start_Time();
     void setParams(float duration, float ts, int mtrInitPWM);
     void set_IE_Ratio(int IE_Ratio);

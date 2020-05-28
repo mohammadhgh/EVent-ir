@@ -49,7 +49,8 @@ void MotorController::motorControllerHandler()
                 reciprocateStop = false; 
                 onMotorStop();
                 reciprocatingState=closingCycleStart;  
-                controllerState = beforeReciprocating;                        
+                controllerState = beforeReciprocating; 
+                printLog();                       
             }                        
         }
         break;
@@ -123,13 +124,15 @@ void MotorController::reciprocatingHandler()
         degreeTracker->updateDesiredDeltaDegree(desiredRotation + positionError);
         setRequiredSpeed(degreeTracker->updateDesiredRPM());
         onMotorStart();
+        logCounter=0;
+        logMotor();
         reciprocatingState = closingCycleinProgrees;
         break;
 
     case closingCycleinProgrees:
+        motorSpeedCheck();
         degreeTracker->updateTime();
         degreeTracker->updatePosition(Motor::getInstance()->getPC());
-        motorSpeedCheck();
         if (degreeTracker->getLeftTime() > MOTOR_STOP_TIME)
         {
             setRequiredSpeed(degreeTracker->updateDesiredRPM());
@@ -140,11 +143,12 @@ void MotorController::reciprocatingHandler()
             onStopCommandPulseCount = Motor::getInstance()->getPC();
             reciprocatingState = closingCycleStopping;
         }
-
+        logMotor();
         break;
 
     case closingCycleStopping:
-        motorSpeedCheck();
+        motorSpeedCheck(); 
+        logMotor();     
         if (lastEncoderPulseCount == Motor::getInstance()->getPC())
         {
             positionError = degreeTracker->getLeftDeltaDegree();
@@ -160,6 +164,7 @@ void MotorController::reciprocatingHandler()
 
     case closingCycleStopped:
         setRequiredSpeed(MINIUM_MOTOR_SPEED_IN_RPM);
+        logMotor();
         onMotorStop();
         lastEncoderPulseCount = 0;
         delay(50);        
@@ -172,13 +177,14 @@ void MotorController::reciprocatingHandler()
         degreeTracker->updateDesiredDeltaDegree((desiredRotation + positionError)* float(0.9));
         setRequiredSpeed(degreeTracker->updateDesiredRPM());
         onMotorStart();
+        logMotor();
         reciprocatingState = openningCycleInProgress;
         break;
 
     case openningCycleInProgress:
         motorSpeedCheck();
         degreeTracker->updateTime();
-        degreeTracker->updatePosition(Motor::getInstance()->getPC());
+        degreeTracker->updatePosition(Motor::getInstance()->getPC());    
         if (degreeTracker->getLeftTime() > MOTOR_STOP_TIME)
         {            
             setRequiredSpeed(degreeTracker->updateDesiredRPM());
@@ -189,10 +195,11 @@ void MotorController::reciprocatingHandler()
             onStopCommandPulseCount = Motor::getInstance()->getPC();
             reciprocatingState = openningCycleReaching_uSwitch;
         }
+        logMotor();
         break;
 
     case openningCycleReaching_uSwitch:
-        motorSpeedCheck();
+        motorSpeedCheck();   
         if (open_uSwitch->get_Status() == BSTATE_HIGH)
         {
             setRequiredSpeed(MINIUM_MOTOR_SPEED_IN_RPM);
@@ -208,10 +215,12 @@ void MotorController::reciprocatingHandler()
             Motor::getInstance()->motorStop();
             reciprocatingState = openningCycleStopping;
         }
+        logMotor();
         break;
 
     case openningCycleStopping:
         motorSpeedCheck();
+        logMotor();
         if (lastEncoderPulseCount == Motor::getInstance()->getPC())
         {
             if (motorStopDoubleGaurd == motorStopDoubleGaurdLimit)
@@ -255,8 +264,34 @@ void MotorController::setMotorOnMinimumSpeed(bool direction)
 
 void MotorController::setRequiredSpeed(float requiredSpeed)
 {
-    int motorSpeed = pid->Calc((float)requiredSpeed, Motor::getInstance()->getEncRPM());
+    motorSpeed = pid->Calc((float)requiredSpeed, Motor::getInstance()->getEncRPM());
     Motor::getInstance()->setSpeed(motorSpeed);
+}
+
+void MotorController::logMotor(){
+	calcedLeftTime[logCounter]    = degreeTracker->getLeftTime();
+	calcedLeftDegree[logCounter]  = degreeTracker->getLeftDeltaDegree();
+	MotorPwm[logCounter] 		  = motorSpeed;
+	MotorSpeedActual[logCounter]  = round(Motor::getInstance()->getEncRPM());
+    if (logCounter<399)
+        logCounter++;
+}
+
+void MotorController::printLog(){
+	for (int i = 0; i < logCounter; i++)
+	{
+		Serial.print(i);
+		Serial.print("\t");
+		Serial.print(calcedLeftTime[i],3);
+		Serial.print("\t");
+		Serial.print(calcedLeftDegree[i],3);
+		Serial.print("\t");
+		Serial.print(MotorPwm[i]);
+		Serial.print("\t");
+		Serial.println(MotorSpeedActual[i]);
+	}
+	Serial.println("End");				
+	logCounter=0;
 }
 
 void MotorController::motorSpeedCheck(){

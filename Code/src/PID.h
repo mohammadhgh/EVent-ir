@@ -1,6 +1,7 @@
 #ifndef PID_H
 #define PID_H
 #include <Arduino.h>
+#include <motor.h>
 class PID
 {
 private:

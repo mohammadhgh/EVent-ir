@@ -12,12 +12,17 @@ PID::PID(float KP, float KI, float KD, int initialPWM, int ignorePIDCount, int s
 
 int PID::Calc(float desired, float pv){
     float pwm = 0;
-    if(ignoreCounter==0)
+    if(stepCounter==0)
     {
         pwm    = initialPWM;
         oldPWM = pwm;
+        stepCounter++;
     }
-    if(ignoreCounter>ignorePIDCount)
+    else if(stepCounter==1 && Motor::getInstance()->getEncRPM()<2){
+        pwm  = initialPWM;
+        oldPWM = pwm;
+    }
+    else
     {
         error = desired - pv;
 
@@ -43,7 +48,7 @@ int PID::Calc(float desired, float pv){
         stepCounter++;
     }
     
-    ignoreCounter++;
+    //ignoreCounter++;
 
     return round(oldPWM); 
 }

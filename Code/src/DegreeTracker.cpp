@@ -29,6 +29,7 @@ void DegreeTracker::updateTime()
 
 void DegreeTracker::updatePosition(int pulseCount)
 { 
+    this->updateTime();
     this->passedDeltaDegree = pulseStep * (float)pulseCount;
     this->leftDeltaDegree   = this->desiredDeltaDegree - this->passedDeltaDegree;
 }

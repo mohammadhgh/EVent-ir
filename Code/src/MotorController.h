@@ -10,9 +10,9 @@
 #include "sysconfig.h"
 #include <timers.h>
 
-#define MAXIMUM_MOTOR_SPEED_IN_RPM 40
+#define MAXIMUM_MOTOR_SPEED_IN_RPM 70
 #define MINIUM_MOTOR_SPEED_IN_RPM  4
-#define MINIUM_MOTOR_SPEED_IN_PWM  10
+#define MINIUM_MOTOR_SPEED_IN_PWM  11
 #define TIME_STEP                  5e-3
 #define DESIRED_ROTATION           33
 #define EXHALE_DEGREE_RATIO        0.9

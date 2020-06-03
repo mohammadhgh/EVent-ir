@@ -72,7 +72,7 @@ void MotorController::initialMotorCalibrationHandler()
         break;
 
     case initialCalibrationInProgress:
-       // motorSpeedCheck();
+         motorSpeedCheck();
         if (open_uSwitch->get_Status() == BSTATE_HIGH)
         {
             Motor::getInstance()->setSpeed(sysConfig->motorInitPWM);

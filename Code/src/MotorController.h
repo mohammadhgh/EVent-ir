@@ -7,22 +7,18 @@
 #include "configuration.h"
 #include "callBacks.h"
 #include "motor.h"
+#include "CurveFit.h"
 #include "sysconfig.h"
 #include <timers.h>
 
-#define MAXIMUM_MOTOR_SPEED_IN_RPM 70
-#define MINIUM_MOTOR_SPEED_IN_RPM  4
+#define MAXIMUM_MOTOR_SPEED_IN_RPM 50
+#define MINIUM_MOTOR_SPEED_IN_RPM  5
 #define MINIUM_MOTOR_SPEED_IN_PWM  11
 #define TIME_STEP                  5e-3
 #define DESIRED_ROTATION           33
 #define EXHALE_DEGREE_RATIO        0.9
 #define BEFORE_OUSWITCH_MAX_DEGREE 15
-#define MOTOR_STOP_TIME            35e-3
-#define KP                         2.5
-#define KI                         32                          
-#define KD                         25e-3
-#define PID_IGNORE_COUNT           20
-#define PID_GAURD_COUNT            20
+#define MOTOR_STOP_TIME            20e-3
 
 extern Button *open_uSwitch;
 extern int on_uSwithHitPC;
@@ -67,7 +63,7 @@ class MotorController
 {
 private:
     SysConfig *sysConfig;
-    PID *pid;
+    CurveFit *curveFit;
     DegreeTracker *degreeTracker;
 
     ControllerStates controllerState = initialCalibration;
@@ -80,7 +76,7 @@ private:
     float desiredRotation           = 0;
     float desiredRotationTime       = 0.7;
     float inhaleExhaleRatio         = 2;
-    int   motorSpeed                = 0;
+    int   motorPWM                  = 0;
     int   motorStopDoubleGaurd      = 0;
     int   motorStopDoubleGaurdLimit = 4;
     bool  reciprocateStart          = false;
@@ -88,6 +84,8 @@ private:
     float inhaleTime                = 0;
     float exhaleTime                = 0;
     int   logCounter=0;
+    float curveFitRatios[3]         = {6.551, 0.7125, 0.0063};
+    float pwm                       = 0;
 
     void setRequiredSpeed(float requiredSpeed);
     void setMotorOnMinimumSpeed(bool direction);

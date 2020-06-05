@@ -1,12 +1,11 @@
 
 #include <PID.h>
 
-PID::PID(float KP, float KI, float KD, int initialPWM, int ignorePIDCount, int stepGaurd){
+PID::PID(float KP, float KI, float KD, int initialPWM, int stepGaurd){
     this->KP=KP;
     this->KI=KI;
     this->KD=KD;
     this->initialPWM      = initialPWM;
-    this->ignorePIDCount  = ignorePIDCount;
     this->stepGaurd       = stepGaurd;
 }
 
@@ -88,6 +87,5 @@ void PID::resetParams(){
     this->errorPre=0;
     this->integral=0;
     this->derivative=0;
-    this->ignoreCounter=0;
     this->stepCounter=0;
 }

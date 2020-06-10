@@ -9,6 +9,8 @@ CurveFit::CurveFit(int degree, float *ratios)
 }
 
 int CurveFit::fit(float x){
+    if(x<5)
+        x=5;
     float y=0;
     float x1 = a1*x;
     float x2 = a2*pow(x,2);  

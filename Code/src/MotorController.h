@@ -12,22 +12,22 @@
 #include <timers.h>
 
 #define MAXIMUM_MOTOR_SPEED_IN_RPM 50
-#define MINIUM_MOTOR_SPEED_IN_RPM  5
+#define MINIUM_MOTOR_SPEED_IN_RPM  6
 #define MINIUM_MOTOR_SPEED_IN_PWM  11
 #define TIME_STEP                  5e-3
-#define DESIRED_ROTATION           33
+#define DESIRED_ROTATION           30
 #define EXHALE_DEGREE_RATIO        0.9
-#define BEFORE_OUSWITCH_MAX_DEGREE 15
-#define MOTOR_STOP_TIME            20e-3
+#define BEFORE_OUSWITCH_MAX_DEGREE 10
+#define MOTOR_STOP_TIME            10e-3
 
 extern Button *open_uSwitch;
 extern int on_uSwithHitPC;
 extern volatile int timeStepValid;
 
-extern float calcedLeftTime[400];
-extern float calcedLeftDegree[400];
-extern int   MotorSpeedActual[400];
-extern float MotorPwm[400];
+extern float calcedLeftTime[420];
+extern float calcedLeftDegree[420];
+extern int   MotorSpeedActual[420];
+extern float MotorPwm[420];
 
 enum ControllerStates
 {

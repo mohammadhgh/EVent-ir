@@ -7,6 +7,7 @@ easeInFactor  = a;
 easeOutFactor = a;
 
 x0=0;
+
 x1=deltaDegree*(easeInFactor);
 x2=deltaDegree*(1-easeOutFactor);
 x3=x0+deltaDegree;

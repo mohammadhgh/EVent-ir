@@ -49,10 +49,10 @@ int table_IE[] = {1, 2, 3, 4};
 
 volatile int timeStepValid = 0;
 
-float calcedLeftTime[400];
-float calcedLeftDegree[400];
-int   MotorSpeedActual[400];
-float MotorPwm[400];
+float calcedLeftTime[420];
+float calcedLeftDegree[420];
+int   MotorSpeedActual[420];
+float MotorPwm[420];
 
 int on_uSwithHitPC = 0;
 int stopPC = 0;

@@ -126,11 +126,11 @@ void MotorController::reciprocatingHandler()
         break;
 
     case closingCycleinProgrees:
-        //motorSpeedCheck();
+        motorSpeedCheck();
         degreeTracker->updatePosition(Motor::getInstance()->getPC());
         if (degreeTracker->getLeftTime() > MOTOR_STOP_TIME)
         {
-            setRequiredSpeed(degreeTracker->updateDesiredRPM());
+            setRequiredSpeed(degreeTracker->updateDesiredRPM(Motor::getInstance()->getEncRPM()));
         }
         else
         {
@@ -142,7 +142,7 @@ void MotorController::reciprocatingHandler()
         break;
 
     case closingCycleStopping:
-        //motorSpeedCheck(); 
+        motorSpeedCheck(); 
         logMotor();     
         if (lastEncoderPulseCount == Motor::getInstance()->getPC())
         {
@@ -161,24 +161,24 @@ void MotorController::reciprocatingHandler()
         logMotor();
         onMotorStop();
         lastEncoderPulseCount = 0;
-        delay(50);        
+        delay(100);        
         reciprocatingState = openningCycleStart;
         break;
 
     case openningCycleStart:
         Motor::getInstance()->setDirection(DIRECTION_OPEN);
-        motorGoToPosition(exhaleTime, (DESIRED_ROTATION + positionError)* EXHALE_DEGREE_RATIO);
+        motorGoToPosition(inhaleTime+0.1, (DESIRED_ROTATION - positionError)* EXHALE_DEGREE_RATIO);
         onMotorStart();
         logMotor();
         reciprocatingState = openningCycleInProgress;
         break;
 
     case openningCycleInProgress:
-        //motorSpeedCheck();
+        motorSpeedCheck();
         degreeTracker->updatePosition(Motor::getInstance()->getPC());    
         if (degreeTracker->getLeftTime() > MOTOR_STOP_TIME)
         {            
-            setRequiredSpeed(degreeTracker->updateDesiredRPM());
+            setRequiredSpeed(degreeTracker->updateDesiredRPM(Motor::getInstance()->getEncRPM()));
         }
         else
         {
@@ -190,7 +190,8 @@ void MotorController::reciprocatingHandler()
         break;
 
     case openningCycleReaching_uSwitch:
-        //motorSpeedCheck();   
+        motorSpeedCheck();
+        degreeTracker->updatePosition(Motor::getInstance()->getPC());     
         if (open_uSwitch->get_Status() == BSTATE_HIGH)
         {
             setRequiredSpeed(MINIUM_MOTOR_SPEED_IN_RPM);
@@ -210,7 +211,8 @@ void MotorController::reciprocatingHandler()
         break;
 
     case openningCycleStopping:
-        //motorSpeedCheck();
+        motorSpeedCheck();
+        degreeTracker->updatePosition(Motor::getInstance()->getPC());  
         logMotor();
         if (lastEncoderPulseCount == Motor::getInstance()->getPC())
         {
@@ -231,10 +233,13 @@ void MotorController::reciprocatingHandler()
         break;
 
     case openningCycleStopped:
+        if(exhaleTime>inhaleTime)
+            delay(exhaleTime-inhaleTime-0.1);    
         inhaleTime = sysConfig->get_Inh_Time()/1000;
         exhaleTime = sysConfig->get_Exh_Time()/1000;
         lastEncoderPulseCount = 0;
         reciprocatingState = closingCycleStart;
+
         break;
 
     case openSwitchNotHit:
@@ -262,9 +267,10 @@ void MotorController::setRequiredSpeed(float requiredSpeed)
 void MotorController::logMotor(){
 	calcedLeftTime[logCounter]    = degreeTracker->getLeftTime();
 	calcedLeftDegree[logCounter]  = degreeTracker->getLeftDeltaDegree();
-	MotorPwm[logCounter] 		  = motorPWM;
+	//MotorPwm[logCounter] 		  = motorPWM;
+	MotorPwm[logCounter] 		  = degreeTracker->getDesiredRPM();
 	MotorSpeedActual[logCounter]  = round(Motor::getInstance()->getEncRPM());
-    if (logCounter<399)
+    if (logCounter<419)
         logCounter++;
 }
 
@@ -309,7 +315,7 @@ void MotorController::onMotorStop()
 void MotorController::motorGoToPosition(float deltaTime, float deltaDegree){
     degreeTracker->updateDesiredDelatTime(deltaTime);
     degreeTracker->updateDesiredDeltaDegree(deltaDegree);
-    setRequiredSpeed(degreeTracker->updateDesiredRPM());
+    setRequiredSpeed(degreeTracker->updateDesiredRPM(Motor::getInstance()->getEncRPM()));
 }
 
 void MotorController::resetParams()

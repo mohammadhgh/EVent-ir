@@ -23,7 +23,6 @@ void LCD::update_sysconfig(SysConfig *newconfig)
 
 void LCD::LCD_Cover()
 {
-
     GLCD.Init();
     GLCD.DrawRoundRect(0, 0, GLCD.Width, GLCD.Height, 4);
     Serial.println(1);
@@ -39,7 +38,7 @@ void LCD::LCD_Clear()
 void LCD::LCD_Logo()
 {
     GLCD.Init();
-    GLCD.DrawBitmap(comp14, 0, 0);
+    /*GLCD.DrawBitmap(comp14, 0, 0);
     delay(7 * LogoDelay);
     GLCD.DrawBitmap(comp15, 0, 0);
     delay(LogoDelay);
@@ -92,7 +91,7 @@ void LCD::LCD_Logo()
     GLCD.DrawBitmap(comp39, 0, 0);
     delay(LogoDelay);
     GLCD.DrawBitmap(comp40, 0, 0);
-    delay(5 * LogoDelay);
+    delay(5 * LogoDelay);*/
     GLCD.ClearScreen();
     GLCD.DrawRoundRect(0, 0, GLCD.Width, GLCD.Height, 2);
     GLCD.SelectFont(Iain5x7);
@@ -106,7 +105,9 @@ void LCD::LCD_Logo()
     GLCD.DrawString(F("Tidal Volume : "), 3, 3);
     GLCD.DrawString(F("Resp Rate : "), 3, 19);
     GLCD.DrawString(F("In/Ex Ratio: "), 3, 36);
+    GLCD.DrawString(F("1 :"), 80, 36);
     GLCD.DrawString(F("PR (CmH2O) : "), 3, 53);
+    
 }
 
 void LCD::LCD_Menu(int tidalVolume, int respRate, int IEratio, float PR)
@@ -114,7 +115,7 @@ void LCD::LCD_Menu(int tidalVolume, int respRate, int IEratio, float PR)
 
     String *tidal_Vol = &(this->lastVol);
     String *resp_Rate = &(this->lastRate);
-    String *IE_ratio = &(this->lastIE);
+    String *IE_ratio  = &(this->lastIE);
     String *PR_Sensor = &(this->lastPR);
 
     String a = String(tidalVolume);
@@ -122,29 +123,61 @@ void LCD::LCD_Menu(int tidalVolume, int respRate, int IEratio, float PR)
     String c = String(IEratio);
     String d = String(PR);
 
-    GLCD.CursorToXY(80, 3);
-    GLCD.Puts(screenWiper(16, a, tidal_Vol));
+    switch (printVarCounter)
+    {        
+        case 0:
+            GLCD.CursorToXY(80, 3);
+            GLCD.Puts(printVar(16, &wipeVar[printVarCounter], a, tidal_Vol));                  
+            printVarCounter++;
+            break;
+        case 1:    
+            GLCD.CursorToXY(80, 20);
+            GLCD.Puts(printVar(16, &wipeVar[printVarCounter], b, resp_Rate));
+            printVarCounter++;
+            break;
+        case 2:            
+            GLCD.CursorToXY(80, 36);
+            GLCD.Puts(printVar(18, &wipeVar[printVarCounter], c, IE_ratio));
+            printVarCounter++;
+            break;
+        case 3:
+            GLCD.CursorToXY(80, 52);
+            GLCD.Puts(printVar(16, &wipeVar[printVarCounter], d, PR_Sensor));
+            printVarCounter=0;
+            break;
+        default:
+            GLCD.CursorToXY(80, 3);
+            GLCD.Puts(printVar(16, &wipeVar[printVarCounter], a, tidal_Vol));
+            printVarCounter=0;            
+            break;
+    }
+        
+            
 
-    GLCD.CursorToXY(80, 20);
-    GLCD.Puts(screenWiper(16, b, resp_Rate));
-
-    GLCD.DrawString(F("1 :"), 80, 36);
-    GLCD.CursorTo(18);
-    GLCD.Puts(screenWiper(18, c, IE_ratio));
-
-    GLCD.CursorToXY(80, 52);
-    GLCD.Puts(screenWiper(16, d, PR_Sensor));
 }
 
-String LCD::screenWiper(int columnNumber, String toPrint, String *lastToPrint)
-{
+void LCD::screenWiper(int columnNumber, String toPrint, String *lastToPrint)
+{ 
     if (toPrint != *lastToPrint)
-    {
-        GLCD.print("            ");
+    {   
+        GLCD.print("     ");
         GLCD.CursorTo(columnNumber);
-        *lastToPrint = toPrint;
     }
+}
 
+String LCD::printVar(int columnNumber, bool *wipeWar, String toPrint, String *lastToPrint)
+{
+    if (toPrint != *lastToPrint){
+        if(*wipeVar){
+            GLCD.print("     ");
+            GLCD.CursorTo(columnNumber); 
+        }
+        else{
+            GLCD.CursorTo(columnNumber);
+            *lastToPrint = toPrint;   
+        }
+        *wipeVar = not(*wipeVar);         
+    }                
     return toPrint;
 }
 

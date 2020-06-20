@@ -239,7 +239,6 @@ void MotorController::reciprocatingHandler()
         exhaleTime = sysConfig->get_Exh_Time()/1000;
         lastEncoderPulseCount = 0;
         reciprocatingState = closingCycleStart;
-
         break;
 
     case openSwitchNotHit:

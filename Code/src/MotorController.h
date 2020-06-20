@@ -11,9 +11,9 @@
 #include "sysconfig.h"
 #include <timers.h>
 
-#define MAXIMUM_MOTOR_SPEED_IN_RPM 50
-#define MINIUM_MOTOR_SPEED_IN_RPM  6
-#define MINIUM_MOTOR_SPEED_IN_PWM  11
+#define MAXIMUM_MOTOR_SPEED_IN_RPM 45
+#define MINIUM_MOTOR_SPEED_IN_RPM  7
+#define MINIUM_MOTOR_SPEED_IN_PWM  12
 #define TIME_STEP                  5e-3
 #define DESIRED_ROTATION           30
 #define EXHALE_DEGREE_RATIO        0.9

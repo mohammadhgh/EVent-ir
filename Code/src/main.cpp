@@ -44,11 +44,13 @@ void setup()
 
 	motorController = new MotorController();
 
-	//LCD::getInstance()->LCD_Logo();
+	LCD::getInstance()->LCD_Logo();
+	//delay(2000);
+	//LCD::getInstance()->LCD_Cover();
 
 	interrupts();
 
-	digitalWrite(PinConfiguration::motorDriverOnOff, HIGH);
+	//digitalWrite(PinConfiguration::motorDriverOnOff, HIGH);
 	Motor::getInstance()->initEnc(PinConfiguration::motorEncoderPin, INPUT, enc_callback, FALLING);
 	Timer1Start(round(15625 * Global_SysConfig->timeStep) - 1);
 
@@ -57,13 +59,15 @@ void setup()
 void loop()
 {
 	//Serial.println(millis());
-	//LCD::getInstance()->LCD_Menu(respVolume->Potentiometer_Read(), respCycle->Potentiometer_Read(), IERatio->Potentiometer_Read(), PR->Read_Pressure());
+	unsigned long currentTime = millis();
+	LCD::getInstance()->LCD_Menu(respVolume->Potentiometer_Read(), respCycle->Potentiometer_Read(), IERatio->Potentiometer_Read(), 0 /*PR->Read_Pressure()*/);
 	//Serial.println(PR->Read_Pressure());
-	//Serial.println(millis());
+	Serial.println(currentTime);
+	Serial.println(millis());
 
 	//LCD::getInstance()->LCD_graph();
 
-	onButton->check();
+	/*onButton->check();
 	if (onButton->get_Clicked() == true && onButton->get_On_Off() == BSTATE_ON){
 		onButton->set_Clicked(false);
 		motorController->startReciporating();
@@ -77,6 +81,6 @@ void loop()
 	if(timeStepValid){
 		motorController->updatePots(IERatio->Potentiometer_Read(), respCycle->Potentiometer_Read());			
 		motorController->motorControllerHandler();	
-	}
+	}*/
 	wdt_reset();
 }

@@ -3,17 +3,6 @@
 
 #include "main.h"
 
-/* ------------- Static Functions ------------*/
-// static void motorSpeedCheck(){
-// 	if(round(Motor::getInstance()->getEncRPM())>90)
-// 	{
-// 		Serial.println("check");
-// 		onMotorStop();
-// 		comeAndGo=0;
-// 	}
-// }
-
-
 void setup()
 {
 	noInterrupts();
@@ -55,7 +44,8 @@ void setup()
 
 	motorController = new MotorController();
 
-	//LCD::getInstance()->LCD_Logo();
+	LCD::getInstance()->LCD_Logo();
+	LCD::getInstance()->LCD_Menu(respVolume->Potentiometer_Read(), respCycle->Potentiometer_Read(), IERatio->Potentiometer_Read(), 0 /*PR->Read_Pressure()*/);
 
 	interrupts();
 
@@ -67,13 +57,8 @@ void setup()
 
 void loop()
 {
-	//LCD::getInstance()->LCD_Menu(respVolume->Potentiometer_Read(), respCycle->Potentiometer_Read(), IERatio->Potentiometer_Read(), PR->Read_Pressure());
-	//LCD::getInstance()->LCD_Clear();
-
+	LCD::getInstance()->LCD_Menu(respVolume->Potentiometer_Read(), respCycle->Potentiometer_Read(), IERatio->Potentiometer_Read(), 0 /*PR->Read_Pressure()*/);
 	//LCD::getInstance()->LCD_graph();
-
-	//Serial.println(respCycle->Potentiometer_Read());
-	//Serial.println(IERatio->Potentiometer_Read());
 
 	onButton->check();
 	if (onButton->get_Clicked() == true && onButton->get_On_Off() == BSTATE_ON){
@@ -87,6 +72,7 @@ void loop()
 	}
 	
 	if(timeStepValid){
+		motorController->updatePots(IERatio->Potentiometer_Read(), respCycle->Potentiometer_Read());			
 		motorController->motorControllerHandler();	
 	}
 	wdt_reset();

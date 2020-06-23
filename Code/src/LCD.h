@@ -27,6 +27,8 @@ private:
     int q = 0; //old x graph coordinate
     int w = 0; //old y graph coordinate
 
+    int printVarCounter = 0;
+    bool wipeVar[4] = {true, true, true, true};
 public:
     LCD();
     static LCD *getInstance();
@@ -36,7 +38,9 @@ public:
     void LCD_Logo();
     void LCD_Cover();
     void LCD_graph();
-    String screenWiper(int columnnumber, String toPrint, String *lastToPrint);
+    void wipeVariable(int hpos, int vpos, int spaceQuantity);
+    String printVariable(int hpos, int ypos, bool *wipeWar, String toPrint, String *lastToPrint);
+    
 };
 
 #endif

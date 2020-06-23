@@ -1,21 +1,27 @@
 
 #include <PID.h>
 
-PID::PID(float KP, float KI, float KD, int ignorePIDCount){
+PID::PID(float KP, float KI, float KD, int initialPWM, int stepGaurd){
     this->KP=KP;
     this->KI=KI;
     this->KD=KD;
-    this->ignorePIDCount = ignorePIDCount;
+    this->initialPWM      = initialPWM;
+    this->stepGaurd       = stepGaurd;
 }
 
 int PID::Calc(float desired, float pv){
     float pwm = 0;
-    if(ignoreCounter==0)
+    if(stepCounter==0)
     {
-        pwm = 20;
+        pwm    = initialPWM;
+        oldPWM = pwm;
+        stepCounter++;
+    }
+    else if(stepCounter==1 && Motor::getInstance()->getEncRPM()<2){
+        pwm  = initialPWM;
         oldPWM = pwm;
     }
-    if(ignoreCounter>ignorePIDCount)
+    else
     {
         error = desired - pv;
 
@@ -25,18 +31,23 @@ int PID::Calc(float desired, float pv){
 
         errorPre = error;
         
-        //pwm = 255 - (KP*error + KI*integral + KD*derivative);  
-        
-        pwm = KP*error + KI*integral + KD*derivative;  
+        pwm = KP*error + KI*integral + KD*derivative;
 
+        if (stepCounter < stepGaurd){         
+            if(pwm < initialPWM)
+                pwm = initialPWM;
+        }
+        
         realPidVal = pwm ; 
 
         pwm = limitOutput(pwm);
 
         oldPWM = pwm;
+
+        stepCounter++;
     }
     
-    ignoreCounter++;
+    //ignoreCounter++;
 
     return round(oldPWM); 
 }
@@ -76,5 +87,5 @@ void PID::resetParams(){
     this->errorPre=0;
     this->integral=0;
     this->derivative=0;
-    this->ignoreCounter=0;
+    this->stepCounter=0;
 }

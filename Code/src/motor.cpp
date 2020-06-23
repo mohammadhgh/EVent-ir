@@ -66,6 +66,7 @@ void Motor::setMotorOut()
     if (this->motorStatus == MOTOR_IS_ON)
     {
         digitalWrite(PinConfiguration::motorOut1, this->direction);
+        delay(20);
         digitalWrite(PinConfiguration::motorOut2, not(this->direction));
     }
     else
@@ -87,7 +88,7 @@ int Motor::getSpeed()
 }
 int Motor::getSpeedPWM()
 {
-    return map(this->motorSpeed, 0, 100, 0, 255);
+    return motorSpeed;
     wdt_enable(WDTO_500MS);
 }
 void Motor::motorStop()

@@ -13,7 +13,7 @@
 #define MOTOR_IS_ON             HIGH
 #define MOTOR_IS_OFF            LOW
 
-#define MOTOR_PULSE_PER_TURN    1220
+#define MOTOR_PULSE_PER_TURN    1150
 
 #define MOTOR_ENC_PERIOD_OFF    100000
 
@@ -22,7 +22,7 @@ class Motor
 {
 private:
     static Motor *INSTANCE;
-    int motorSpeed = 245;
+    int motorSpeed = 0;
     int motorStatus = MOTOR_IS_OFF;
     int direction = DIRECTION_OPEN;
 

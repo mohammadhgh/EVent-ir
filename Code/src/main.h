@@ -46,24 +46,13 @@ MotorController *motorController;
 int table_RV[] = {200, 300, 400, 500, 600, 700, 800};
 int table_RC[23];
 int table_IE[] = {1, 2, 3, 4};
-float calcedLeftTime[400];
-float calcedLeftDegree[400];
-//int MotorSpeedDesired[300];
-int MotorSpeedActual[400];
-float MotorPwm[400];
 
-int motorSpeed = 0;
-int myCounter = 0;
-
-int j = 0;
-int k = 0;
 volatile int timeStepValid = 0;
 
-int motorStopped = 0;
-int motorMustStop = 0;
-int timerPinVal = LOW;
-int comeAndGo = 0;
-int changeDir = 0;
+float calcedLeftTime[420];
+float calcedLeftDegree[420];
+int   MotorSpeedActual[420];
+float MotorPwm[420];
 
 int on_uSwithHitPC = 0;
 int stopPC = 0;

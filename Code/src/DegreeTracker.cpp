@@ -5,6 +5,7 @@ DegreeTracker::DegreeTracker(float desiredDeltaDegree, float desiredDeltaTime, f
     this->desiredDeltaTime   = desiredDeltaTime;
     this->passedDeltaDegree  = 0;
     this->passedTime         = 0;
+    this->stepLeftDegree     = 0;
     this->timeStep           = timeStep;
     this->leftDeltaDegree    = desiredDeltaDegree;
     this->leftTime           = desiredDeltaTime;
@@ -21,28 +22,40 @@ void DegreeTracker::updateDesiredDeltaDegree(float desiredDeltaDegree){
     this->desiredDeltaDegree = desiredDeltaDegree;
 }
 
+
+void DegreeTracker::updatePosition(int pulseCount)
+{ 
+    this->updateTime();
+    this->passedDeltaDegree = pulseStep * (float)pulseCount;
+    this->leftDeltaDegree   = this->desiredDeltaDegree - this->passedDeltaDegree;
+}
+
 void DegreeTracker::updateTime()
 {
     this->passedTime +=  this->timeStep;
     this->leftTime   -=  this->timeStep;
 }
 
-void DegreeTracker::updatePosition(int pulseCount)
-{ 
-    this->passedDeltaDegree = pulseStep * (float)pulseCount;
-    this->leftDeltaDegree   = this->desiredDeltaDegree - this->passedDeltaDegree;
-}
-
-float DegreeTracker::updateDesiredRPM()
+float DegreeTracker::updateDesiredRPM(float motorRPM)
 {
-    this->desiredRPM = this->leftDeltaDegree / (this->leftTime * 6);
-    return this->desiredRPM;
+    desiredRPM = leftDeltaDegree/ (this->leftTime * 6);
+    if(desiredRPM-motorRPM>2){
+        stepLeftDegree += (desiredRPM - motorRPM)*6*timeStep;
+    }
+    else
+    {
+        stepLeftDegree = 0;
+    }
+    
+    desiredRPM = (leftDeltaDegree + stepLeftDegree)/ (this->leftTime * 6);
+    return desiredRPM;
 }
 
 void DegreeTracker::resetPosition(void)
 {
     this->passedDeltaDegree = 0;
     this->passedTime        = 0;
+    this->stepLeftDegree    = 0;
     this->leftDeltaDegree   = desiredDeltaDegree;
     this->leftTime          = desiredDeltaTime;
     this->desiredRPM        = desiredDeltaDegree / (desiredDeltaTime * 6);
@@ -56,4 +69,9 @@ float DegreeTracker::getLeftDeltaDegree(void)
 float DegreeTracker::getLeftTime(void)
 {
     return this->leftTime;
+}
+
+float DegreeTracker::getDesiredRPM(void)
+{
+    return this->desiredRPM;
 }

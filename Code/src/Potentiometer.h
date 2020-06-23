@@ -13,6 +13,7 @@ private:
     int volumeDisplay;
     int subValue;
     int *table;
+    int lastVolumeValue;
     uint8_t size;
 
 public:

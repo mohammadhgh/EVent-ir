@@ -23,7 +23,6 @@ void LCD::update_sysconfig(SysConfig *newconfig)
 
 void LCD::LCD_Cover()
 {
-
     GLCD.Init();
     GLCD.DrawRoundRect(0, 0, GLCD.Width, GLCD.Height, 4);
     Serial.println(1);
@@ -39,7 +38,7 @@ void LCD::LCD_Clear()
 void LCD::LCD_Logo()
 {
     GLCD.Init();
-    GLCD.DrawBitmap(comp14, 0, 0);
+    /*GLCD.DrawBitmap(comp14, 0, 0);
     delay(7 * LogoDelay);
     GLCD.DrawBitmap(comp15, 0, 0);
     delay(LogoDelay);
@@ -92,23 +91,8 @@ void LCD::LCD_Logo()
     GLCD.DrawBitmap(comp39, 0, 0);
     delay(LogoDelay);
     GLCD.DrawBitmap(comp40, 0, 0);
-    delay(5 * LogoDelay);
+    delay(5 * LogoDelay);*/
     GLCD.ClearScreen();
-}
-
-void LCD::LCD_Menu(int tidalVolume, int respRate, int IEratio, float PR)
-{
-
-    String *tidal_Vol = &(this->lastVol);
-    String *resp_Rate = &(this->lastRate);
-    String *IE_ratio = &(this->lastIE);
-    String *PR_Sensor = &(this->lastPR);
-
-    String a = String(tidalVolume);
-    String b = String(respRate);
-    String c = String(IEratio);
-    String d = String(PR);
-
     GLCD.DrawRoundRect(0, 0, GLCD.Width, GLCD.Height, 2);
     GLCD.SelectFont(Iain5x7);
 
@@ -119,33 +103,76 @@ void LCD::LCD_Menu(int tidalVolume, int respRate, int IEratio, float PR)
     }
 
     GLCD.DrawString(F("Tidal Volume : "), 3, 3);
-    GLCD.CursorTo(16);
-    GLCD.Puts(screenWiper(16, a, tidal_Vol));
-
-    GLCD.DrawString(F("Resp Rate : "), 3, 19);
-    GLCD.CursorTo(16);
-    GLCD.Puts(screenWiper(16, b, resp_Rate));
-
-    GLCD.DrawString(F("In/Ex Ratio: "), 3, 36);
-    GLCD.CursorTo(16);
-    GLCD.DrawString(F("1 :"), 80, 36);
-    GLCD.CursorTo(18);
-    GLCD.Puts(screenWiper(18, c, IE_ratio));
-
-    GLCD.DrawString(F("PR (CmH2O) : "), 3, 53);
-    GLCD.CursorTo(16);
-    GLCD.Puts(screenWiper(16, d, PR_Sensor));
+    GLCD.DrawString(F("Resp Rate : "), 3, 20);
+    GLCD.DrawString(F("In/Ex Ratio: "), 3, 37);
+    GLCD.DrawString(F("1 :"), 80, 37);
+    GLCD.DrawString(F("PR (CmH2O) : "), 3, 54);
+    
 }
 
-String LCD::screenWiper(int columnNumber, String toPrint, String *lastToPrint)
+void LCD::LCD_Menu(int tidalVolume, int respRate, int IEratio, float PR)
 {
-    if (toPrint != *lastToPrint)
-    {
-        GLCD.print("            ");
-        GLCD.CursorTo(columnNumber);
-        *lastToPrint = toPrint;
-    }
 
+    String *tidal_Vol = &(this->lastVol);
+    String *resp_Rate = &(this->lastRate);
+    String *IE_ratio  = &(this->lastIE);
+    String *PR_Sensor = &(this->lastPR);
+
+    String a = String(tidalVolume);
+    String b = String(respRate);
+    String c = String(IEratio);
+    String d = String(PR);
+
+    switch (printVarCounter)
+    {        
+        case 0:            
+            printVariable(80, 3, &wipeVar[printVarCounter], a, tidal_Vol);
+            printVarCounter++;
+            break;
+        case 1:                
+            printVariable(80, 20, &wipeVar[printVarCounter], b, resp_Rate);
+            printVarCounter++;
+            break;
+        case 2:                        
+            printVariable(89, 37, &wipeVar[printVarCounter], c, IE_ratio);
+            printVarCounter++;
+            break;
+        case 3:            
+            printVariable(80, 54, &wipeVar[printVarCounter], d, PR_Sensor);
+            printVarCounter=0;
+            break;
+        default:
+            printVarCounter=0;            
+            break;
+    }
+        
+            
+
+}
+
+void LCD::wipeVariable(int hpos, int vpos, int spaceQuantity)
+{ 
+    GLCD.CursorToXY(hpos, vpos);
+    for (int i=0; i<spaceQuantity; i++){
+         GLCD.print(" ");
+    }
+    GLCD.CursorToXY(hpos, vpos);
+}
+
+String LCD::printVariable(int hpos, int vpos, bool *wipeWar, String toPrint, String *lastToPrint)
+{
+    if (toPrint != *lastToPrint){
+        if(*wipeVar){
+            GLCD.CursorToXY(hpos, vpos);
+            GLCD.print("     ");
+        }
+        else{
+            GLCD.CursorToXY(hpos, vpos);
+            GLCD.Puts(toPrint);
+            *lastToPrint = toPrint;   
+        }
+        *wipeVar = not(*wipeVar);         
+    }                
     return toPrint;
 }
 

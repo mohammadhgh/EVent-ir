@@ -26,12 +26,12 @@ int SysConfig::get_Tidal_Volume()
     return this->Tidal_Volume;
 }
 
-int SysConfig::get_Inh_Time()
+float SysConfig::get_Inh_Time()
 {
     return this->Inhale_Time;
 }
 
-int SysConfig::get_Exh_Time()
+float SysConfig::get_Exh_Time()
 {
     return this->Exhale_Time;
 }
@@ -70,7 +70,7 @@ void SysConfig::set_Inh_Time()
     float num = (float)60000;
     float den = (get_Resp_Rate() * (get_IE_Ratio() + 1));
     float result = num / den;
-    this->Inhale_Time = (int)result;
+    this->Inhale_Time = result;
 }
 
 void SysConfig::set_Exh_Time()
@@ -78,7 +78,7 @@ void SysConfig::set_Exh_Time()
     float num = (float)60000 * get_IE_Ratio();
     float den = (get_Resp_Rate() * (get_IE_Ratio() + 1));
     float result = num / den;
-    this->Exhale_Time = (int)result;
+    this->Exhale_Time = result;
 }
 
 void SysConfig::set_Start_Time()

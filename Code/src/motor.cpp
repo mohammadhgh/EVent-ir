@@ -12,37 +12,42 @@ Motor *Motor::getInstance()
     return INSTANCE;
 }
 
+Motor::Motor(){
+    for (size_t i = 0; i < RPM_AVG_N; i++)
+        this->RPMs[i]=0;
+}
+
 void Motor::initEnc(int pin, uint8_t ioMode, void (*callback_func)(void), int interruptMode){
     pinMode(pin, ioMode);
     attachInterrupt(digitalPinToInterrupt(pin), callback_func, interruptMode);
-}
-
-void Motor::changeDirection()
-{
-    //if(this->motorStatus==MOTOR_IS_ON){
-        if(this->direction==DIRECTION_CLOSE)
-            this->direction=DIRECTION_OPEN;
-        else
-            this->direction=DIRECTION_CLOSE;
-    //}    
-    this->setMotorOut();
-}
-
-float Motor::convertRMPtoPWM(float RPM){
-    return (RPM_PWM_Ratio*RPM+RPM_PWM_Constant);
-}
-
-float Motor::convertOmegatoRPM(float omega, float time){
-    return DEGREE_TO_RPM*omega/time;
 }
 
 void Motor::setEncPeriod(int encPeriod){
     this->encPeriod = encPeriod;
 }
 
+void Motor::incrementPC(){
+    this->PC++;
+}
+
+void Motor::resetPC(){
+    this->PC=0;
+}
+
 int Motor::getStatus()
 {
     return this->motorStatus;
+}
+
+void Motor::changeDirection()
+{
+    if(this->motorStatus==MOTOR_IS_ON){
+        if(this->direction==DIRECTION_CLOSE)
+            this->direction=DIRECTION_OPEN;
+        else
+            this->direction=DIRECTION_CLOSE;
+    }    
+    this->setMotorOut();
 }
 
 void Motor::setDirection(int directionl)
@@ -61,7 +66,7 @@ void Motor::setMotorOut()
     if (this->motorStatus == MOTOR_IS_ON)
     {
         digitalWrite(PinConfiguration::motorOut1, this->direction);
-        delay(50);
+        delay(20);
         digitalWrite(PinConfiguration::motorOut2, not(this->direction));
     }
     else
@@ -71,19 +76,19 @@ void Motor::setMotorOut()
     }
 }
 
-void Motor::setSpeed(float newSpeed)
+void Motor::setSpeed(int newSpeed)
 {
-    this->motorSpeed = convertRMPtoPWM(newSpeed);
-    analogWrite(PinConfiguration::motorControl, getSpeedPWM());
+    this->motorSpeed = newSpeed > 255 ? 255 : newSpeed;
+    analogWrite(PinConfiguration::motorControl, newSpeed);
 }
 
-float Motor::getSpeed()
+int Motor::getSpeed()
 {
     return this->motorSpeed;
 }
 int Motor::getSpeedPWM()
 {
-    return map(round(this->motorSpeed), 0, 100, 0, 255);
+    return motorSpeed;
     wdt_enable(WDTO_500MS);
 }
 void Motor::motorStop()
@@ -116,17 +121,45 @@ int Motor::getEncCount()
 void Motor::resetEncPeriod()
 {
     this->encPeriod = 0;
+    this->oldRPM = 0;
+}
+
+void Motor::resetEncRPM(){
+    resetEncPeriod();
 }
 
 float Motor::getEncRPM()
 {
     float RPM = 0;
+    //float tempRPM = 0;
     int period = this->getEncPeriod();
-    if(period>0){
-        RPM = (long)period * (long)MOTOR_PULSE_PER_TURN * (float)4; 
-        RPM = (float)60000000 / RPM;
+    if(period>100){
+        RPM = (float)period * (float)MOTOR_PULSE_PER_TURN * (float)4; 
+        RPM = (long)60000000 / RPM;
+        /*RPMs[rpmIndex]=RPM;
+        for (size_t i = 0; i < RPM_AVG_N; i++)
+        {
+            tempRPM+=this->RPMs[i];
+        }        
+        if (this->rpmIndex<RPM_AVG_N)
+            this->rpmIndex++;
+        else
+            this->rpmIndex = 0;
+        this->oldRPM = tempRPM;*/ 
+        oldRPM = RPM;              
     }
+    else
+    {
+        RPM=oldRPM;
+        //tempRPM=this->oldRPM;
+    }
+          
+    //return tempRPM/(float)RPM_AVG_N;
     return RPM;
+}
+
+int Motor::getPC(){
+    return this->PC;
 }
 
 int Motor::getEncAngle()

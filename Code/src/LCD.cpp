@@ -103,10 +103,10 @@ void LCD::LCD_Logo()
     }
 
     GLCD.DrawString(F("Tidal Volume : "), 3, 3);
-    GLCD.DrawString(F("Resp Rate : "), 3, 19);
-    GLCD.DrawString(F("In/Ex Ratio: "), 3, 36);
-    GLCD.DrawString(F("1 :"), 80, 36);
-    GLCD.DrawString(F("PR (CmH2O) : "), 3, 53);
+    GLCD.DrawString(F("Resp Rate : "), 3, 20);
+    GLCD.DrawString(F("In/Ex Ratio: "), 3, 37);
+    GLCD.DrawString(F("1 :"), 80, 37);
+    GLCD.DrawString(F("PR (CmH2O) : "), 3, 54);
     
 }
 
@@ -125,29 +125,23 @@ void LCD::LCD_Menu(int tidalVolume, int respRate, int IEratio, float PR)
 
     switch (printVarCounter)
     {        
-        case 0:
-            GLCD.CursorToXY(80, 3);
-            GLCD.Puts(printVar(16, &wipeVar[printVarCounter], a, tidal_Vol));                  
+        case 0:            
+            printVariable(80, 3, &wipeVar[printVarCounter], a, tidal_Vol);
             printVarCounter++;
             break;
-        case 1:    
-            GLCD.CursorToXY(80, 20);
-            GLCD.Puts(printVar(16, &wipeVar[printVarCounter], b, resp_Rate));
+        case 1:                
+            printVariable(80, 20, &wipeVar[printVarCounter], b, resp_Rate);
             printVarCounter++;
             break;
-        case 2:            
-            GLCD.CursorToXY(80, 36);
-            GLCD.Puts(printVar(18, &wipeVar[printVarCounter], c, IE_ratio));
+        case 2:                        
+            printVariable(89, 37, &wipeVar[printVarCounter], c, IE_ratio);
             printVarCounter++;
             break;
-        case 3:
-            GLCD.CursorToXY(80, 52);
-            GLCD.Puts(printVar(16, &wipeVar[printVarCounter], d, PR_Sensor));
+        case 3:            
+            printVariable(80, 54, &wipeVar[printVarCounter], d, PR_Sensor);
             printVarCounter=0;
             break;
         default:
-            GLCD.CursorToXY(80, 3);
-            GLCD.Puts(printVar(16, &wipeVar[printVarCounter], a, tidal_Vol));
             printVarCounter=0;            
             break;
     }
@@ -156,24 +150,25 @@ void LCD::LCD_Menu(int tidalVolume, int respRate, int IEratio, float PR)
 
 }
 
-void LCD::screenWiper(int columnNumber, String toPrint, String *lastToPrint)
+void LCD::wipeVariable(int hpos, int vpos, int spaceQuantity)
 { 
-    if (toPrint != *lastToPrint)
-    {   
-        GLCD.print("     ");
-        GLCD.CursorTo(columnNumber);
+    GLCD.CursorToXY(hpos, vpos);
+    for (int i=0; i<spaceQuantity; i++){
+         GLCD.print(" ");
     }
+    GLCD.CursorToXY(hpos, vpos);
 }
 
-String LCD::printVar(int columnNumber, bool *wipeWar, String toPrint, String *lastToPrint)
+String LCD::printVariable(int hpos, int vpos, bool *wipeWar, String toPrint, String *lastToPrint)
 {
     if (toPrint != *lastToPrint){
         if(*wipeVar){
+            GLCD.CursorToXY(hpos, vpos);
             GLCD.print("     ");
-            GLCD.CursorTo(columnNumber); 
         }
         else{
-            GLCD.CursorTo(columnNumber);
+            GLCD.CursorToXY(hpos, vpos);
+            GLCD.Puts(toPrint);
             *lastToPrint = toPrint;   
         }
         *wipeVar = not(*wipeVar);         

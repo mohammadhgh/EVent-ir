@@ -167,7 +167,7 @@ void MotorController::reciprocatingHandler()
 
     case openningCycleStart:
         Motor::getInstance()->setDirection(DIRECTION_OPEN);
-        motorGoToPosition(inhaleTime+0.1, (DESIRED_ROTATION - positionError)* EXHALE_DEGREE_RATIO);
+        motorGoToPosition(OPENING_CYCLE_TIME, (DESIRED_ROTATION - positionError)* EXHALE_DEGREE_RATIO);
         onMotorStart();
         logMotor();
         reciprocatingState = openningCycleInProgress;
@@ -176,13 +176,13 @@ void MotorController::reciprocatingHandler()
     case openningCycleInProgress:
         motorSpeedCheck();
         degreeTracker->updatePosition(Motor::getInstance()->getPC());    
-        if (degreeTracker->getLeftTime() > MOTOR_STOP_TIME)
+        if (degreeTracker->getLeftTime() > MOTOR_STOP_TIME_OPEN_CYCLE)
         {            
             setRequiredSpeed(degreeTracker->updateDesiredRPM(Motor::getInstance()->getEncRPM()));
         }
         else
         {
-            setRequiredSpeed(MINIUM_MOTOR_SPEED_IN_RPM);
+            setRequiredSpeed(MINIUM_MOTOR_SPEED_IN_RPM-2);
             onStopCommandPulseCount = Motor::getInstance()->getPC();
             reciprocatingState = openningCycleReaching_uSwitch;
         }
@@ -194,7 +194,7 @@ void MotorController::reciprocatingHandler()
         degreeTracker->updatePosition(Motor::getInstance()->getPC());     
         if (open_uSwitch->get_Status() == BSTATE_HIGH)
         {
-            setRequiredSpeed(MINIUM_MOTOR_SPEED_IN_RPM);
+            setRequiredSpeed(MINIUM_MOTOR_SPEED_IN_RPM-2);
             float passedDegreeFromStop = (Motor::getInstance()->getPC()-onStopCommandPulseCount)*(float)360 / (float)MOTOR_PULSE_PER_TURN;
             if(passedDegreeFromStop>BEFORE_OUSWITCH_MAX_DEGREE){
                 Motor::getInstance()->motorStop();
@@ -233,8 +233,8 @@ void MotorController::reciprocatingHandler()
         break;
 
     case openningCycleStopped:
-        if(exhaleTime>inhaleTime)
-            delay(exhaleTime-inhaleTime-0.1);    
+        if(exhaleTime>=inhaleTime)
+            delay(exhaleTime-OPENING_CYCLE_TIME-0.1);    
         inhaleTime = sysConfig->get_Inh_Time()/1000;
         exhaleTime = sysConfig->get_Exh_Time()/1000;
         lastEncoderPulseCount = 0;

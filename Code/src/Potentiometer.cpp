@@ -6,7 +6,7 @@ Potentiometer::Potentiometer(int pin, int subMultiple)
     this->pin = pin;
     this->subMultiple = subMultiple;
     this->volumeDisplay = 0;
-    this->lastVolumeValue = 0;
+    this->lastVolumeValue = -1;
 }
 
 void Potentiometer::set_Range(int *table, uint8_t size)
@@ -19,7 +19,6 @@ void Potentiometer::set_Range(int *table, uint8_t size)
 int Potentiometer::Potentiometer_Read()
 {
     int volumeValue = analogRead(this->pin);
-
     int Range_Value[this->subMultiple] = {};
     this->subValue = 1023 / this->subMultiple;
     if (volumeValue != this->lastVolumeValue)

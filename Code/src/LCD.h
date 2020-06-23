@@ -38,8 +38,8 @@ public:
     void LCD_Logo();
     void LCD_Cover();
     void LCD_graph();
-    void screenWiper(int columnnumber, String toPrint, String *lastToPrint);
-    String printVar(int columnnumber, bool *wipeWar, String toPrint, String *lastToPrint);
+    void wipeVariable(int hpos, int vpos, int spaceQuantity);
+    String printVariable(int hpos, int ypos, bool *wipeWar, String toPrint, String *lastToPrint);
     
 };
 

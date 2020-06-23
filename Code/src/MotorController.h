@@ -15,10 +15,12 @@
 #define MINIUM_MOTOR_SPEED_IN_RPM  7
 #define MINIUM_MOTOR_SPEED_IN_PWM  12
 #define TIME_STEP                  5e-3
-#define DESIRED_ROTATION           30
+#define DESIRED_ROTATION           35
 #define EXHALE_DEGREE_RATIO        0.9
-#define BEFORE_OUSWITCH_MAX_DEGREE 10
+#define BEFORE_OUSWITCH_MAX_DEGREE 15
 #define MOTOR_STOP_TIME            10e-3
+#define MOTOR_STOP_TIME_OPEN_CYCLE 0.15
+#define OPENING_CYCLE_TIME         0.8
 
 extern Button *open_uSwitch;
 extern int on_uSwithHitPC;

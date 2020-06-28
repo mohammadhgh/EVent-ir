@@ -75,12 +75,15 @@ void loop()
 	// 	motorController->updatePots(IERatio->Potentiometer_Read(), respCycle->Potentiometer_Read());			
 	// 	motorController->motorControllerHandler();	
 	// }
+	long time1 = micros();
 
 	float pressure = PR->Read_Pressure();
 
+	long time2 = micros(); 
 	// char* serial_buff;
 	// sprintf(serial_buff, "%f", pressure);
 	Serial.println(pressure);
+	// Serial.println(time2 - time1);
 
 	// wdt_reset();
 }

@@ -70,7 +70,7 @@ void MotorController::initialMotorCalibrationHandler()
         break;
 
     case initialCalibrationInProgress:
-         motorSpeedCheck();
+        motorSpeedCheck();
         if (open_uSwitch->get_Status() == BSTATE_HIGH)
         {
             setMotorOnMinimumSpeed(DIRECTION_OPEN);
@@ -117,8 +117,9 @@ void MotorController::reciprocatingHandler()
     switch (reciprocatingState)
     {
     case closingCycleStart:
+        inhaling = true;
         Motor::getInstance()->setDirection(DIRECTION_CLOSE);
-        motorGoToPosition(inhaleTime, DESIRED_ROTATION + positionError);
+        motorGoToPosition(inhaleTime, DESIRED_ROTATION + positionError*EXHALE_DEGREE_RATIO);
         onMotorStart();
         logCounter=0;
         logMotor();
@@ -134,6 +135,7 @@ void MotorController::reciprocatingHandler()
         }
         else
         {
+            setRequiredSpeed(MINIUM_MOTOR_SPEED_IN_RPM);
             Motor::getInstance()->motorStop();
             onStopCommandPulseCount = Motor::getInstance()->getPC();
             reciprocatingState = closingCycleStopping;
@@ -161,11 +163,12 @@ void MotorController::reciprocatingHandler()
         logMotor();
         onMotorStop();
         lastEncoderPulseCount = 0;
-        delay(100);        
+        delay(INHALE_TO_EXHALE_PAUSE_TIME*1e3);        
         reciprocatingState = openningCycleStart;
         break;
 
     case openningCycleStart:
+        inhaling = false;
         Motor::getInstance()->setDirection(DIRECTION_OPEN);
         motorGoToPosition(OPENING_CYCLE_TIME, (DESIRED_ROTATION - positionError)* EXHALE_DEGREE_RATIO);
         onMotorStart();
@@ -233,8 +236,10 @@ void MotorController::reciprocatingHandler()
         break;
 
     case openningCycleStopped:
-        if(exhaleTime>=inhaleTime)
-            delay(exhaleTime-OPENING_CYCLE_TIME-0.1);    
+        if(exhaleTime>=inhaleTime){
+            float puaseTime = exhaleTime-OPENING_CYCLE_TIME-INHALE_TO_EXHALE_PAUSE_TIME; 
+            delay(round(puaseTime*1000));   
+        }
         inhaleTime = sysConfig->get_Inh_Time()/1000;
         exhaleTime = sysConfig->get_Exh_Time()/1000;
         lastEncoderPulseCount = 0;
@@ -243,6 +248,7 @@ void MotorController::reciprocatingHandler()
 
     case openSwitchNotHit:
         reciprocatingState = openSwitchNotHit;
+        Serial.print("NotHi");
         break;  
 
     default:
@@ -253,13 +259,19 @@ void MotorController::reciprocatingHandler()
 void MotorController::setMotorOnMinimumSpeed(bool direction)
 {
     Motor::getInstance()->setDirection(direction);
-    setRequiredSpeed(MINIUM_MOTOR_SPEED_IN_RPM);
+    //setRequiredSpeed(MINIUM_MOTOR_SPEED_IN_RPM);
+    Motor::getInstance()->setSpeed(MINIUM_MOTOR_SPEED_IN_PWM);
     onMotorStart();
 }
 
 void MotorController::setRequiredSpeed(float requiredSpeed)
 {
-    motorPWM = curveFit->fit(requiredSpeed);
+    
+    if(inhaling)
+        motorPWM = curveFit->fit(requiredSpeed)+9;
+    else        
+        motorPWM = curveFit->fit(requiredSpeed)-1;        
+        
     Motor::getInstance()->setSpeed(motorPWM);
 }
 

@@ -11,16 +11,17 @@
 #include "sysconfig.h"
 #include <timers.h>
 
-#define MAXIMUM_MOTOR_SPEED_IN_RPM 45
-#define MINIUM_MOTOR_SPEED_IN_RPM  7
-#define MINIUM_MOTOR_SPEED_IN_PWM  12
-#define TIME_STEP                  5e-3
-#define DESIRED_ROTATION           35
-#define EXHALE_DEGREE_RATIO        0.9
-#define BEFORE_OUSWITCH_MAX_DEGREE 15
-#define MOTOR_STOP_TIME            10e-3
-#define MOTOR_STOP_TIME_OPEN_CYCLE 0.15
-#define OPENING_CYCLE_TIME         0.8
+#define MAXIMUM_MOTOR_SPEED_IN_RPM  50
+#define MINIUM_MOTOR_SPEED_IN_RPM   7
+#define MINIUM_MOTOR_SPEED_IN_PWM   12
+#define TIME_STEP                   5e-3
+#define DESIRED_ROTATION            40
+#define EXHALE_DEGREE_RATIO         0.9
+#define BEFORE_OUSWITCH_MAX_DEGREE  10
+#define MOTOR_STOP_TIME             5e-3
+#define MOTOR_STOP_TIME_OPEN_CYCLE  0.2
+#define OPENING_CYCLE_TIME          0.8
+#define INHALE_TO_EXHALE_PAUSE_TIME 0.1
 
 extern Button *open_uSwitch;
 extern int on_uSwithHitPC;
@@ -88,6 +89,7 @@ private:
     int   logCounter=0;
     float curveFitRatios[3]         = {6.551, 0.7125, 0.0063};
     float pwm                       = 0;
+    bool inhaling                   = true;
 
     void setRequiredSpeed(float requiredSpeed);
     void setMotorOnMinimumSpeed(bool direction);

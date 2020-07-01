@@ -118,6 +118,8 @@ void MotorController::reciprocatingHandler()
     {
     case closingCycleStart:
         inhaling = true;
+        ieRatio  = sysConfig->get_IE_Ratio();
+        respRate = sysConfig->get_Resp_Rate();
         Motor::getInstance()->setDirection(DIRECTION_CLOSE);
         motorGoToPosition(inhaleTime, DESIRED_ROTATION + positionError*EXHALE_DEGREE_RATIO);
         onMotorStart();
@@ -185,7 +187,7 @@ void MotorController::reciprocatingHandler()
         }
         else
         {
-            setRequiredSpeed(MINIUM_MOTOR_SPEED_IN_RPM-2);
+            setRequiredSpeed(MINIUM_MOTOR_SPEED_IN_RPM-6);
             onStopCommandPulseCount = Motor::getInstance()->getPC();
             reciprocatingState = openningCycleReaching_uSwitch;
         }
@@ -197,7 +199,7 @@ void MotorController::reciprocatingHandler()
         degreeTracker->updatePosition(Motor::getInstance()->getPC());     
         if (open_uSwitch->get_Status() == BSTATE_HIGH)
         {
-            setRequiredSpeed(MINIUM_MOTOR_SPEED_IN_RPM-2);
+            setRequiredSpeed(MINIUM_MOTOR_SPEED_IN_RPM-6);
             float passedDegreeFromStop = (Motor::getInstance()->getPC()-onStopCommandPulseCount)*(float)360 / (float)MOTOR_PULSE_PER_TURN;
             if(passedDegreeFromStop>BEFORE_OUSWITCH_MAX_DEGREE){
                 Motor::getInstance()->motorStop();
@@ -242,13 +244,14 @@ void MotorController::reciprocatingHandler()
         }
         inhaleTime = sysConfig->get_Inh_Time()/1000;
         exhaleTime = sysConfig->get_Exh_Time()/1000;
+        //Serial.println(ieRatio);
         lastEncoderPulseCount = 0;
         reciprocatingState = closingCycleStart;
         break;
 
     case openSwitchNotHit:
         reciprocatingState = openSwitchNotHit;
-        Serial.print("NotHi");
+        Serial.print("NotHit");
         break;  
 
     default:
@@ -259,7 +262,6 @@ void MotorController::reciprocatingHandler()
 void MotorController::setMotorOnMinimumSpeed(bool direction)
 {
     Motor::getInstance()->setDirection(direction);
-    //setRequiredSpeed(MINIUM_MOTOR_SPEED_IN_RPM);
     Motor::getInstance()->setSpeed(MINIUM_MOTOR_SPEED_IN_PWM);
     onMotorStart();
 }
@@ -267,20 +269,33 @@ void MotorController::setMotorOnMinimumSpeed(bool direction)
 void MotorController::setRequiredSpeed(float requiredSpeed)
 {
     
-    if(inhaling)
-        motorPWM = curveFit->fit(requiredSpeed)+9;
+    if(inhaling){
+        if(ieRatio<2)
+            motorPWM = curveFit->fit(requiredSpeed, MINIUM_MOTOR_SPEED_IN_RPM)+14;
+        else if(ieRatio<3){
+            if(respRate < 17)
+                motorPWM = curveFit->fit(requiredSpeed, MINIUM_MOTOR_SPEED_IN_RPM-2)+respRate-3;
+            else
+                motorPWM = curveFit->fit(requiredSpeed, MINIUM_MOTOR_SPEED_IN_RPM-2)+respRate-7;
+        }
+        else        
+            motorPWM = curveFit->fit(requiredSpeed, MINIUM_MOTOR_SPEED_IN_RPM)+22;
+        
+    }   
     else        
-        motorPWM = curveFit->fit(requiredSpeed)-1;        
+        motorPWM = curveFit->fit(requiredSpeed, MINIUM_MOTOR_SPEED_IN_RPM-6)-1;        
         
     Motor::getInstance()->setSpeed(motorPWM);
 }
 
-void MotorController::logMotor(){
+void MotorController::logMotor()
+{
 	calcedLeftTime[logCounter]    = degreeTracker->getLeftTime();
 	calcedLeftDegree[logCounter]  = degreeTracker->getLeftDeltaDegree();
 	//MotorPwm[logCounter] 		  = motorPWM;
 	MotorPwm[logCounter] 		  = degreeTracker->getDesiredRPM();
-	MotorSpeedActual[logCounter]  = round(Motor::getInstance()->getEncRPM());
+    MotorSpeedActual[logCounter]  = motorPWM;
+	//MotorSpeedActual[logCounter]  = round(Motor::getInstance()->getEncRPM());
     if (logCounter<419)
         logCounter++;
 }

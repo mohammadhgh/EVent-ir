@@ -9,9 +9,9 @@ CurveFit::CurveFit(int degree, float *ratios)
     this->a2=ratios[2];
 }
 
-int CurveFit::fit(float x){
-    if(x<MINIUM_MOTOR_SPEED_IN_RPM)
-        x=MINIUM_MOTOR_SPEED_IN_RPM;
+int CurveFit::fit(float x, int minimumRpm){
+    if(x<minimumRpm)
+        x=minimumRpm;
     if(x>MAXIMUM_MOTOR_SPEED_IN_RPM)
         x=MAXIMUM_MOTOR_SPEED_IN_RPM;    
     float y=0;

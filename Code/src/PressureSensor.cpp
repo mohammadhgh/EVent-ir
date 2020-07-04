@@ -5,18 +5,30 @@ PressureSensor::PressureSensor(int Out_pin, int Sck_pin)
     this->Sck_pin = Sck_pin;
     this->Out_pin = Out_pin;
     this->PR = PR;
-    this->scale = new HX711();
-    this->sensorDivider = 59710;
-    this->sensorOfset = 1326161;
+    this->HX711_inst = new HX711();
+
+    this->HX711_inst->begin(this->Out_pin, this->Sck_pin, 64);
+}
+
+void PressureSensor::Calibrate(int times)
+{
+    this->HX711_inst->tare(times);  
+
+    Serial.println(this->HX711_inst->get_offset());
+    Serial.println("Tare updated. Press to continue ...");
+    while (!Serial.available()) {}  
+
+    double scale = this->HX711_inst->get_value(times);
+    Serial.println(scale);
+    this->HX711_inst->set_scale(scale/10);
+    Serial.println(this->HX711_inst->get_scale());
+
+    Serial.println("Scale updated. Press to continue ...");
+    while (!Serial.available()) {}
 }
 
 float PressureSensor::Read_Pressure()
 {
-    this->scale->begin(this->Out_pin, this->Sck_pin);
-    this->scale->get_scale();
-    this->scale->tare();
-    this->scale->set_offset(this->sensorOfset);
-    this->scale->set_scale(this->sensorDivider);
-    this->PR = this->scale->get_units();
+    this->PR = this->HX711_inst->get_units(1);
     return this->PR;
 }

@@ -5,7 +5,7 @@
 class PressureSensor
 {
 private:
-    HX711 *scale;
+    HX711 *HX711_inst;
     float PR;
     int Sck_pin;
     int Out_pin;
@@ -14,6 +14,7 @@ private:
 
 public:
     PressureSensor(int Out_pin, int Sck_pin);
+    void  Calibrate(int times = 100);
     float Read_Pressure();
 };
 

@@ -84,7 +84,9 @@ void loop()
 	// char* serial_buff;
 	// sprintf(serial_buff, "%f", pressure);
 	Serial.println(pressure);
-	// Serial.println(time2 - time1);
+	Serial.println(time2 - time1);
+	
+	delay(1000);
 
 	// wdt_reset();
 }

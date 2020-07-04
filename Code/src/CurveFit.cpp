@@ -1,4 +1,5 @@
 #include <CurveFit.h>
+#include <MotorController.h>
 
 CurveFit::CurveFit(int degree, float *ratios)
 {
@@ -8,9 +9,11 @@ CurveFit::CurveFit(int degree, float *ratios)
     this->a2=ratios[2];
 }
 
-int CurveFit::fit(float x){
-    if(x<5)
-        x=5;
+int CurveFit::fit(float x, int minimumRpm){
+    if(x<minimumRpm)
+        x=minimumRpm;
+    if(x>MAXIMUM_MOTOR_SPEED_IN_RPM)
+        x=MAXIMUM_MOTOR_SPEED_IN_RPM;    
     float y=0;
     float x1 = a1*x;
     float x2 = a2*pow(x,2);  

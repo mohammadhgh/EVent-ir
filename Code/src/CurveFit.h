@@ -12,7 +12,7 @@ private:
     float a2=0;
 public:
     CurveFit(int degree, float *ratios);
-    int fit(float x);
+    int fit(float x, int minimumRpm);
     
 };
 

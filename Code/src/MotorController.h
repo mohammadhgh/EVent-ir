@@ -11,7 +11,7 @@
 #include "sysconfig.h"
 #include <timers.h>
 
-#define MAXIMUM_MOTOR_SPEED_IN_RPM  35
+#define MAXIMUM_MOTOR_SPEED_IN_RPM  40
 #define MINIUM_MOTOR_SPEED_IN_RPM   10
 #define MINIUM_MOTOR_SPEED_IN_PWM   12
 #define TIME_STEP                   5e-3

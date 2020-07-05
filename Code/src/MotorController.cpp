@@ -270,8 +270,14 @@ void MotorController::setRequiredSpeed(float requiredSpeed)
 {
     
     if(inhaling){
-        if(ieRatio<2)
-            motorPWM = curveFit->fit(requiredSpeed, MINIUM_MOTOR_SPEED_IN_RPM)+14;
+        if(ieRatio<2){
+            if(respRate < 22)
+                motorPWM = curveFit->fit(requiredSpeed, MINIUM_MOTOR_SPEED_IN_RPM+8)+respRate+24;        
+            if(respRate < 25)
+                motorPWM = curveFit->fit(requiredSpeed, MINIUM_MOTOR_SPEED_IN_RPM-2)+respRate-13;
+            else
+                motorPWM = curveFit->fit(requiredSpeed, MINIUM_MOTOR_SPEED_IN_RPM-2)+respRate-14;
+        }
         else if(ieRatio<3){
             if(respRate < 17)
                 motorPWM = curveFit->fit(requiredSpeed, MINIUM_MOTOR_SPEED_IN_RPM-2)+respRate-3;
@@ -294,8 +300,8 @@ void MotorController::logMotor()
 	calcedLeftDegree[logCounter]  = degreeTracker->getLeftDeltaDegree();
 	//MotorPwm[logCounter] 		  = motorPWM;
 	MotorPwm[logCounter] 		  = degreeTracker->getDesiredRPM();
-    MotorSpeedActual[logCounter]  = motorPWM;
-	//MotorSpeedActual[logCounter]  = round(Motor::getInstance()->getEncRPM());
+    //MotorSpeedActual[logCounter]  = motorPWM;
+	MotorSpeedActual[logCounter]  = round(Motor::getInstance()->getEncRPM());
     if (logCounter<419)
         logCounter++;
 }

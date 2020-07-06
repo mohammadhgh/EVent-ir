@@ -36,7 +36,7 @@ void setup()
 	// respCycle = new Potentiometer(PinConfiguration::Potentiometer_Cycle, 23);
 	// IERatio = new Potentiometer(PinConfiguration::Potentiometer_IE, 4);
 
-	PR = new PressureSensor(PinConfiguration::PR_Out, PinConfiguration::PR_Sck);
+	PR = new PressureSensor(PinConfiguration::PR_Out, PinConfiguration::PR_Sck, 0 ,4);
 	PR->Calibrate(100);
 
 	// respCycle->set_Range(table_RC, sizeof table_RC);

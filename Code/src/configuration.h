@@ -20,7 +20,7 @@ public:
     const static int dummyInput = 15;
 
     //----uSwitches
-    const static int open_uSw_pin = 3;
+    const static int open_uSw_pin = 4;
 
     //----motor
     const static int motorOut1         = 18;
@@ -37,9 +37,11 @@ public:
     const static int buzzerPin = 48; //PWM
 
     //----LEDs
-    const static int bLED_pin = 43;
-    const static int wLED_pin = 47;
-    const static int ardLED = 13;
+    const static int bLED_pin   = 43;
+    const static int wLED_pin   = 47;
+    const static int ardLED_pin = 13;
+    const static int pLED1_pin  = 10;
+    const static int pLED2_pin  = 11;
 
     //----Potentiometer
     const static int Potentiometer_Volume = A12;

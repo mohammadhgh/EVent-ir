@@ -42,7 +42,11 @@ void PinConfiguration::pinConfiguration()
 	pinMode(bLED_pin, OUTPUT);
 	digitalWrite(bLED_pin, LOW);
 	pinMode(wLED_pin, OUTPUT);
-	digitalWrite(wLED_pin, LOW);	
+	digitalWrite(wLED_pin, LOW);
+	pinMode(pLED1_pin, OUTPUT);
+	digitalWrite(pLED1_pin, LOW);
+	pinMode(pLED2_pin, OUTPUT);
+	digitalWrite(pLED2_pin, LOW);			
 
 
 

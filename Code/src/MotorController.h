@@ -12,13 +12,13 @@
 #include <timers.h>
 
 #define MAXIMUM_MOTOR_SPEED_IN_RPM  40
-#define MINIUM_MOTOR_SPEED_IN_RPM   10
+#define MINIUM_MOTOR_SPEED_IN_RPM   6
 #define MINIUM_MOTOR_SPEED_IN_PWM   12
 #define TIME_STEP                   5e-3
 #define DESIRED_ROTATION            38
 #define EXHALE_DEGREE_RATIO         0.9
 #define BEFORE_OUSWITCH_MAX_DEGREE  12
-#define MOTOR_STOP_TIME             5e-3
+#define MOTOR_STOP_TIME             20e-3
 #define MOTOR_STOP_TIME_OPEN_CYCLE  0.4
 #define OPENING_CYCLE_TIME          0.8
 #define INHALE_TO_EXHALE_PAUSE_TIME 0.15

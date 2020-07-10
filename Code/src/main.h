@@ -27,6 +27,7 @@
 SysConfig *Global_SysConfig;
 
 Button *onButton;
+Button *applyButton;
 Button *open_uSwitch;
 
 LED *bLED;

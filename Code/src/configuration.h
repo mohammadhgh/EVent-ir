@@ -31,7 +31,8 @@ public:
     const static int motorDriverOnOff  = 16;
 
     //----pushButtons
-    const static int onButton_pin = 2;
+    const static int onButton_pin    = 2;
+    const static int applyButton_pin = 3;
 
     //----buzzer
     const static int buzzerPin = 48; //PWM

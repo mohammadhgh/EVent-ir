@@ -27,12 +27,10 @@ void PinConfiguration::pinConfiguration()
 
 	//----buttons
 	pinMode(onButton_pin, INPUT);
-	digitalWrite(onButton_pin, HIGH);
-
+	pinMode(applyButton_pin, INPUT);
 
 	//----uSwitches
 	pinMode(open_uSw_pin, INPUT);
-	digitalWrite(open_uSw_pin, HIGH);
 
 	//----buzzer
 	pinMode(buzzerPin, OUTPUT);
@@ -47,7 +45,5 @@ void PinConfiguration::pinConfiguration()
 	digitalWrite(pLED1_pin, LOW);
 	pinMode(pLED2_pin, OUTPUT);
 	digitalWrite(pLED2_pin, LOW);			
-
-
 
 }

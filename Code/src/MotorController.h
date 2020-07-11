@@ -15,11 +15,11 @@
 #define MINIUM_MOTOR_SPEED_IN_RPM   6
 #define MINIUM_MOTOR_SPEED_IN_PWM   12
 #define TIME_STEP                   5e-3
-#define DESIRED_ROTATION            38
-#define EXHALE_DEGREE_RATIO         0.9
-#define BEFORE_OUSWITCH_MAX_DEGREE  12
+#define DESIRED_ROTATION            40
+#define EXHALE_DEGREE_RATIO         1
+#define BEFORE_OUSWITCH_MAX_DEGREE  28
 #define MOTOR_STOP_TIME             20e-3
-#define MOTOR_STOP_TIME_OPEN_CYCLE  0.4
+#define MOTOR_STOP_TIME_OPEN_CYCLE  0.6
 #define OPENING_CYCLE_TIME          0.8
 #define INHALE_TO_EXHALE_PAUSE_TIME 0.15
 
@@ -84,10 +84,12 @@ private:
     int   motorStopDoubleGaurdLimit = 4;
     bool  reciprocateStart          = false;
     bool  reciprocateStop           = false;
+    bool  openingCycleFinished      = false;
     int   ieRatio                   = 0;
     int   respRate                  = 0;
     float inhaleTime                = 0;
     float exhaleTime                = 0;
+    float leftTime                  = 0;
     int   logCounter=0;
     float curveFitRatios[3]         = {6.551, 0.7125, 0.0063};
     float pwm                       = 0;

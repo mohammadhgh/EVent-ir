@@ -60,6 +60,8 @@ void setup()
 	Motor::getInstance()->initEnc(PinConfiguration::motorEncoderPin, INPUT, enc_callback, FALLING);
 	Timer1Start(round(15625 * Global_SysConfig->timeStep) - 1);
 
+	motorController->updatePots(IERatio->Potentiometer_Read(), respCycle->Potentiometer_Read());
+
 }
 
 void loop()
@@ -73,7 +75,7 @@ void loop()
 		onButton->set_Clicked(false);
 		motorController->startReciporating();
 	}
-	else if (onButton->get_Clicked() == true && onButton->get_On_Off() == BSTATE_OFF)
+	else if(onButton->get_Clicked() == true && onButton->get_On_Off() == BSTATE_OFF)
 	{
 		motorController->stopReciporating();
 		onButton->set_Clicked(false); 
@@ -81,11 +83,11 @@ void loop()
 
 	if (applyButton->get_Clicked() == true){
 		applyButton->set_Clicked(false);
-		
+		motorController->updatePots(IERatio->Potentiometer_Read(), respCycle->Potentiometer_Read());		
 	}	
 	
 	if(timeStepValid){
-		motorController->updatePots(IERatio->Potentiometer_Read(), respCycle->Potentiometer_Read());					
+		//motorController->updatePots(IERatio->Potentiometer_Read(), respCycle->Potentiometer_Read());					
 		motorController->motorControllerHandler();	
 	}
 	wdt_reset();

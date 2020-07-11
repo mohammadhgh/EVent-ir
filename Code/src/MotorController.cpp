@@ -118,8 +118,11 @@ void MotorController::reciprocatingHandler()
     {
     case closingCycleStart:
         inhaling = true;
-        ieRatio  = sysConfig->get_IE_Ratio();
-        respRate = sysConfig->get_Resp_Rate();
+        ieRatio    = sysConfig->get_IE_Ratio();
+        respRate   = sysConfig->get_Resp_Rate();
+        inhaleTime = sysConfig->get_Inh_Time()/1000;
+        exhaleTime = sysConfig->get_Exh_Time()/1000;
+
         Motor::getInstance()->setDirection(DIRECTION_CLOSE);
         motorGoToPosition(inhaleTime, DESIRED_ROTATION + positionError*EXHALE_DEGREE_RATIO);
         onMotorStart();
@@ -242,9 +245,6 @@ void MotorController::reciprocatingHandler()
             float puaseTime = exhaleTime-OPENING_CYCLE_TIME-INHALE_TO_EXHALE_PAUSE_TIME; 
             delay(round(puaseTime*1000));   
         }
-        inhaleTime = sysConfig->get_Inh_Time()/1000;
-        exhaleTime = sysConfig->get_Exh_Time()/1000;
-        //Serial.println(ieRatio);
         lastEncoderPulseCount = 0;
         reciprocatingState = closingCycleStart;
         break;
@@ -282,7 +282,7 @@ void MotorController::setRequiredSpeed(float requiredSpeed)
             if(respRate < 17)
                 motorPWM = curveFit->fit(requiredSpeed, MINIUM_MOTOR_SPEED_IN_RPM-2)+respRate-3;
             else
-                motorPWM = curveFit->fit(requiredSpeed, MINIUM_MOTOR_SPEED_IN_RPM-2)+respRate-7;
+                motorPWM = curveFit->fit(requiredSpeed, MINIUM_MOTOR_SPEED_IN_RPM-4)+respRate-7;
         }
         else        
             motorPWM = curveFit->fit(requiredSpeed, MINIUM_MOTOR_SPEED_IN_RPM)+22;

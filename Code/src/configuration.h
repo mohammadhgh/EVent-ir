@@ -31,15 +31,18 @@ public:
     const static int motorDriverOnOff  = 16;
 
     //----pushButtons
-    const static int onButton_pin = 2;
+    const static int onButton_pin    = 2;
+    const static int applyButton_pin = 4;
 
     //----buzzer
     const static int buzzerPin = 48; //PWM
 
     //----LEDs
-    const static int bLED_pin = 43;
-    const static int wLED_pin = 47;
-    const static int ardLED = 13;
+    const static int bLED_pin   = 43;
+    const static int wLED_pin   = 47;
+    const static int ardLED_pin = 13;
+    const static int pLED1_pin  = 10;
+    const static int pLED2_pin  = 11;
 
     //----Potentiometer
     const static int Potentiometer_Volume = A12;

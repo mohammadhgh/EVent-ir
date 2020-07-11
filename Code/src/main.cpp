@@ -27,10 +27,17 @@ void setup()
 	onButton = new Button(PinConfiguration::onButton_pin);
 	onButton->setPressCallback(onButton_callback);
 
+	applyButton = new Button(PinConfiguration::applyButton_pin);
+	applyButton->setPressCallback(applyButton_callback);	
+
 	open_uSwitch = new Button(PinConfiguration::open_uSw_pin, INPUT, open_uSw_callback, LOW);
 
-	bLED = new LED(PinConfiguration::bLED_pin);
-	wLED = new LED(PinConfiguration::wLED_pin);
+	bLED  = new LED(PinConfiguration::bLED_pin);
+	wLED  = new LED(PinConfiguration::wLED_pin);
+	pLED1 = new LED(PinConfiguration::pLED1_pin);
+	pLED2 = new LED(PinConfiguration::pLED2_pin);
+	pLED1->set_high();
+	pLED2->set_high();
 
 	respVolume = new Potentiometer(PinConfiguration::Potentiometer_Volume, 7);
 	respCycle = new Potentiometer(PinConfiguration::Potentiometer_Cycle, 23);
@@ -61,6 +68,7 @@ void loop()
 	//LCD::getInstance()->LCD_graph();
 
 	onButton->check();
+	applyButton->check();
 	if (onButton->get_Clicked() == true && onButton->get_On_Off() == BSTATE_ON){
 		onButton->set_Clicked(false);
 		motorController->startReciporating();
@@ -70,9 +78,14 @@ void loop()
 		motorController->stopReciporating();
 		onButton->set_Clicked(false); 
 	}
+
+	if (applyButton->get_Clicked() == true){
+		applyButton->set_Clicked(false);
+		
+	}	
 	
 	if(timeStepValid){
-		motorController->updatePots(IERatio->Potentiometer_Read(), respCycle->Potentiometer_Read());			
+		motorController->updatePots(IERatio->Potentiometer_Read(), respCycle->Potentiometer_Read());					
 		motorController->motorControllerHandler();	
 	}
 	wdt_reset();

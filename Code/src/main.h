@@ -27,11 +27,14 @@
 SysConfig *Global_SysConfig;
 
 Button *onButton;
+Button *applyButton;
 Button *open_uSwitch;
 
 LED *bLED;
 LED *wLED;
 LED *ardLED;
+LED *pLED1;
+LED *pLED2;
 
 Buzzer *coolBuzz;
 

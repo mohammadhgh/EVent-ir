@@ -6,13 +6,16 @@
 #include <timers.h>
 
 extern Button *onButton;
+extern Button *applyButton;
 extern Button *open_uSwitch;
 extern volatile int encFalled;
 extern volatile int on_uSwithHitPC;
 extern LED *bLED;
 extern LED *wLED;
+extern LED *pLED1;
+extern LED *pLED2;
 
-/* -------------- on button callback ----------------- */
+/* ---------------- on button callback ----------------- */
 void onButton_callback_WithInteruppt()
 {
 	detachInterrupt(digitalPinToInterrupt(PinConfiguration::onButton_pin));
@@ -27,7 +30,14 @@ void onButton_callback()
 	wLED->switch_led();
 }
 
-/* ------------ open uSwithch callback ---------------- */
+/* --------------- apply button callback ----------------- */
+void applyButton_callback()
+{
+	applyButton->set_Clicked(true);
+	pLED1->switch_led();
+}
+
+/* -------------- open uSwithch callback ---------------- */
 void open_uSw_callback()
 {
 	detachInterrupt(digitalPinToInterrupt(PinConfiguration::open_uSw_pin));	

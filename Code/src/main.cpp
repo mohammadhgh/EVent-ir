@@ -81,10 +81,11 @@ void loop()
 
 	if (applyButton->get_Clicked() == true){
 		applyButton->set_Clicked(false);
-		motorController->updatePots(IERatio->Potentiometer_Read(), respCycle->Potentiometer_Read());
+		
 	}	
 	
-	if(timeStepValid){					
+	if(timeStepValid){
+		motorController->updatePots(IERatio->Potentiometer_Read(), respCycle->Potentiometer_Read());					
 		motorController->motorControllerHandler();	
 	}
 	wdt_reset();

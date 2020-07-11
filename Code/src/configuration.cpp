@@ -31,6 +31,7 @@ void PinConfiguration::pinConfiguration()
 
 	//----uSwitches
 	pinMode(open_uSw_pin, INPUT);
+	digitalWrite(open_uSw_pin, HIGH);
 
 	//----buzzer
 	pinMode(buzzerPin, OUTPUT);

@@ -20,7 +20,7 @@ public:
     const static int dummyInput = 15;
 
     //----uSwitches
-    const static int open_uSw_pin = 4;
+    const static int open_uSw_pin = 3;
 
     //----motor
     const static int motorOut1         = 18;
@@ -32,7 +32,7 @@ public:
 
     //----pushButtons
     const static int onButton_pin    = 2;
-    const static int applyButton_pin = 3;
+    const static int applyButton_pin = 4;
 
     //----buzzer
     const static int buzzerPin = 48; //PWM

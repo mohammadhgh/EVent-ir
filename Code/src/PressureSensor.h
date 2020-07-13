@@ -2,7 +2,9 @@
 #define PRESSURESENSOR_H
 #include <Arduino.h>
 #include <HX711.h>
-#include<EEPROM.h>
+#include <EEPROM.h>
+
+#define CALIBRATION_HEIGHT 10 //in centimeters
 
 class PressureSensor
 {

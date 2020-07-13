@@ -32,18 +32,16 @@ void PressureSensor::Calibrate(int times)
 
     EEPROM.put(this->e2p_offset_addr, this->HX711_inst->get_offset());
     Serial.println(this->HX711_inst->get_offset());
-
-    Serial.println("Tare updated. Press to continue ...");
+    Serial.println("Tare updated. Press any key to continue ...");
     while (!Serial.available()) {}  
 
     double scale = this->HX711_inst->get_value(times);
-    Serial.println(scale);
-    this->HX711_inst->set_scale(scale/10);
+    this->HX711_inst->set_scale(scale/CALIBRATION_HEIGHT);
 
     EEPROM.put(this->e2p_scale_addr, this->HX711_inst->get_scale());
     Serial.println(this->HX711_inst->get_scale());
 
-    Serial.println("Scale updated. Press to continue ...");
+    Serial.println("Scale updated. Press any key to continue ...");
     while (!Serial.available()) {}
 }
 

@@ -36,8 +36,7 @@ void setup()
 	wLED  = new LED(PinConfiguration::wLED_pin);
 	pLED1 = new LED(PinConfiguration::pLED1_pin);
 	pLED2 = new LED(PinConfiguration::pLED2_pin);
-	pLED1->set_high();
-	pLED2->set_high();
+
 
 	respVolume = new Potentiometer(PinConfiguration::Potentiometer_Volume, 7);
 	respCycle = new Potentiometer(PinConfiguration::Potentiometer_Cycle, 23);
@@ -51,10 +50,15 @@ void setup()
 
 	motorController = new MotorController();
 
+	interrupts();
+
 	LCD::getInstance()->LCD_Logo();
 	LCD::getInstance()->LCD_Menu(respVolume->Potentiometer_Read(), respCycle->Potentiometer_Read(), IERatio->Potentiometer_Read(), 0 /*PR->Read_Pressure()*/);
 
-	interrupts();
+	delay(100);
+	
+	pLED1->set_high();
+	pLED2->set_high();
 
 	digitalWrite(PinConfiguration::motorDriverOnOff, HIGH);
 	Motor::getInstance()->initEnc(PinConfiguration::motorEncoderPin, INPUT, enc_callback, FALLING);

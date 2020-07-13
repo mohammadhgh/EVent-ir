@@ -282,10 +282,12 @@ void MotorController::setRequiredSpeed(float requiredSpeed)
                 motorPWM = curveFit->fit(requiredSpeed, MINIUM_MOTOR_SPEED_IN_RPM-2)+respRate-14;
         }
         else if(ieRatio<3){
-            if(respRate < 17)
-                motorPWM = curveFit->fit(requiredSpeed, MINIUM_MOTOR_SPEED_IN_RPM-2)+respRate-3;
+            if(respRate < 21)
+                motorPWM = curveFit->fit(requiredSpeed, MINIUM_MOTOR_SPEED_IN_RPM-2)+respRate;
+            else if(respRate < 26)
+                motorPWM = curveFit->fit(requiredSpeed, MINIUM_MOTOR_SPEED_IN_RPM-3)+respRate-3;
             else
-                motorPWM = curveFit->fit(requiredSpeed, MINIUM_MOTOR_SPEED_IN_RPM-3)+respRate-6;
+                motorPWM = curveFit->fit(requiredSpeed, MINIUM_MOTOR_SPEED_IN_RPM-3)+respRate-5;
         }
         else        
             motorPWM = curveFit->fit(requiredSpeed, MINIUM_MOTOR_SPEED_IN_RPM)+22;

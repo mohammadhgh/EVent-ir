@@ -7,8 +7,9 @@
 #include <sysconfig.h>
 #include <configuration.h>
 #include <PressureSensor.h>
-//#include <gText.h>
 #include <animation.h>
+#include <HX711.h>
+
 #define LogoDelay 200 / 3
 
 class LCD
@@ -17,15 +18,15 @@ private:
     static LCD *INSTANCE;
     SysConfig *local_sysconfig;
     PressureSensor *pr;
-    String lastRate = "0";
-    String lastVol = "0";
-    String lastIE = "0";
-    String lastPR = "0";
-
-    int x = 0; //x graph coordinate
-    int y = 0; //y graph coordinate
-    int q = 0; //old x graph coordinate
-    int w = 0; //old y graph coordinate
+    int lastRate = 0;
+    int lastVol = 0;
+    int lastIE = 0;
+    int lastPR = 0;
+    int x = 0;
+    int y = 0;
+    int q = 0;
+    int w = 0;
+    int count = 0;
 
 public:
     LCD();
@@ -36,7 +37,7 @@ public:
     void LCD_Logo();
     void LCD_Cover();
     void LCD_graph();
-    String screenWiper(int columnnumber, String toPrint, String *lastToPrint);
+    int screenWiper(int columnnumber, int toPrint, int *lastToPrint);
 };
 
 #endif

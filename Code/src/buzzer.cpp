@@ -4,7 +4,7 @@ Buzzer::Buzzer(int pin)
 {
     this->pin = pin;
     this->sound_freq = 1000; //active buzzer
-    this->on_delay = 50;
+    this->on_delay = 500;
 }
 
 void Buzzer::beep(int beeps_count)
@@ -13,7 +13,7 @@ void Buzzer::beep(int beeps_count)
     {
         tone(this->pin, this->sound_freq, this->on_delay);
         delay(this->on_delay);
-        //  noTone(this->pin);
-        // delay(this->on_delay);
+        noTone(this->pin);
+        delay(this->on_delay);
     }
 }

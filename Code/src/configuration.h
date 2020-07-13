@@ -36,7 +36,7 @@ public:
     int onButton_hits = 0;
 
     //----buzzer
-    const static int buzzerPin = 5; //PWM
+    const static int buzzerPin = 12; //PWM
 
     //----LEDs
     const static int gLED_pin = 7;

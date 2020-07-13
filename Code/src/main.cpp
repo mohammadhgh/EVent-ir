@@ -18,6 +18,7 @@
 #include <string.h>
 #include <Stream.h>
 #include <PressureSensor.h>
+#include <alarm.h>
 
 long testTimer = 0;
 
@@ -29,10 +30,9 @@ Button *open_uSwitch;
 
 LED *gLED;
 LED *ardLED;
-boolean a = false;
 Buzzer *coolBuzz;
 Motor_Driver *mot_Driver;
-
+ALARM *EmgSound;
 Potentiometer *respVolume;
 Potentiometer *respCycle;
 Potentiometer *IERatio;
@@ -89,50 +89,49 @@ void setup()
 	// Init_Timer5();
 
 	Serial.begin(9600);
-
+	pinMode(7, OUTPUT);
 	//Global_SysConfig = new SysConfig(2, 0, 0);
-	PinConfiguration::getInstance()->pinConfiguration();
+	//PinConfiguration::getInstance()->pinConfiguration();
 
-	coolBuzz = new Buzzer(PinConfiguration::buzzerPin);
+	//coolBuzz = new Buzzer(PinConfiguration::buzzerPin);
+	//EmgSoun7d = new ALARM();
+	// mot_Driver = new Motor_Driver(Motor::getInstance());
 
-	mot_Driver = new Motor_Driver(Motor::getInstance());
+	// ON_button = new Button(PinConfiguration::onButton_pin, INPUT, onButton_callback, LOW);
 
-	ON_button = new Button(PinConfiguration::onButton_pin, INPUT, onButton_callback, LOW);
+	// open_uSwitch = new Button(PinConfiguration::open_uSw_pin, INPUT, open_uSw_callback, LOW);
 
-	open_uSwitch = new Button(PinConfiguration::open_uSw_pin, INPUT, open_uSw_callback, LOW);
+	// gLED = new LED(PinConfiguration::gLED_pin);
 
-	gLED = new LED(PinConfiguration::gLED_pin);
-
-	ardLED = new LED(PinConfiguration::ardLED);
+	// ardLED = new LED(PinConfiguration::ardLED);
 
 	//noInterrupts();
-	respVolume = new Potentiometer(PinConfiguration::Potentiometer_Volume, 7);
-	respCycle = new Potentiometer(PinConfiguration::Potentiometer_Cycle, 33);
-	IERatio = new Potentiometer(PinConfiguration::Potentiometer_IE, 4);
-	PR = new PressureSensor(PinConfiguration::PR_Out, PinConfiguration::PR_Sck);
+	// respVolume = new Potentiometer(PinConfiguration::Potentiometer_Volume, 7);
+	// respCycle = new Potentiometer(PinConfiguration::Potentiometer_Cycle, 33);
+	// IERatio = new Potentiometer(PinConfiguration::Potentiometer_IE, 4);
+	// PR = new PressureSensor(PinConfiguration::PR_Out, PinConfiguration::PR_Sck);
 
-	respCycle->set_Range(table_RC, sizeof table_RC);
-	respVolume->set_Range(table_RV, sizeof table_RV);
-	IERatio->set_Range(table_IE, sizeof table_IE);
+	// respCycle->set_Range(table_RC, sizeof table_RC);
+	// respVolume->set_Range(table_RV, sizeof table_RV);
+	// IERatio->set_Range(table_IE, sizeof table_IE);
 
 	//interrupts();
 
 	// Motor::getInstance()->setSpeed(85);
 	// Motor::getInstance()->initEnc(PinConfiguration::motorEncoderPin, INPUT, enc_callback, RISING);
 	//initial_Check();
-	LCD::getInstance()->LCD_Logo();
+	// LCD::getInstance()->LCD_Logo();
 }
 void loop()
 {
 	//mot_Driver->update_resp_rate(Global_SysConfig);
 	//if (ON_button->get_On_Off() == BSTATE_ON)
-	//mot_Driver->check();
-	Serial.println(millis());
-	LCD::getInstance()->LCD_Menu(respVolume->Potentiometer_Read(), respCycle->Potentiometer_Read(), IERatio->Potentiometer_Read(), PR->Read_Pressure());
-	Serial.println(millis());
-
-	//LCD::getInstance()->LCD_graph();
-
+	// //mot_Driver->check();
+	// Serial.println(millis());
+	// //	LCD::getInstance()->LCD_Menu(respVolume->Potentiometer_Read(), respCycle->Potentiometer_Read(), IERatio->Potentiometer_Read(), 0 /*PR->Read_Pressure()*/);
+	// GLCD.print(1);
+	// Serial.println(millis());
+	//	EmgSound->alarm(1);
 	// Motor::getInstance()->setSpeed(30 - respCycle->Potentiometer_Read());
 	// if (ON_button->get_Clicked() == true && ON_button->get_On_Off() == BSTATE_ON)
 	// {
@@ -161,4 +160,11 @@ void loop()
 	// delay(100);
 
 	// wdt_reset();
+
+	// wait for the chip to become ready
+
+	tone(7, 1000);
+	delay(1000);
+	noTone(7);
+	delay(1000);
 }

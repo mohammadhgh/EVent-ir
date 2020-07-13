@@ -12,11 +12,13 @@ PressureSensor::PressureSensor(int Out_pin, int Sck_pin)
 
 float PressureSensor::Read_Pressure()
 {
-    this->scale->begin(this->Out_pin, this->Sck_pin);
+    this->scale->begin(this->Out_pin, this->Sck_pin, 64);
     this->scale->get_scale();
     this->scale->tare();
     this->scale->set_offset(this->sensorOfset);
     this->scale->set_scale(this->sensorDivider);
+
     this->PR = this->scale->get_units();
+
     return this->PR;
 }

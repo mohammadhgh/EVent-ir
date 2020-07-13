@@ -112,31 +112,48 @@ void LCD::LCD_Logo()
 void LCD::LCD_Menu(int tidalVolume, int respRate, int IEratio, float PR)
 {
 
-    String *tidal_Vol = &(this->lastVol);
-    String *resp_Rate = &(this->lastRate);
-    String *IE_ratio = &(this->lastIE);
-    String *PR_Sensor = &(this->lastPR);
+    int *tidal_Vol = &(this->lastVol);
+    int *resp_Rate = &(this->lastRate);
+    int *IE_ratio = &(this->lastIE);
+    int *PR_Sensor = &(this->lastPR);
 
-    String a = String(tidalVolume);
-    String b = String(respRate);
-    String c = String(IEratio);
-    String d = String(PR);
+    // String a = String(tidalVolume);
+    // String b = String(respRate);
+    // String c = String(IEratio);
+    // String d = String(PR);
 
-    GLCD.CursorToXY(80, 3);
-    GLCD.Puts(screenWiper(16, a, tidal_Vol));
+    if (this->count == 0)
+    {
+        GLCD.CursorToXY(80, 3);
+        GLCD.print(screenWiper(16, tidalVolume, tidal_Vol));
+    }
+    else if (this->count == 1)
+    {
 
-    GLCD.CursorToXY(80, 20);
-    GLCD.Puts(screenWiper(16, b, resp_Rate));
+        GLCD.CursorToXY(80, 20);
+        GLCD.print(screenWiper(16, respRate, resp_Rate));
+    }
+    else if (this->count == 2)
+    {
+        GLCD.DrawString(F("1 :"), 80, 36);
+        GLCD.CursorTo(18);
+        GLCD.print(screenWiper(18, IEratio, IE_ratio));
+    }
 
-    GLCD.DrawString(F("1 :"), 80, 36);
-    GLCD.CursorTo(18);
-    GLCD.Puts(screenWiper(18, c, IE_ratio));
+    else
+    {
+        GLCD.CursorToXY(80, 52);
+        GLCD.print(screenWiper(16, PR, PR_Sensor));
+    }
 
-    GLCD.CursorToXY(80, 52);
-    GLCD.Puts(screenWiper(16, d, PR_Sensor));
+    this->count++;
+    if (this->count == 4)
+    {
+        this->count = 0;
+    }
 }
 
-String LCD::screenWiper(int columnNumber, String toPrint, String *lastToPrint)
+int LCD::screenWiper(int columnNumber, int toPrint, int *lastToPrint)
 {
     if (toPrint != *lastToPrint)
     {

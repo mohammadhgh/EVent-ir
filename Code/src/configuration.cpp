@@ -13,37 +13,38 @@ PinConfiguration *PinConfiguration::getInstance()
 
 void PinConfiguration::pinConfiguration()
 {
-	// //Dummy Input Pin
-	// pinMode(dummyInput, INPUT);
+	//Dummy Input Pin
+	pinMode(dummyInput, INPUT);
 
-	// // Motor pins
-	// pinMode(motorOut1, OUTPUT);
-	// digitalWrite(motorOut1, LOW);
-	// pinMode(motorOut2, OUTPUT);
-	// digitalWrite(motorOut2, LOW);
-	// pinMode(motorControl, OUTPUT);
-	// pinMode(motorDriverOnOff, OUTPUT);
-	// digitalWrite(motorDriverOnOff, LOW);	
+	// Motor pins
+	pinMode(motorOut1, OUTPUT);
+	digitalWrite(motorOut1, LOW);
+	pinMode(motorOut2, OUTPUT);
+	digitalWrite(motorOut2, LOW);
+	pinMode(motorControl, OUTPUT);
+	pinMode(motorDriverOnOff, OUTPUT);
+	digitalWrite(motorDriverOnOff, LOW);	
 
-	// //----buttons
-	// pinMode(onButton_pin, INPUT);
-	// digitalWrite(onButton_pin, HIGH);
+	//----buttons
+	pinMode(onButton_pin, INPUT);
+	pinMode(applyButton_pin, INPUT);
 
+	//----uSwitches
+	pinMode(open_uSw_pin, INPUT);
+	digitalWrite(open_uSw_pin, HIGH);
 
-	// //----uSwitches
-	// pinMode(open_uSw_pin, INPUT);
-	// digitalWrite(open_uSw_pin, HIGH);
+	//----buzzer
+	pinMode(buzzerPin, OUTPUT);
+	digitalWrite(buzzerPin, LOW);
 
-	// //----buzzer
-	// pinMode(buzzerPin, OUTPUT);
-	// digitalWrite(buzzerPin, LOW);
-
-	// //----LEDs
-	// pinMode(bLED_pin, OUTPUT);
-	// digitalWrite(bLED_pin, LOW);
-	// pinMode(wLED_pin, OUTPUT);
-	// digitalWrite(wLED_pin, LOW);	
-
-
+	//----LEDs
+	pinMode(bLED_pin, OUTPUT);
+	digitalWrite(bLED_pin, LOW);
+	pinMode(wLED_pin, OUTPUT);
+	digitalWrite(wLED_pin, LOW);
+	pinMode(pLED1_pin, OUTPUT);
+	digitalWrite(pLED1_pin, LOW);
+	pinMode(pLED2_pin, OUTPUT);
+	digitalWrite(pLED2_pin, LOW);			
 
 }

@@ -7,8 +7,8 @@ void setup()
 {
 	noInterrupts();
 
-	for (size_t i = 8; i <= 30; i++)
-		table_RC[i - 8] = i;
+	for (int i=0; i<4; i++)
+		table_RC[i] = 15+i*5;
 
 	Init_Timer1();
 	Init_Timer3();
@@ -37,10 +37,9 @@ void setup()
 	pLED1 = new LED(PinConfiguration::pLED1_pin);
 	pLED2 = new LED(PinConfiguration::pLED2_pin);
 
-
 	respVolume = new Potentiometer(PinConfiguration::Potentiometer_Volume, 7);
-	respCycle = new Potentiometer(PinConfiguration::Potentiometer_Cycle, 23);
-	IERatio = new Potentiometer(PinConfiguration::Potentiometer_IE, 4);
+	respCycle  = new Potentiometer(PinConfiguration::Potentiometer_Cycle, 4);
+	IERatio    = new Potentiometer(PinConfiguration::Potentiometer_IE, 4);
 
 	PR = new PressureSensor(PinConfiguration::PR_Out, PinConfiguration::PR_Sck);
 

@@ -15,7 +15,7 @@
 #define MINIUM_MOTOR_SPEED_IN_RPM   6
 #define MINIUM_MOTOR_SPEED_IN_PWM   12
 #define TIME_STEP                   5e-3
-#define DESIRED_ROTATION            40
+#define DESIRED_ROTATION            29
 #define EXHALE_DEGREE_RATIO         1
 #define BEFORE_OUSWITCH_MAX_DEGREE  28
 #define MOTOR_STOP_TIME             20e-3

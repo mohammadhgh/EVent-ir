@@ -7,7 +7,7 @@ MotorController::MotorController(/* args */)
 
     curveFit = new CurveFit(2, curveFitRatios);
 
-    degreeTracker = new DegreeTracker(DESIRED_ROTATION, sysConfig->duration, sysConfig->timeStep);
+    degreeTracker = new DegreeTracker(desiredRotation, sysConfig->duration, sysConfig->timeStep);
 }
 
 void MotorController::startReciporating(){
@@ -18,11 +18,12 @@ void MotorController::stopReciporating(){
     this->reciprocateStop = true;
 }
 
-void MotorController::updatePots(int IERatio, int respCycle){
+void MotorController::updatePots(int IERatio, int respCycle, int respVolume){
     sysConfig->set_IE_Ratio(IERatio);
     sysConfig->set_Resp_Rate(respCycle);
+    sysConfig->set_Tidal_Volume(respVolume);
     inhaleTime = sysConfig->get_Inh_Time()/1000;
-    exhaleTime = sysConfig->get_Exh_Time()/1000;  
+    exhaleTime = sysConfig->get_Exh_Time()/1000;
 }
 
 void MotorController::motorControllerHandler()
@@ -43,9 +44,9 @@ void MotorController::motorControllerHandler()
     case reciprocating:  
         reciprocatingHandler();      
         if(reciprocateStop){            
-            if(openingCycleFinished){
-                reciprocateStop = false; 
+            if(openingCycleFinished){                
                 onMotorStop();
+                reciprocateStop = false; 
                 reciprocatingState=closingCycleStart;  
                 controllerState = beforeReciprocating; 
                 printLog();                       
@@ -119,13 +120,18 @@ void MotorController::reciprocatingHandler()
     case closingCycleStart:
         openingCycleFinished = false;
         inhaling = true;
-        ieRatio    = sysConfig->get_IE_Ratio();
-        respRate   = sysConfig->get_Resp_Rate();
-        inhaleTime = sysConfig->get_Inh_Time()/1000;
-        exhaleTime = sysConfig->get_Exh_Time()/1000;
-
+        tidalVolume = sysConfig->get_Tidal_Volume();
+        ieRatio     = sysConfig->get_IE_Ratio();
+        respRate    = sysConfig->get_Resp_Rate();
+        inhaleTime  = sysConfig->get_Inh_Time()/1000;
+        exhaleTime  = sysConfig->get_Exh_Time()/1000;
+        if(tidalVolume==300)
+            desiredRotation = 29;
+        else
+            desiredRotation = 40;
+            
         Motor::getInstance()->setDirection(DIRECTION_CLOSE);
-        motorGoToPosition(inhaleTime, DESIRED_ROTATION + positionError*EXHALE_DEGREE_RATIO);
+        motorGoToPosition(inhaleTime, desiredRotation + positionError*EXHALE_DEGREE_RATIO);
         onMotorStart();
         logCounter=0;
         logMotor();
@@ -176,7 +182,7 @@ void MotorController::reciprocatingHandler()
     case openningCycleStart:
         inhaling = false;
         Motor::getInstance()->setDirection(DIRECTION_OPEN);
-        motorGoToPosition(OPENING_CYCLE_TIME, (DESIRED_ROTATION - positionError)* EXHALE_DEGREE_RATIO);
+        motorGoToPosition(OPENING_CYCLE_TIME, (desiredRotation - positionError)* EXHALE_DEGREE_RATIO);
         onMotorStart();
         logMotor();
         reciprocatingState = openningCycleInProgress;
@@ -226,12 +232,13 @@ void MotorController::reciprocatingHandler()
         if (lastEncoderPulseCount == Motor::getInstance()->getPC())
         {
             if (motorStopDoubleGaurd == motorStopDoubleGaurdLimit)
-            {
+            {                
                 int motorPulseCount = Motor::getInstance()->getPC();
-                positionError = ((float)motorPulseCount - (float)on_uSwithHitPC) * (float)360 / (float)MOTOR_PULSE_PER_TURN;
-                reciprocatingState = openningCycleStopped;
+                positionError = ((float)motorPulseCount - (float)on_uSwithHitPC) * (float)360 / (float)MOTOR_PULSE_PER_TURN;                                
                 leftTime = degreeTracker->getLeftTime();
                 onMotorStop();
+                openingCycleFinished = true;
+                reciprocatingState = openningCycleStopped;
             }
             motorStopDoubleGaurd++;
         }
@@ -248,7 +255,7 @@ void MotorController::reciprocatingHandler()
             delay(round(puaseTime*1000));   
         }
         lastEncoderPulseCount = 0;
-        openingCycleFinished = true;
+        
         reciprocatingState = closingCycleStart;
         break;
 
@@ -282,14 +289,10 @@ void MotorController::setRequiredSpeed(float requiredSpeed)
                 motorPWM = curveFit->fit(requiredSpeed, MINIUM_MOTOR_SPEED_IN_RPM-2)+respRate-14;
         }
         else if(ieRatio<3){
-            if(respRate < 16)
-                motorPWM = curveFit->fit(requiredSpeed, MINIUM_MOTOR_SPEED_IN_RPM-2)+respRate-7;            
-            else if(respRate < 21)
-                motorPWM = curveFit->fit(requiredSpeed, MINIUM_MOTOR_SPEED_IN_RPM-3)+respRate-9;
-            else if(respRate < 26)
-                motorPWM = curveFit->fit(requiredSpeed, MINIUM_MOTOR_SPEED_IN_RPM-4)+respRate-12;
+            if(tidalVolume==300)
+                motorPWM = curveFit->fit(requiredSpeed, MINIUM_MOTOR_SPEED_IN_RPM-mtrMinSpdOfstTDV300[(respRate-15)/5])+respRate-mtrSpdOfstTDV300[(respRate-15)/5];
             else
-                motorPWM = curveFit->fit(requiredSpeed, MINIUM_MOTOR_SPEED_IN_RPM-3)+respRate-17;
+                motorPWM = curveFit->fit(requiredSpeed, MINIUM_MOTOR_SPEED_IN_RPM-mtrMinSpdOfstTDV700[(respRate-15)/5])+respRate-mtrSpdOfstTDV700[(respRate-15)/5];                   
         }
         else        
             motorPWM = curveFit->fit(requiredSpeed, MINIUM_MOTOR_SPEED_IN_RPM)+22;

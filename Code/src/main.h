@@ -46,7 +46,7 @@ PressureSensor *PR;
 
 MotorController *motorController;
 
-int table_RV[] = {200, 300, 400, 500, 600, 700, 800};
+int table_RV[] = {300, 700};
 int table_RC[4];
 int table_IE[] = {1, 2, 3, 4};
 

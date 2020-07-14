@@ -37,7 +37,7 @@ void setup()
 	pLED1 = new LED(PinConfiguration::pLED1_pin);
 	pLED2 = new LED(PinConfiguration::pLED2_pin);
 
-	respVolume = new Potentiometer(PinConfiguration::Potentiometer_Volume, 7);
+	respVolume = new Potentiometer(PinConfiguration::Potentiometer_Volume, 2);
 	respCycle  = new Potentiometer(PinConfiguration::Potentiometer_Cycle, 4);
 	IERatio    = new Potentiometer(PinConfiguration::Potentiometer_IE, 4);
 
@@ -63,7 +63,7 @@ void setup()
 	Motor::getInstance()->initEnc(PinConfiguration::motorEncoderPin, INPUT, enc_callback, FALLING);
 	Timer1Start(round(15625 * Global_SysConfig->timeStep) - 1);
 
-	motorController->updatePots(IERatio->Potentiometer_Read(), respCycle->Potentiometer_Read());
+	motorController->updatePots(IERatio->Potentiometer_Read(), respCycle->Potentiometer_Read(), respVolume->Potentiometer_Read());
 
 }
 
@@ -86,11 +86,11 @@ void loop()
 
 	if (applyButton->get_Clicked() == true){
 		applyButton->set_Clicked(false);
-		motorController->updatePots(IERatio->Potentiometer_Read(), respCycle->Potentiometer_Read());		
+		motorController->updatePots(IERatio->Potentiometer_Read(), respCycle->Potentiometer_Read(), respVolume->Potentiometer_Read());		
 	}	
 	
 	if(timeStepValid){
-		//motorController->updatePots(IERatio->Potentiometer_Read(), respCycle->Potentiometer_Read());					
+		//motorController->updatePots(IERatio->Potentiometer_Read(), respCycle->Potentiometer_Read(), respVolume->Potentiometer_Read());					
 		motorController->motorControllerHandler();	
 	}
 	wdt_reset();

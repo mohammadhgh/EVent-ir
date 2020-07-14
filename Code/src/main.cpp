@@ -30,7 +30,7 @@ void setup()
 	applyButton = new Button(PinConfiguration::applyButton_pin);
 	applyButton->setPressCallback(applyButton_callback);	
 
-	open_uSwitch = new Button(PinConfiguration::open_uSw_pin, INPUT, open_uSw_callback, LOW);
+	// ardLED = new LED(PinConfiguration::ardLED);
 
 	bLED  = new LED(PinConfiguration::bLED_pin);
 	wLED  = new LED(PinConfiguration::wLED_pin);

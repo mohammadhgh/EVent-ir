@@ -23,6 +23,7 @@ void LCD::update_sysconfig(SysConfig *newconfig)
 
 void LCD::LCD_Cover()
 {
+
     GLCD.Init();
     GLCD.DrawRoundRect(0, 0, GLCD.Width, GLCD.Height, 4);
     Serial.println(1);

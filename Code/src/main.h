@@ -22,6 +22,7 @@
 #include <math.h>
 #include "DegreeTracker.h"
 #include "MotorController.h"
+#include "PressureSensor.h"
 
 /* Global Objects */
 SysConfig *Global_SysConfig;

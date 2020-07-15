@@ -5,7 +5,7 @@ LCD *LCD::INSTANCE = NULL;
 LCD::LCD()
 {
     this->local_sysconfig = new SysConfig(0, 0, 0);
-    this->pr = new PressureSensor(PinConfiguration::PR_Out, PinConfiguration::PR_Sck);
+    // this->pr = new PressureSensor(PinConfiguration::PR_Out, PinConfiguration::PR_Sck);
 }
 LCD *LCD::getInstance()
 {

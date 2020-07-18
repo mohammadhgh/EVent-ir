@@ -165,6 +165,6 @@ void loop()
 
 	tone(7, 1000);
 	delay(1000);
-	noTone(7);
-	delay(1000);
+	//noTone(7);
+	//delay(1000);
 }

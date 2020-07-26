@@ -1,7 +1,7 @@
 // by Amir Sk , MHG, MHM, ASM
 // Apr. 5rd 2020
 
-#include "main.h"
+#include "mainPressureSensorPressureSensor.h"
 
 void setup()
 {
@@ -52,7 +52,7 @@ void setup()
 
 	motorController = new MotorController();
 
-	// LCD::getInstance()->LCD_Logo();
+	LCD::getInstance()->LCD_Logo();
 	LCD::getInstance()->LCD_Menu(respVolume->Potentiometer_Read(), respCycle->Potentiometer_Read(), IERatio->Potentiometer_Read(), 0 /*PR->Read_Pressure()*/);
 
 	interrupts();
@@ -65,6 +65,7 @@ void setup()
 
 void loop()
 {
+
 	LCD::getInstance()->LCD_Menu(respVolume->Potentiometer_Read(), respCycle->Potentiometer_Read(), IERatio->Potentiometer_Read(), PR->Read_Pressure());
 	// LCD::getInstance()->LCD_graph();
 	// long time1 = micros();
@@ -72,26 +73,26 @@ void loop()
 	// long time2 = micros();
 	// Serial.println(pressure);
 
-	// onButton->check();
-	// applyButton->check();
-	// if (onButton->get_Clicked() == true && onButton->get_On_Off() == BSTATE_ON){
-	// 	onButton->set_Clicked(false);
-	// 	motorController->startReciporating();
-	// }
-	// else if (onButton->get_Clicked() == true && onButton->get_On_Off() == BSTATE_OFF)
-	// {
-	// 	motorController->stopReciporating();
-	// 	onButton->set_Clicked(false); 
-	// }
+	onButton->check();
+	applyButton->check();
+	if (onButton->get_Clicked() == true && onButton->get_On_Off() == BSTATE_ON){
+		onButton->set_Clicked(false);
+		motorController->startReciporating();
+	}
+	else if (onButton->get_Clicked() == true && onButton->get_On_Off() == BSTATE_OFF)
+	{
+		motorController->stopReciporating();
+		onButton->set_Clicked(false); 
+	}
 
-	// if (applyButton->get_Clicked() == true){
-	// 	applyButton->set_Clicked(false);
+	if (applyButton->get_Clicked() == true){
+		applyButton->set_Clicked(false);
 		
-	// }	
+	}	
 	
-	// if(timeStepValid){
-	// 	motorController->updatePots(IERatio->Potentiometer_Read(), respCycle->Potentiometer_Read());					
-	// 	motorController->motorControllerHandler();	
-	// }
+	if(timeStepValid){
+		motorController->updatePots(IERatio->Potentiometer_Read(), respCycle->Potentiometer_Read());					
+		motorController->motorControllerHandler();	
+	}
 	wdt_reset();
 }

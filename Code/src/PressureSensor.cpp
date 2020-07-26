@@ -13,6 +13,8 @@ PressureSensor::PressureSensor(int Out_pin, int Sck_pin,
 
     this->HX711_inst->begin(this->Out_pin, this->Sck_pin, 64); //64 is not real gain, it is based on HX710B
 
+    this->peak_pr = 0.0;
+
     long offset;
     EEPROM.get(this->e2p_offset_addr, offset);
     this->HX711_inst->set_offset(offset);
@@ -51,3 +53,12 @@ float PressureSensor::Read_Pressure()
     return this->PR;
 }
 
+float PressureSensor::get_peak_pr()
+{
+    return this->peak_pr;
+}
+    
+void  PressureSensor::set_peak_pr(float new_peak_pr)
+{
+    this->peak_pr = new_peak_pr;
+}

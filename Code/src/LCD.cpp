@@ -38,7 +38,7 @@ void LCD::LCD_Clear()
 void LCD::LCD_Logo()
 {
     GLCD.Init();
-    /*GLCD.DrawBitmap(comp14, 0, 0);
+    GLCD.DrawBitmap(comp14, 0, 0);
     delay(7 * LogoDelay);
     GLCD.DrawBitmap(comp15, 0, 0);
     delay(LogoDelay);
@@ -91,7 +91,7 @@ void LCD::LCD_Logo()
     GLCD.DrawBitmap(comp39, 0, 0);
     delay(LogoDelay);
     GLCD.DrawBitmap(comp40, 0, 0);
-    delay(5 * LogoDelay);*/
+    delay(5 * LogoDelay);
     GLCD.ClearScreen();
     GLCD.DrawRoundRect(0, 0, GLCD.Width, GLCD.Height, 2);
     GLCD.SelectFont(Iain5x7);

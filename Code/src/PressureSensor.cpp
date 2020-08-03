@@ -62,3 +62,14 @@ void  PressureSensor::set_peak_pr(float new_peak_pr)
 {
     this->peak_pr = new_peak_pr;
 }
+
+void  PressureSensor::update_peak_pr(float current_pr)
+{
+    if(current_pr > this->get_peak_pr())
+        this->set_peak_pr(current_pr);
+}
+
+void  PressureSensor::reset_peak_pr()
+{
+    this->set_peak_pr(0.0);
+}

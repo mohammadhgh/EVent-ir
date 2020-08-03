@@ -75,6 +75,7 @@ void loop()
 
 	onButton->check();
 	applyButton->check();
+
 	if (onButton->get_Clicked() == true && onButton->get_On_Off() == BSTATE_ON){
 		onButton->set_Clicked(false);
 		motorController->startReciporating();
@@ -87,12 +88,12 @@ void loop()
 
 	if (applyButton->get_Clicked() == true){
 		applyButton->set_Clicked(false);
-		
 	}	
 	
 	if(timeStepValid){
 		motorController->updatePots(IERatio->Potentiometer_Read(), respCycle->Potentiometer_Read());					
 		motorController->motorControllerHandler();	
 	}
+	
 	wdt_reset();
 }

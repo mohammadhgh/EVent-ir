@@ -41,7 +41,8 @@ void setup()
 	respCycle  = new Potentiometer(PinConfiguration::Potentiometer_Cycle, 4);
 	IERatio    = new Potentiometer(PinConfiguration::Potentiometer_IE, 4);
 
-	PR = new PressureSensor(PinConfiguration::PR_Out, PinConfiguration::PR_Sck);
+	PR = new PressureSensor(PinConfiguration::PR_Out, PinConfiguration::PR_Sck, 0 ,4);
+	// PR->Calibrate(100);
 
 	respCycle->set_Range(table_RC, sizeof table_RC);
 	respVolume->set_Range(table_RV, sizeof table_RV);
@@ -69,11 +70,17 @@ void setup()
 
 void loop()
 {
-	LCD::getInstance()->LCD_Menu(respVolume->Potentiometer_Read(), respCycle->Potentiometer_Read(), IERatio->Potentiometer_Read(), 0 /*PR->Read_Pressure()*/);
-	//LCD::getInstance()->LCD_graph();
+
+	LCD::getInstance()->LCD_Menu(respVolume->Potentiometer_Read(), respCycle->Potentiometer_Read(), IERatio->Potentiometer_Read(), PR->Read_Pressure());
+	// LCD::getInstance()->LCD_graph();
+	// long time1 = micros();
+	// float pressure = PR->Read_Pressure();
+	// long time2 = micros();
+	// Serial.println(pressure);
 
 	onButton->check();
 	applyButton->check();
+
 	if (onButton->get_Clicked() == true && onButton->get_On_Off() == BSTATE_ON){
 		onButton->set_Clicked(false);
 		motorController->startReciporating();
@@ -93,5 +100,6 @@ void loop()
 		//motorController->updatePots(IERatio->Potentiometer_Read(), respCycle->Potentiometer_Read(), respVolume->Potentiometer_Read());					
 		motorController->motorControllerHandler();	
 	}
+	
 	wdt_reset();
 }

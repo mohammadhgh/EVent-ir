@@ -24,7 +24,7 @@ public:
     float Read_Pressure();
     float get_peak_pr();
     void  set_peak_pr(float new_peak_pr);
-    void  update_peak_pr(float current_pr);
+    float update_peak_pr();
     void  reset_peak_pr();
 };
 
